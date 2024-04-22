@@ -1,5 +1,5 @@
 plugins {
-    id 'consumer'
+    id 'multiloader-loader'
     id 'fabric-loom' version '1.6-SNAPSHOT'
 }
 dependencies {

@@ -1,5 +1,5 @@
 plugins {
-    id 'shared'
+    id 'multiloader-common'
 }
 
 configurations {

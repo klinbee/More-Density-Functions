@@ -1,5 +1,5 @@
 plugins {
-    id 'consumer'
+    id 'multiloader-loader'
     id 'net.neoforged.gradle.userdev' version '7.0.107'
 }
 
