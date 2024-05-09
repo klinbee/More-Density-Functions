@@ -15,9 +15,15 @@ public record FloorDivision(DensityFunction arg1, DensityFunction arg2, double m
 
     @Override
     public double sample(NoisePos pos) {
-        long divedend = Math.round(this.arg1.sample(pos));
-        long divisor = Math.round(this.arg2.sample(pos));
-        long quotient = Math.floorDiv(divedend,divisor);
+        double initialDivisor = this.arg2.sample(pos);
+        long dividend = Math.round(this.arg1.sample(pos));
+        long divisor = Math.round(initialDivisor);
+
+        if (divisor == 0) {
+            return initialDivisor >= 0 ? maxOutput : minOutput;
+        }
+
+        long quotient = Math.floorDiv(dividend,divisor);
         if (quotient > this.maxOutput) {
             return maxOutput;
         }
