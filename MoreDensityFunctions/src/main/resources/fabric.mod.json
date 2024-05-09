@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "more_density_functions",
+  "version": "${version}",
+  "name": "MoreDensityFunctions",
+  "description": "Adds more density functions for terrain shaping.",
+  "authors": [
+    "Quidvio"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/more_density_functions/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.quidvio.more_density_functions.MoreDensityFunctionsMain"
+    ]
+  },
+  "mixins": [
+    "more_density_functions.mixins.json"
+  ],
+  "accessWidner": [
+    "more_density_functions.accesswidener"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "fabric": "*",
+    "minecraft": "1.19"
+  }
+}
