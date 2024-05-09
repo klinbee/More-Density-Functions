@@ -6,15 +6,15 @@ import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record Power(DensityFunction arg1, DensityFunction arg2) implements DensityFunction {
+public record Power(DensityFunction base, DensityFunction exponent) implements DensityFunction {
 
-    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("argument1").forGetter(Power::arg1), DensityFunction.CODEC.fieldOf("argument2").forGetter(Power::arg2)).apply(instance, (Power::new)));
+    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.CODEC.fieldOf("exponent").forGetter(Power::exponent)).apply(instance, (Power::new)));
     public static final CodecHolder<Power> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
 
 
     @Override
     public double sample(NoisePos pos) {
-        return Math.pow(this.arg1.sample(pos),this.arg2.sample(pos));
+        return Math.pow(this.base.sample(pos),this.exponent.sample(pos));
     }
 
     @Override
@@ -24,27 +24,27 @@ public record Power(DensityFunction arg1, DensityFunction arg2) implements Densi
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Power(this.arg1,this.arg2));
+        return visitor.apply(new Power(this.base,this.exponent));
     }
 
     @Override
-    public DensityFunction arg1() {
-        return arg1;
+    public DensityFunction base() {
+        return base;
     }
 
     @Override
-    public DensityFunction arg2() {
-        return arg2;
+    public DensityFunction exponent() {
+        return exponent;
     }
 
     @Override
     public double minValue() {
-        return Math.min(arg1.minValue(),arg2.minValue());
+        return Math.min(base.minValue(),exponent.minValue());
     }
 
     @Override
     public double maxValue() {
-        return Math.max(arg1.maxValue(),arg2.maxValue());
+        return Math.max(base.maxValue(),exponent.maxValue());
     }
 
     @Override

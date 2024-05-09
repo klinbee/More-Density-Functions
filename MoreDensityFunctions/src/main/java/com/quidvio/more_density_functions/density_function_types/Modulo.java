@@ -6,15 +6,15 @@ import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record Modulo(DensityFunction arg1, DensityFunction arg2) implements DensityFunction {
+public record Modulo(DensityFunction dividend, DensityFunction divisor) implements DensityFunction {
 
-    private static final MapCodec<Modulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("argument1").forGetter(Modulo::arg1), DensityFunction.CODEC.fieldOf("argument2").forGetter(Modulo::arg2)).apply(instance, (Modulo::new)));
+    private static final MapCodec<Modulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("argument1").forGetter(Modulo::dividend), DensityFunction.CODEC.fieldOf("argument2").forGetter(Modulo::divisor)).apply(instance, (Modulo::new)));
     public static final CodecHolder<Modulo> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
 
 
     @Override
     public double sample(NoisePos pos) {
-        return this.arg1.sample(pos) % this.arg2.sample(pos);
+        return this.dividend.sample(pos) % this.divisor.sample(pos);
     }
 
     @Override
@@ -24,27 +24,27 @@ public record Modulo(DensityFunction arg1, DensityFunction arg2) implements Dens
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Modulo(this.arg1,this.arg2));
+        return visitor.apply(new Modulo(this.dividend,this.divisor));
     }
 
     @Override
-    public DensityFunction arg1() {
-        return arg1;
+    public DensityFunction dividend() {
+        return dividend;
     }
 
     @Override
-    public DensityFunction arg2() {
-        return arg2;
+    public DensityFunction divisor() {
+        return divisor;
     }
 
     @Override
     public double minValue() {
-        return Math.min(arg1.minValue(),arg2.minValue());
+        return Math.min(dividend.minValue(),divisor.minValue());
     }
 
     @Override
     public double maxValue() {
-        return Math.max(arg1.maxValue(),arg2.maxValue());
+        return Math.max(dividend.maxValue(),divisor.maxValue());
     }
 
     @Override
