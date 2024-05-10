@@ -20,11 +20,9 @@ public record Reciprocal(DensityFunction df, double maxOutput, double minOutput)
     @Override
     public double apply(double density) {
         if (density == 0) {
-            return 0;
+            return maxOutput;
         }
-
         double output = 1/density;
-
         if (output > maxOutput) {
             return maxOutput;
         }
@@ -32,7 +30,7 @@ public record Reciprocal(DensityFunction df, double maxOutput, double minOutput)
             return minOutput;
         }
 
-        return 1/density;
+        return output;
     }
 
     @Override
