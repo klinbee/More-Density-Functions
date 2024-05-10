@@ -19,12 +19,10 @@
   "mixins": [
     "more_density_functions.mixins.json"
   ],
-  "accessWidner": [
-    "more_density_functions.accesswidener"
-  ],
+  "accessWidener": "more_density_functions.accesswidener",
   "depends": {
     "fabricloader": ">=0.15.11",
     "fabric": "*",
-    "minecraft": "1.19"
+    "minecraft": "1.19.x"
   }
 }
