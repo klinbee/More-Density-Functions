@@ -8,7 +8,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record Power(DensityFunction base, DensityFunction exponent) implements DensityFunction {
 
-    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.CODEC.fieldOf("exponent").forGetter(Power::exponent)).apply(instance, (Power::new)));
+    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.CODEC.fieldOf("exp").forGetter(Power::exponent)).apply(instance, (Power::new)));
     public static final CodecHolder<Power> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
 
 
