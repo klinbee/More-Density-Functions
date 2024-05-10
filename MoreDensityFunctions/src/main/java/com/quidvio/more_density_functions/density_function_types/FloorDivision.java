@@ -9,7 +9,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record FloorDivision(DensityFunction dividend, DensityFunction divisor, double maxOutput, double minOutput) implements DensityFunction {
 
-    private static final MapCodec<FloorDivision> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("dividend").forGetter(FloorDivision::dividend), DensityFunction.CODEC.fieldOf("divisor").forGetter(FloorDivision::divisor), Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(FloorDivision::maxOutput), Codec.doubleRange(Double.MIN_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(FloorDivision::minOutput)).apply(instance, (FloorDivision::new)));
+    private static final MapCodec<FloorDivision> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("dividend").forGetter(FloorDivision::dividend), DensityFunction.CODEC.fieldOf("divisor").forGetter(FloorDivision::divisor), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(FloorDivision::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(FloorDivision::minOutput)).apply(instance, (FloorDivision::new)));
     public static final CodecHolder<FloorDivision> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
 
 
