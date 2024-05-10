@@ -18,10 +18,9 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor) implemen
     }
 
     @Override
-    public void applyEach(double[] densities, EachApplier applier) {
-        applier.applyEach(densities,this);
+    public void fill(double[] densities, EachApplier applier) {
+        applier.fill(densities,this);
     }
-
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
         return visitor.apply(new Modulo(this.dividend,this.divisor));

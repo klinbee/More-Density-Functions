@@ -34,8 +34,8 @@ public record FloorDivision(DensityFunction dividend, DensityFunction divisor, d
     }
 
     @Override
-    public void applyEach(double[] densities, EachApplier applier) {
-        applier.applyEach(densities,this);
+    public void fill(double[] densities, EachApplier applier) {
+        applier.fill(densities,this);
     }
 
     @Override

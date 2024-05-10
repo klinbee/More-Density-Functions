@@ -18,10 +18,9 @@ public record Power(DensityFunction base, DensityFunction exponent) implements D
     }
 
     @Override
-    public void applyEach(double[] densities, EachApplier applier) {
-        applier.applyEach(densities,this);
+    public void fill(double[] densities, EachApplier applier) {
+        applier.fill(densities,this);
     }
-
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
         return visitor.apply(new Power(this.base,this.exponent));
