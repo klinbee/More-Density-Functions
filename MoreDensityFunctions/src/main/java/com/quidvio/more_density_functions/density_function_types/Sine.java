@@ -6,10 +6,10 @@ import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record Sine(DensityFunction df) implements DensityFunctionTypes.class_6932 {
+public record Sine(DensityFunction df) implements DensityFunctionTypes.Unary {
 
     private static final MapCodec<Sine> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("input").forGetter(Sine::df)).apply(instance, (Sine::new)));
-    public static final CodecHolder<Sine> CODEC  = DensityFunctionTypes.method_41065(MAP_CODEC);
+    public static final CodecHolder<Sine> CODEC  = DensityFunctionTypes.holderOf(MAP_CODEC);
 
     @Override
     public DensityFunction input() {
@@ -37,7 +37,7 @@ public record Sine(DensityFunction df) implements DensityFunctionTypes.class_693
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodec() {
+    public CodecHolder<? extends DensityFunction> getCodecHolder() {
         return CODEC;
     }
 }

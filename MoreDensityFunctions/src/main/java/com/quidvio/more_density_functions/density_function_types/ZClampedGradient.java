@@ -8,10 +8,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record ZClampedGradient(int fromZ, int toZ, double fromVal, double toVal) implements DensityFunction.class_6913 {
+public record ZClampedGradient(int fromZ, int toZ, double fromVal, double toVal) implements DensityFunction.Base {
 
     private static final MapCodec<ZClampedGradient> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(Codec.intRange(-30_000_000, 30_000_000).fieldOf("from_z").forGetter(ZClampedGradient::fromZ), Codec.intRange(-30_000_000, 30_000_000).fieldOf("to_z").forGetter(ZClampedGradient::toZ), DensityFunctionTypes.CONSTANT_RANGE.fieldOf("from_value").forGetter(ZClampedGradient::fromVal), DensityFunctionTypes.CONSTANT_RANGE.fieldOf("to_value").forGetter(ZClampedGradient::toVal)).apply(instance, (ZClampedGradient::new)));
-    public static final CodecHolder<ZClampedGradient> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
+    public static final CodecHolder<ZClampedGradient> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
     public ZClampedGradient(int fromZ, int toZ, double fromVal, double toVal) {
         this.fromZ = fromZ;
@@ -22,7 +22,7 @@ public record ZClampedGradient(int fromZ, int toZ, double fromVal, double toVal)
 
     @Override
     public double sample(NoisePos pos) {
-        return MathHelper.clampedLerpFromProgress((double)pos.blockZ(), (double)this.fromZ, (double)this.toZ, this.fromVal, this.toVal);
+        return MathHelper.clampedMap((double)pos.blockZ(), (double)this.fromZ, (double)this.toZ, this.fromVal, this.toVal);
     }
 
     @Override
@@ -51,7 +51,7 @@ public record ZClampedGradient(int fromZ, int toZ, double fromVal, double toVal)
         return fromVal;
     }
 
-    public CodecHolder<? extends DensityFunction> getCodec() {
+    public CodecHolder<? extends DensityFunction> getCodecHolder() {
         return CODEC;
     }
 }

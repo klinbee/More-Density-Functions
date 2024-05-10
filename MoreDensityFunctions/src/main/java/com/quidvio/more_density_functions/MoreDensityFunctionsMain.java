@@ -2,8 +2,11 @@ package com.quidvio.more_density_functions;
 
 import com.quidvio.more_density_functions.density_function_types.*;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import java.rmi.registry.Registry;
 
 public class MoreDensityFunctionsMain implements ModInitializer {
 
@@ -13,7 +16,7 @@ public class MoreDensityFunctionsMain implements ModInitializer {
      */
     @Override
     public void onInitialize() {
-        Registry.register(Registry.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","x_clamped_gradient"), XClampedGradient.CODEC.codec());
+        Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","x_clamped_gradient"), XClampedGradient.CODEC.codec());
         Registry.register(Registry.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","z_clamped_gradient"), ZClampedGradient.CODEC.codec());
         Registry.register(Registry.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","sine"), Sine.CODEC.codec());
         Registry.register(Registry.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","sqrt"), Sqrt.CODEC.codec());

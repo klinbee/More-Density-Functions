@@ -9,7 +9,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 public record Power(DensityFunction base, DensityFunction exponent) implements DensityFunction {
 
     private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.CODEC.fieldOf("exp").forGetter(Power::exponent)).apply(instance, (Power::new)));
-    public static final CodecHolder<Power> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
+    public static final CodecHolder<Power> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
     @Override
@@ -18,8 +18,8 @@ public record Power(DensityFunction base, DensityFunction exponent) implements D
     }
 
     @Override
-    public void method_40470(double[] ds, class_6911 arg) {
-        arg.method_40478(ds, this);
+    public void applyEach(double[] densities, EachApplier applier) {
+        applier.applyEach(densities,this);
     }
 
     @Override
@@ -48,7 +48,7 @@ public record Power(DensityFunction base, DensityFunction exponent) implements D
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodec() {
+    public CodecHolder<? extends DensityFunction> getCodecHolder() {
         return CODEC;
     }
 }

@@ -9,7 +9,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 public record Subtract(DensityFunction arg1, DensityFunction arg2) implements DensityFunction {
 
     private static final MapCodec<Subtract> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("argument1").forGetter(Subtract::arg1), DensityFunction.CODEC.fieldOf("argument2").forGetter(Subtract::arg2)).apply(instance, (Subtract::new)));
-    public static final CodecHolder<Subtract> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
+    public static final CodecHolder<Subtract> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
     @Override
@@ -18,8 +18,8 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
     }
 
     @Override
-    public void method_40470(double[] ds, class_6911 arg) {
-        arg.method_40478(ds, this);
+    public void applyEach(double[] densities, EachApplier applier) {
+        applier.applyEach(densities,this);
     }
 
     @Override
@@ -48,7 +48,7 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodec() {
+    public CodecHolder<? extends DensityFunction> getCodecHolder() {
         return CODEC;
     }
 }

@@ -10,7 +10,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 public record ShiftFunction(DensityFunction df, DensityFunction shiftx, DensityFunction shifty, DensityFunction shiftz) implements DensityFunction {
 
     private static final MapCodec<ShiftFunction> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("input").forGetter(ShiftFunction::df), DensityFunction.CODEC.fieldOf("shift_x").forGetter(ShiftFunction::shiftx), DensityFunction.CODEC.fieldOf("shift_y").forGetter(ShiftFunction::shifty), DensityFunction.CODEC.fieldOf("shift_z").forGetter(ShiftFunction::shiftz)).apply(instance, (ShiftFunction::new)));
-    public static final CodecHolder<ShiftFunction> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
+    public static final CodecHolder<ShiftFunction> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
     @Override
@@ -19,8 +19,8 @@ public record ShiftFunction(DensityFunction df, DensityFunction shiftx, DensityF
     }
 
     @Override
-    public void method_40470(double[] ds, class_6911 arg) {
-        arg.method_40478(ds, this);
+    public void applyEach(double[] densities, EachApplier applier) {
+        applier.applyEach(densities,this);
     }
 
     @Override
@@ -59,7 +59,7 @@ public record ShiftFunction(DensityFunction df, DensityFunction shiftx, DensityF
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodec() {
+    public CodecHolder<? extends DensityFunction> getCodecHolder() {
         return CODEC;
     }
 }

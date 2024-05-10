@@ -9,7 +9,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 public record Modulo(DensityFunction dividend, DensityFunction divisor) implements DensityFunction {
 
     private static final MapCodec<Modulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("dividend").forGetter(Modulo::dividend), DensityFunction.CODEC.fieldOf("divisor").forGetter(Modulo::divisor)).apply(instance, (Modulo::new)));
-    public static final CodecHolder<Modulo> CODEC = DensityFunctionTypes.method_41065(MAP_CODEC);
+    public static final CodecHolder<Modulo> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
     @Override
@@ -18,8 +18,8 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor) implemen
     }
 
     @Override
-    public void method_40470(double[] ds, class_6911 arg) {
-        arg.method_40478(ds, this);
+    public void applyEach(double[] densities, EachApplier applier) {
+        applier.applyEach(densities,this);
     }
 
     @Override
@@ -48,7 +48,7 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor) implemen
     }
 
     @Override
-    public CodecHolder<? extends DensityFunction> getCodec() {
+    public CodecHolder<? extends DensityFunction> getCodecHolder() {
         return CODEC;
     }
 }
