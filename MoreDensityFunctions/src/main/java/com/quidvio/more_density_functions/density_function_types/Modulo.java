@@ -15,7 +15,15 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor, double e
 
     @Override
     public double sample(NoisePos pos) {
-        return this.dividend.sample(pos) % this.divisor.sample(pos);
+
+        int dividendValue = (int) this.dividend.sample(pos);
+        int divisorValue = (int) this.divisor.sample(pos);
+
+        if (divisorValue == 0) {
+            return this.errorVal;
+        }
+
+        return dividendValue % divisorValue;
     }
 
     @Override
