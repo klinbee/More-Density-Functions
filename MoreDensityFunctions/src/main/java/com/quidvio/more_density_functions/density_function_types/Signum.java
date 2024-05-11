@@ -8,7 +8,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record Signum(DensityFunction df) implements DensityFunctionTypes.Unary {
 
-    private static final MapCodec<Signum> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("input").forGetter(Signum::df)).apply(instance, (Signum::new)));
+    private static final MapCodec<Signum> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("input").forGetter(Signum::df)).apply(instance, (Signum::new)));
     public static final CodecHolder<Signum> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
     @Override

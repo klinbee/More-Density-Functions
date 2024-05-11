@@ -9,7 +9,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record Reciprocal(DensityFunction df, double maxOutput, double minOutput, double errorValue) implements DensityFunctionTypes.Unary {
 
-    private static final MapCodec<Reciprocal> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("input").forGetter(Reciprocal::df), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(Reciprocal::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(Reciprocal::minOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("error_value").forGetter(Reciprocal::errorValue)).apply(instance, (Reciprocal::new)));
+    private static final MapCodec<Reciprocal> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("input").forGetter(Reciprocal::df), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(Reciprocal::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(Reciprocal::minOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("error_value").forGetter(Reciprocal::errorValue)).apply(instance, (Reciprocal::new)));
     public static final CodecHolder<Reciprocal> CODEC  = DensityFunctionTypes.holderOf(MAP_CODEC);
 
     @Override
@@ -20,14 +20,14 @@ public record Reciprocal(DensityFunction df, double maxOutput, double minOutput,
     @Override
     public double apply(double density) {
         if (density == 0) {
-            return maxOutput;
+            return this.errorValue;
         }
         double result = 1/density;
-        if (result > maxOutput) {
-            return maxOutput;
+        if (result > this.maxOutput) {
+            return this.maxOutput;
         }
-        if (result < minOutput) {
-            return minOutput;
+        if (result < this.minOutput) {
+            return this.minOutput;
         }
 
         return result;

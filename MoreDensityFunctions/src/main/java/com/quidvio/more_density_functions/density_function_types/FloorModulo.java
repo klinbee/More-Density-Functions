@@ -8,7 +8,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record FloorModulo(DensityFunction dividend, DensityFunction divisor) implements DensityFunction {
 
-    private static final MapCodec<FloorModulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("dividend").forGetter(FloorModulo::dividend), DensityFunction.CODEC.fieldOf("divisor").forGetter(FloorModulo::divisor)).apply(instance, (FloorModulo::new)));
+    private static final MapCodec<FloorModulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("dividend").forGetter(FloorModulo::dividend), DensityFunction.FUNCTION_CODEC.fieldOf("divisor").forGetter(FloorModulo::divisor)).apply(instance, (FloorModulo::new)));
     public static final CodecHolder<FloorModulo> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
