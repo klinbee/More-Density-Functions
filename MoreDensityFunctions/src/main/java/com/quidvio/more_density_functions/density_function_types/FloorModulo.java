@@ -23,7 +23,7 @@ public record FloorModulo(DensityFunction dividend, DensityFunction divisor) imp
     }
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new FloorModulo(this.dividend,this.divisor));
+        return visitor.apply(new FloorModulo(this.dividend.apply(visitor), this.divisor.apply(visitor)));
     }
 
     @Override

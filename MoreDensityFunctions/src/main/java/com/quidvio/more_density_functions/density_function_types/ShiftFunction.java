@@ -15,7 +15,7 @@ public record ShiftFunction(DensityFunction df, DensityFunction shiftx, DensityF
 
     @Override
     public double sample(NoisePos pos) {
-        return this.df.sample(new UnblendedNoisePos(pos.blockX()+(int)this.shiftx.sample(pos),pos.blockY()+(int)this.shifty.sample(pos),pos.blockZ()+(int)this.shiftz.sample(pos)));
+        return this.df.sample(new UnblendedNoisePos(pos.blockX() + (int)this.shiftx.sample(pos),pos.blockY() + (int)this.shifty.sample(pos),pos.blockZ() + (int)this.shiftz.sample(pos)));
     }
 
     @Override
@@ -24,7 +24,7 @@ public record ShiftFunction(DensityFunction df, DensityFunction shiftx, DensityF
     }
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new ShiftFunction(this.df,this.shiftx,this.shifty,this.shiftz));
+        return visitor.apply(new ShiftFunction(this.df.apply(visitor), this.shiftx.apply(visitor), this.shifty.apply(visitor), this.shiftz.apply(visitor)));
     }
 
     @Override

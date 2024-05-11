@@ -23,7 +23,7 @@ public record Power(DensityFunction base, DensityFunction exponent) implements D
     }
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Power(this.base,this.exponent));
+        return visitor.apply(new Power(this.base.apply(visitor), this.exponent.apply(visitor)));
     }
 
     @Override

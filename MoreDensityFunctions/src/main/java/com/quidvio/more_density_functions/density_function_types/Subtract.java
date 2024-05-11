@@ -23,7 +23,7 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
     }
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Subtract(this.arg1,this.arg2));
+        return visitor.apply(new Subtract(this.arg1.apply(visitor), this.arg2.apply(visitor)));
     }
 
     @Override
