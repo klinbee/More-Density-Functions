@@ -13,16 +13,10 @@ public record XClampedGradient(int fromX, int toX, double fromVal, double toVal)
     private static final MapCodec<XClampedGradient> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(Codec.intRange(-30_000_000, 30_000_000).fieldOf("from_x").forGetter(XClampedGradient::fromX), Codec.intRange(-30_000_000, 30_000_000).fieldOf("to_x").forGetter(XClampedGradient::toX), DensityFunctionTypes.CONSTANT_RANGE.fieldOf("from_value").forGetter(XClampedGradient::fromVal), DensityFunctionTypes.CONSTANT_RANGE.fieldOf("to_value").forGetter(XClampedGradient::toVal)).apply(instance, (XClampedGradient::new)));
     public static final CodecHolder<XClampedGradient> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
-    public XClampedGradient(int fromX, int toX, double fromVal, double toVal) {
-        this.fromX = fromX;
-        this.toX = toX;
-        this.fromVal = fromVal;
-        this.toVal = toVal;
-    }
 
     @Override
     public double sample(DensityFunction.NoisePos pos) {
-        return MathHelper.clampedMap((double)pos.blockX(), (double)this.fromX, (double)this.toX, this.fromVal, this.toVal);
+        return MathHelper.clampedMap(pos.blockX(), this.fromX, this.toX, this.fromVal, this.toVal);
     }
 
     @Override
