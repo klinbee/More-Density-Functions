@@ -22,6 +22,8 @@ public class MoreDensityFunctionsMain implements ModInitializer {
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","floor"), Floor.CODEC.codec());
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","ceil"), Ceil.CODEC.codec());
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","round"), Round.CODEC.codec());
+        Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","signum"), Signum.CODEC.codec());
+        Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","div"), Division.CODEC.codec());
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","floor_div"), FloorDivision.CODEC.codec());
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","mod"), Modulo.CODEC.codec());
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","floor_mod"), FloorModulo.CODEC.codec());

@@ -7,10 +7,10 @@ import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record FloorDivision(DensityFunction dividend, DensityFunction divisor, double maxOutput, double minOutput, double errorValue) implements DensityFunction {
+public record Division(DensityFunction dividend, DensityFunction divisor, double maxOutput, double minOutput, double errorValue) implements DensityFunction {
 
-    private static final MapCodec<FloorDivision> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("dividend").forGetter(FloorDivision::dividend), DensityFunction.CODEC.fieldOf("divisor").forGetter(FloorDivision::divisor), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(FloorDivision::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(FloorDivision::minOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("error_value").forGetter(FloorDivision::errorValue)).apply(instance, (FloorDivision::new)));
-    public static final CodecHolder<FloorDivision> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
+    private static final MapCodec<Division> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("dividend").forGetter(Division::dividend), DensityFunction.CODEC.fieldOf("divisor").forGetter(Division::divisor), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(Division::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(Division::minOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("error_value").forGetter(Division::errorValue)).apply(instance, (Division::new)));
+    public static final CodecHolder<Division> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
     @Override
@@ -21,17 +21,17 @@ public record FloorDivision(DensityFunction dividend, DensityFunction divisor, d
         if (divisorValue == 0) {
             return this.errorValue;
         }
-
-        double result = Math.floorDiv((int)dividendValue,(int)divisorValue);
-
+        
+        double result = dividendValue / divisorValue;
+        
         if (result > this.maxOutput) {
             return this.maxOutput;
         }
-
+        
         if (result < this.minOutput) {
             return this.minOutput;
         }
-
+        
         return result;
     }
 
@@ -42,7 +42,7 @@ public record FloorDivision(DensityFunction dividend, DensityFunction divisor, d
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new FloorDivision(this.dividend.apply(visitor), this.divisor.apply(visitor), this.maxOutput, this.minOutput, this.errorValue));
+        return visitor.apply(new Division(this.dividend.apply(visitor), this.divisor.apply(visitor), this.maxOutput, this.minOutput, this.errorValue));
     }
 
     @Override
