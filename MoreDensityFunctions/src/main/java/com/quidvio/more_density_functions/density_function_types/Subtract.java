@@ -8,7 +8,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record Subtract(DensityFunction arg1, DensityFunction arg2) implements DensityFunction {
 
-    private static final MapCodec<Subtract> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("argument1").forGetter(Subtract::arg1), DensityFunction.CODEC.fieldOf("argument2").forGetter(Subtract::arg2)).apply(instance, (Subtract::new)));
+    private static final MapCodec<Subtract> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("argument1").forGetter(Subtract::arg1), DensityFunction.FUNCTION_CODEC.fieldOf("argument2").forGetter(Subtract::arg2)).apply(instance, (Subtract::new)));
     public static final CodecHolder<Subtract> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
@@ -19,12 +19,12 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
 
     @Override
     public void applyEach(double[] densities, EachApplier applier) {
-        applier.applyEach(densities,this);
+        applier.applyEach(densities, this);
     }
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Subtract(this.arg1,this.arg2));
+        return visitor.apply(new Subtract(this.arg1.apply(visitor), this.arg2.apply(visitor)));
     }
 
     @Override
@@ -39,12 +39,12 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
 
     @Override
     public double minValue() {
-        return Math.min(arg1.minValue(),arg2.minValue());
+        return Math.min(arg1.minValue(), arg2.minValue());
     }
 
     @Override
     public double maxValue() {
-        return Math.max(arg1.maxValue(),arg2.maxValue());
+        return Math.max(arg1.maxValue(), arg2.maxValue());
     }
 
     @Override

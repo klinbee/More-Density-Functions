@@ -8,7 +8,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record Modulo(DensityFunction dividend, DensityFunction divisor) implements DensityFunction {
 
-    private static final MapCodec<Modulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("dividend").forGetter(Modulo::dividend), DensityFunction.CODEC.fieldOf("divisor").forGetter(Modulo::divisor)).apply(instance, (Modulo::new)));
+    private static final MapCodec<Modulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("dividend").forGetter(Modulo::dividend), DensityFunction.FUNCTION_CODEC.fieldOf("divisor").forGetter(Modulo::divisor)).apply(instance, (Modulo::new)));
     public static final CodecHolder<Modulo> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
@@ -19,12 +19,12 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor) implemen
 
     @Override
     public void applyEach(double[] densities, EachApplier applier) {
-        applier.applyEach(densities,this);
+        applier.applyEach(densities, this);
     }
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Modulo(this.dividend,this.divisor));
+        return visitor.apply(new Modulo(this.dividend.apply(visitor), this.divisor.apply(visitor)));
     }
 
     @Override
@@ -39,12 +39,12 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor) implemen
 
     @Override
     public double minValue() {
-        return Math.min(dividend.minValue(),divisor.minValue());
+        return Math.min(dividend.minValue(), divisor.minValue());
     }
 
     @Override
     public double maxValue() {
-        return Math.max(dividend.maxValue(),divisor.maxValue());
+        return Math.max(dividend.maxValue(), divisor.maxValue());
     }
 
     @Override

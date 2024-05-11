@@ -7,9 +7,10 @@ import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record FloorDivision(DensityFunction dividend, DensityFunction divisor, double maxOutput, double minOutput) implements DensityFunction {
+public record FloorDivision(DensityFunction dividend, DensityFunction divisor, double maxOutput,
+                            double minOutput) implements DensityFunction {
 
-    private static final MapCodec<FloorDivision> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.CODEC.fieldOf("dividend").forGetter(FloorDivision::dividend), DensityFunction.CODEC.fieldOf("divisor").forGetter(FloorDivision::divisor), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(FloorDivision::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(FloorDivision::minOutput)).apply(instance, (FloorDivision::new)));
+    private static final MapCodec<FloorDivision> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("dividend").forGetter(FloorDivision::dividend), DensityFunction.FUNCTION_CODEC.fieldOf("divisor").forGetter(FloorDivision::divisor), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(FloorDivision::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(FloorDivision::minOutput)).apply(instance, (FloorDivision::new)));
     public static final CodecHolder<FloorDivision> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
@@ -23,24 +24,24 @@ public record FloorDivision(DensityFunction dividend, DensityFunction divisor, d
             return initialDivisor >= 0 ? maxOutput : minOutput;
         }
 
-        long quotient = Math.floorDiv(dividend,divisor);
+        long quotient = Math.floorDiv(dividend, divisor);
         if (quotient > this.maxOutput) {
             return maxOutput;
         }
         if (quotient < this.minOutput) {
             return minOutput;
         }
-        return  quotient;
+        return quotient;
     }
 
     @Override
     public void applyEach(double[] densities, EachApplier applier) {
-        applier.applyEach(densities,this);
+        applier.applyEach(densities, this);
     }
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new FloorDivision(this.dividend,this.divisor, this.maxOutput, this.minOutput));
+        return visitor.apply(new FloorDivision(this.dividend.apply(visitor), this.divisor.apply(visitor), this.maxOutput, this.minOutput));
     }
 
     @Override
@@ -55,12 +56,12 @@ public record FloorDivision(DensityFunction dividend, DensityFunction divisor, d
 
     @Override
     public double minValue() {
-        return Math.min(dividend.minValue(),divisor.minValue());
+        return Math.min(dividend.minValue(), divisor.minValue());
     }
 
     @Override
     public double maxValue() {
-        return Math.max(dividend.maxValue(),divisor.maxValue());
+        return Math.max(dividend.maxValue(), divisor.maxValue());
     }
 
     @Override
