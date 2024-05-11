@@ -15,14 +15,14 @@ public record FloorDivision(DensityFunction dividend, DensityFunction divisor, d
 
     @Override
     public double sample(NoisePos pos) {
-        double divisorValue = this.divisor.sample(pos);
-        double dividendValue = this.dividend.sample(pos);
+        int divisorValue = (int)this.divisor.sample(pos);
+        int dividendValue = (int)this.dividend.sample(pos);
 
         if (divisorValue == 0) {
             return this.errorValue;
         }
 
-        double result = Math.floorDiv((int)dividendValue,(int)divisorValue);
+        double result = Math.floorDiv(dividendValue,divisorValue);
 
         if (result > this.maxOutput) {
             return this.maxOutput;
