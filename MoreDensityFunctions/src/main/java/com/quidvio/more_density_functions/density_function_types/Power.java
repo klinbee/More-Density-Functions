@@ -1,54 +1,83 @@
 package com.quidvio.more_density_functions.density_function_types;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record Power(DensityFunction base, DensityFunction exponent) implements DensityFunction {
+public record Power(DensityFunction base, DensityFunction exponent, double minOutput, double maxOutput,
+    DensityFunction errorDf) implements DensityFunction {
 
-    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.FUNCTION_CODEC.fieldOf("exp").forGetter(Power::exponent)).apply(instance, (Power::new)));
-    public static final CodecHolder<Power> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
+  private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
+      .group(DensityFunction.FUNCTION_CODEC.fieldOf("base").forGetter(Power::base),
+          DensityFunction.FUNCTION_CODEC.fieldOf("exp").forGetter(Power::exponent),
+          Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(Power::minOutput),
+          Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(Power::maxOutput),
+          DensityFunction.FUNCTION_CODEC.fieldOf("error_output").forGetter(Power::errorDf))
+      .apply(instance, (Power::new)));
+  public static final CodecHolder<Power> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
+  @Override
+  public double sample(NoisePos pos) {
+    double base = this.base.sample(pos);
+    double exponent = this.exponent.sample(pos);
+    double result = Math.pow(base, exponent);
 
-    @Override
-    public double sample(NoisePos pos) {
-        return Math.pow(this.base.sample(pos), this.exponent.sample(pos));
+    if (Double.isNaN(result) || Double.isInfinite(result)) {
+      return this.errorDf.sample(pos);
     }
 
-    @Override
-    public void applyEach(double[] densities, EachApplier applier) {
-        applier.applyEach(densities, this);
+    if (result < this.minOutput) {
+      return this.minOutput;
     }
 
-    @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Power(this.base.apply(visitor), this.exponent.apply(visitor)));
+    if (result > this.maxOutput) {
+      return this.maxOutput;
     }
 
-    @Override
-    public DensityFunction base() {
-        return base;
-    }
+    return result;
+  }
 
-    @Override
-    public DensityFunction exponent() {
-        return exponent;
-    }
+  @Override
+  public void fill(double[] densities, EachApplier applier) {
+    applier.fill(densities, this);
+  }
 
-    @Override
-    public double minValue() {
-        return Math.min(base.minValue(), exponent.minValue());
-    }
+  @Override
+  public DensityFunction apply(DensityFunctionVisitor visitor) {
+    return visitor.apply(new Power(this.base.apply(visitor), this.exponent.apply(visitor), this.minOutput,
+        this.maxOutput, this.errorDf.apply(visitor)));
+  }
 
-    @Override
-    public double maxValue() {
-        return Math.max(base.maxValue(), exponent.maxValue());
-    }
+  @Override
+  public DensityFunction base() {
+    return this.base;
+  }
 
-    @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
-        return CODEC;
-    }
+  @Override
+  public DensityFunction exponent() {
+    return this.exponent;
+  }
+
+  @Override
+  public DensityFunction errorDf() {
+    return this.errorDf;
+  }
+
+  @Override
+  public double minValue() {
+    return Math.min(this.errorDf.minValue(), this.minOutput);
+  }
+
+  @Override
+  public double maxValue() {
+    return Math.max(this.errorDf.maxValue(), this.maxOutput);
+  }
+
+  @Override
+  public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    return CODEC;
+  }
 }
