@@ -10,17 +10,17 @@ public record YCoord() implements DensityFunction.Base {
 
     @Override
     public double sample(DensityFunction.NoisePos pos) {
-        return pos.blockY();
+        return Math.min(Math.max(pos.blockY(),minValue()), maxValue());
     }
 
     @Override
     public double minValue() {
-        return -30_000_000;
+        return -2032;
     }
 
     @Override
     public double maxValue() {
-        return 30_000_000;
+        return 2032;
     }
 
     public CodecHolder<? extends DensityFunction> getCodecHolder() {
