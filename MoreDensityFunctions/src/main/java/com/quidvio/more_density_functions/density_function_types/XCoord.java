@@ -10,7 +10,7 @@ public record XCoord() implements DensityFunction.Base {
 
     @Override
     public double sample(DensityFunction.NoisePos pos) {
-        return pos.blockX();
+        return Math.min(Math.max(pos.blockX(),minValue()), maxValue());
     }
 
     @Override
