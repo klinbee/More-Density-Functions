@@ -38,12 +38,12 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
 
     @Override
     public double minValue() {
-        return Math.min(arg1.minValue(),arg2.minValue());
+        return this.arg1.minValue() - this.arg2.maxValue();
     }
 
     @Override
     public double maxValue() {
-        return Math.max(arg1.maxValue(),arg2.maxValue());
+        return this.arg1.maxValue() - this.arg2.minValue();
     }
 
     @Override

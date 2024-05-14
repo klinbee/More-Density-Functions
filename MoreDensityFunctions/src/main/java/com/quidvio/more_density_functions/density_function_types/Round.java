@@ -28,12 +28,12 @@ public record Round(DensityFunction df) implements DensityFunctionTypes.Unary {
 
     @Override
     public double minValue() {
-        return Double.MIN_VALUE;
+        return apply(this.df.minValue());
     }
 
     @Override
     public double maxValue() {
-        return Double.MAX_VALUE;
+        return apply(this.df.maxValue());
     }
 
     @Override

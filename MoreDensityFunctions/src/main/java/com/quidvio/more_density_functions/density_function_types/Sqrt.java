@@ -18,6 +18,9 @@ public record Sqrt(DensityFunction df) implements DensityFunctionTypes.Unary {
 
     @Override
     public double apply(double density) {
+        if (density <= 0) {
+            return 0;
+        }
         return Math.sqrt(density);
     }
 
@@ -28,12 +31,12 @@ public record Sqrt(DensityFunction df) implements DensityFunctionTypes.Unary {
 
     @Override
     public double minValue() {
-        return Double.MIN_VALUE;
+        return Math.min(0,Math.sqrt(this.df.minValue()));
     }
 
     @Override
     public double maxValue() {
-        return Double.MAX_VALUE;
+        return Math.max(0,Math.sqrt(this.df.maxValue()));
     }
 
     @Override
