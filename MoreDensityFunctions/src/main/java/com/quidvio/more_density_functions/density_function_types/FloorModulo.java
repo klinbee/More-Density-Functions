@@ -8,9 +8,9 @@ import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record FloorModulo(DensityFunction dividend, DensityFunction divisor,
-                          double errorVal) implements DensityFunction {
+                          DensityFunction errorDf) implements DensityFunction {
 
-    private static final MapCodec<FloorModulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("dividend").forGetter(FloorModulo::dividend), DensityFunction.FUNCTION_CODEC.fieldOf("divisor").forGetter(FloorModulo::divisor), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("error_value").forGetter(FloorModulo::errorVal)).apply(instance, (FloorModulo::new)));
+    private static final MapCodec<FloorModulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("dividend").forGetter(FloorModulo::dividend), DensityFunction.FUNCTION_CODEC.fieldOf("divisor").forGetter(FloorModulo::divisor), DensityFunction.FUNCTION_CODEC.fieldOf("error_output").forGetter(FloorModulo::errorDf)).apply(instance, (FloorModulo::new)));
     public static final CodecHolder<FloorModulo> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
@@ -21,7 +21,7 @@ public record FloorModulo(DensityFunction dividend, DensityFunction divisor,
         int divisorValue = (int) this.divisor.sample(pos);
 
         if (divisorValue == 0) {
-            return this.errorVal;
+            return this.errorDf.sample(pos);
         }
 
         return Math.floorMod(dividendValue, divisorValue);
@@ -34,27 +34,27 @@ public record FloorModulo(DensityFunction dividend, DensityFunction divisor,
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new FloorModulo(this.dividend.apply(visitor), this.divisor.apply(visitor), this.errorVal));
+        return visitor.apply(new FloorModulo(this.dividend.apply(visitor), this.divisor.apply(visitor), this.errorDf.apply(visitor)));
     }
 
     @Override
     public DensityFunction dividend() {
-        return dividend;
+        return this.dividend;
     }
 
     @Override
     public DensityFunction divisor() {
-        return divisor;
+        return this.divisor;
     }
 
     @Override
     public double minValue() {
-        return Math.min(dividend.minValue(), divisor.minValue());
+        return Math.min(this.errorDf.minValue(),-Math.abs(this.divisor.maxValue()));
     }
 
     @Override
     public double maxValue() {
-        return Math.max(dividend.maxValue(), divisor.maxValue());
+        return Math.max(this.errorDf.maxValue(),Math.abs(this.divisor.maxValue()));
     }
 
     @Override
