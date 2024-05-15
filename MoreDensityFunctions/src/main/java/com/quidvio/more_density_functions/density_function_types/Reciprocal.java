@@ -3,42 +3,38 @@ package com.quidvio.more_density_functions.density_function_types;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.quidvio.more_density_functions.MoreDensityFunctionsMain;
 import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record Reciprocal(DensityFunction df, double maxOutput, double minOutput,
-                         DensityFunction errorDf) implements DensityFunction {
+import java.util.Optional;
 
-    private static final MapCodec<Reciprocal> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("input").forGetter(Reciprocal::df), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(Reciprocal::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(Reciprocal::minOutput), DensityFunction.FUNCTION_CODEC.fieldOf("error_output").forGetter(Reciprocal::errorDf)).apply(instance, (Reciprocal::new)));
+public record Reciprocal(DensityFunction df, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> errorDf) implements DensityFunction {
+
+    private static final MapCodec<Reciprocal> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("input").forGetter(Reciprocal::df), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).optionalFieldOf("max_output").forGetter(Reciprocal::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).optionalFieldOf("min_output").forGetter(Reciprocal::minOutput), DensityFunction.FUNCTION_CODEC.optionalFieldOf("error_output").forGetter(Reciprocal::errorDf)).apply(instance, (Reciprocal::new)));
     public static final CodecHolder<Reciprocal> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
-    public DensityFunction input() {
-        return this.df;
-    }
-
-
-    /**
-     * {@return the density value for the given block position}
-     *
-     * @param pos the block position
-     */
     @Override
     public double sample(NoisePos pos) {
-
         double input = this.df.sample(pos);
 
         if (input == 0) {
-            return this.errorDf.sample(pos);
+            if (errorDf.isPresent()) {
+                return this.errorDf.get().sample(pos);
+            }
+            return MoreDensityFunctionsMain.DEFAULT_ERROR;
         }
 
         double result = 1 / input;
 
-        if (result > this.maxOutput) {
-            return this.maxOutput;
+
+        if (result > this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT)) {
+            return this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT);
         }
-        if (result < this.minOutput) {
-            return this.minOutput;
+
+        if (result < this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT)) {
+            return this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT);
         }
 
         return result;
@@ -46,28 +42,41 @@ public record Reciprocal(DensityFunction df, double maxOutput, double minOutput,
 
     @Override
     public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities, this);
-
+        applier.fill(densities,this);
     }
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return new Reciprocal(this.df.apply(visitor), this.maxOutput, this.minOutput, this.errorDf.apply(visitor));
+        if (this.errorDf.isPresent()) {
+            return visitor.apply(new Reciprocal(this.df.apply(visitor), this.maxOutput, this.minOutput, Optional.of(this.errorDf.get().apply(visitor))));
+        }
+        return visitor.apply(new Reciprocal(this.df.apply(visitor), this.maxOutput, this.minOutput, Optional.empty()));
     }
 
     @Override
-    public DensityFunction errorDf() {
+    public DensityFunction df() {
+        return df;
+    }
+
+    @Override
+    public Optional<DensityFunction> errorDf() {
         return this.errorDf;
     }
 
     @Override
     public double minValue() {
-        return Math.min(this.errorDf.minValue(), this.minOutput);
+        if (errorDf.isPresent()) {
+            return Math.min(this.errorDf.get().minValue(),this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT));
+        }
+        return Math.min(MoreDensityFunctionsMain.DEFAULT_ERROR,this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT));
     }
 
     @Override
     public double maxValue() {
-        return Math.max(this.errorDf.maxValue(),this.maxOutput);
+        if (errorDf.isPresent()) {
+            return Math.max(this.errorDf.get().maxValue(),this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT));
+        }
+        return Math.max(MoreDensityFunctionsMain.DEFAULT_ERROR,this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT));
     }
 
     @Override

@@ -8,6 +8,9 @@ import net.minecraft.util.Identifier;
 
 public class MoreDensityFunctionsMain implements ModInitializer {
 
+    public static final double DEFAULT_ERROR = 0.0;
+    public static final double DEFAULT_MAX_OUTPUT = 1.0;
+    public static final double DEFAULT_MIN_OUTPUT = -1.0;
 
     /**
      * Runs the mod initializer.

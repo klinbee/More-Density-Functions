@@ -3,13 +3,16 @@ package com.quidvio.more_density_functions.density_function_types;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.quidvio.more_density_functions.MoreDensityFunctionsMain;
 import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
-public record Power(DensityFunction base, DensityFunction exponent, double minOutput, double maxOutput, DensityFunction errorDf) implements DensityFunction {
+import java.util.Optional;
 
-    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.FUNCTION_CODEC.fieldOf("exp").forGetter(Power::exponent), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(Power::minOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(Power::maxOutput), DensityFunction.FUNCTION_CODEC.fieldOf("error_output").forGetter(Power::errorDf)).apply(instance, (Power::new)));
+public record Power(DensityFunction base, DensityFunction exponent, Optional<Double> minOutput, Optional<Double> maxOutput, Optional<DensityFunction> errorDf) implements DensityFunction {
+
+    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.FUNCTION_CODEC.fieldOf("exp").forGetter(Power::exponent), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).optionalFieldOf("min_output").forGetter(Power::minOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).optionalFieldOf("max_output").forGetter(Power::maxOutput), DensityFunction.FUNCTION_CODEC.optionalFieldOf("error_output").forGetter(Power::errorDf)).apply(instance, (Power::new)));
     public static final CodecHolder<Power> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
@@ -21,15 +24,18 @@ public record Power(DensityFunction base, DensityFunction exponent, double minOu
         double result = Math.pow(base, exponent);
 
         if (Double.isNaN(result) || Double.isInfinite(result)) {
-            return this.errorDf.sample(pos);
+            if (errorDf.isPresent()) {
+                return this.errorDf.get().sample(pos);
+            }
+            return MoreDensityFunctionsMain.DEFAULT_ERROR;
         }
 
-        if (result < this.minOutput) {
-            return this.minOutput;
+        if (result > this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT)) {
+            return this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT);
         }
 
-        if (result > this.maxOutput) {
-            return this.maxOutput;
+        if (result < this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT)) {
+            return this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT);
         }
 
         return result;
@@ -42,7 +48,10 @@ public record Power(DensityFunction base, DensityFunction exponent, double minOu
 
     @Override
     public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return visitor.apply(new Power(this.base.apply(visitor), this.exponent.apply(visitor), this.minOutput, this.maxOutput, this.errorDf.apply(visitor)));
+        if (this.errorDf.isPresent()) {
+            return visitor.apply(new Power(this.base.apply(visitor), this.exponent.apply(visitor), this.minOutput, this.maxOutput, Optional.of(this.errorDf.get().apply(visitor))));
+        }
+        return visitor.apply(new Power(this.base.apply(visitor), this.exponent.apply(visitor), this.minOutput, this.maxOutput, Optional.empty()));
     }
 
     @Override
@@ -56,19 +65,24 @@ public record Power(DensityFunction base, DensityFunction exponent, double minOu
     }
 
     @Override
-    public DensityFunction errorDf() {
-        return this.errorDf;
+    public Optional<DensityFunction> errorDf() {
+        return errorDf;
     }
 
     @Override
     public double minValue() {
-        return Math.min(this.errorDf.minValue(),this.minOutput);
+        if (errorDf.isPresent()) {
+            return Math.min(this.errorDf.get().minValue(),this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT));
+        }
+        return Math.min(MoreDensityFunctionsMain.DEFAULT_ERROR,this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT));
     }
-
 
     @Override
     public double maxValue() {
-        return Math.max(this.errorDf.maxValue(),this.maxOutput);
+        if (errorDf.isPresent()) {
+            return Math.max(this.errorDf.get().maxValue(),this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT));
+        }
+        return Math.max(MoreDensityFunctionsMain.DEFAULT_ERROR,this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT));
     }
 
     @Override
