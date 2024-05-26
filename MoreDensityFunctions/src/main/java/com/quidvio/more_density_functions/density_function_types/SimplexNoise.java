@@ -18,8 +18,8 @@ public record SimplexNoise(double xzScale, double yScale) implements DensityFunc
     private static final SimplexNoiseSampler sampler = new SimplexNoiseSampler(random);
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities,this);
+    public void applyEach(double[] densities, EachApplier applier) {
+        applier.applyEach(densities,this);
     }
 
     public DensityFunction apply(DensityFunction.DensityFunctionVisitor visitor) {

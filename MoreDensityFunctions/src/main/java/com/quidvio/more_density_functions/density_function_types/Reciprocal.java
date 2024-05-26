@@ -41,8 +41,8 @@ public record Reciprocal(DensityFunction df, Optional<Double> maxOutput, Optiona
     }
 
     @Override
-    public void fill(double[] densities, EachApplier applier) {
-        applier.fill(densities,this);
+    public void applyEach(double[] densities, EachApplier applier) {
+        applier.applyEach(densities,this);
     }
 
     @Override
