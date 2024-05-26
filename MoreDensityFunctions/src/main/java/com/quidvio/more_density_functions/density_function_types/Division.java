@@ -13,33 +13,30 @@ public record Division(DensityFunction dividend, DensityFunction divisor, double
   private static final MapCodec<Division> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
       .group(DensityFunction.FUNCTION_CODEC.fieldOf("dividend").forGetter(Division::dividend),
           DensityFunction.FUNCTION_CODEC.fieldOf("divisor").forGetter(Division::divisor),
-          Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(Division::maxOutput),
-          Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(Division::minOutput),
-          DensityFunction.FUNCTION_CODEC.fieldOf("error_output").forGetter(Division::errorDf))
+          Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Division::maxOutput),
+          Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Division::minOutput),
+          DensityFunction.FUNCTION_CODEC.optionalFieldOf("error_output").forGetter(Division::errorDf))
       .apply(instance, (Division::new)));
   public static final CodecHolder<Division> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
-  @Override
-  public double sample(NoisePos pos) {
-    double divisorValue = this.divisor.sample(pos);
-    double dividendValue = this.dividend.sample(pos);
-
-    if (divisorValue == 0) {
-      return this.errorDf.sample(pos);
-    }
-
-    double result = dividendValue / divisorValue;
-
-    if (result > this.maxOutput) {
-      return this.maxOutput;
-    }
-
-    if (result < this.minOutput) {
-      return this.minOutput;
-    }
-
-    return result;
+  if(divisorValue==0)
+  {
+    return this.errorDf.sample(pos);
   }
+
+  double result = dividendValue / divisorValue;
+
+  if(result>this.maxOutput)
+  {
+    return this.maxOutput;
+  }
+
+  if(result<this.minOutput)
+  {
+    return this.minOutput;
+  }
+
+  return result;
 
   @Override
   public void applyEach(double[] densities, EachApplier applier) {

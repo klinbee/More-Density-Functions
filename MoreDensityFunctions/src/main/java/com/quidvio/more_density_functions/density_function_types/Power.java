@@ -13,31 +13,28 @@ public record Power(DensityFunction base, DensityFunction exponent, double minOu
   private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance
       .group(DensityFunction.FUNCTION_CODEC.fieldOf("base").forGetter(Power::base),
           DensityFunction.FUNCTION_CODEC.fieldOf("exp").forGetter(Power::exponent),
-          Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min_output").forGetter(Power::minOutput),
-          Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max_output").forGetter(Power::maxOutput),
-          DensityFunction.FUNCTION_CODEC.fieldOf("error_output").forGetter(Power::errorDf))
+          Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Power::minOutput),
+          Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Power::maxOutput),
+          DensityFunction.FUNCTION_CODEC.optionalFieldOf("error_output").forGetter(Power::errorDf))
       .apply(instance, (Power::new)));
   public static final CodecHolder<Power> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
-  @Override
-  public double sample(NoisePos pos) {
-    double base = this.base.sample(pos);
-    double exponent = this.exponent.sample(pos);
-    double result = Math.pow(base, exponent);
+  if(Double.isNaN(result)||Double.isInfinite(result))
+  {
+    return this.errorDf.sample(pos);
+  }
 
-    if (Double.isNaN(result) || Double.isInfinite(result)) {
-      return this.errorDf.sample(pos);
-    }
+  if(result<this.minOutput)
+  {
+    return this.minOutput;
+  }
 
-    if (result < this.minOutput) {
-      return this.minOutput;
-    }
+  if(result>this.maxOutput)
+  {
+    return this.maxOutput;
+  }
 
-    if (result > this.maxOutput) {
-      return this.maxOutput;
-    }
-
-    return result;
+  return result;
   }
 
   @Override
