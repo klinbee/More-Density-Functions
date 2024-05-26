@@ -37,5 +37,6 @@ public class MoreDensityFunctionsMain implements ModInitializer {
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","x"), XCoord.CODEC.codec());
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","y"), YCoord.CODEC.codec());
         Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","z"), ZCoord.CODEC.codec());
+        Registry.register(Registries.DENSITY_FUNCTION_TYPE, new Identifier("more_dfs","simplex"), SimplexNoise.CODEC.codec());
     }
 }
