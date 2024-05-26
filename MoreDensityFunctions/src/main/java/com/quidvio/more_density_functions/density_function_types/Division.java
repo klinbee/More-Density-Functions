@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public record Division(DensityFunction dividend, DensityFunction divisor, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> errorDf) implements DensityFunction {
 
-    private static final MapCodec<Division> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("dividend").forGetter(Division::dividend), DensityFunction.FUNCTION_CODEC.fieldOf("divisor").forGetter(Division::divisor), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).optionalFieldOf("max_output").forGetter(Division::maxOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).optionalFieldOf("min_output").forGetter(Division::minOutput), DensityFunction.FUNCTION_CODEC.optionalFieldOf("error_output").forGetter(Division::errorDf)).apply(instance, (Division::new)));
+    private static final MapCodec<Division> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("dividend").forGetter(Division::dividend), DensityFunction.FUNCTION_CODEC.fieldOf("divisor").forGetter(Division::divisor), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Division::maxOutput), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Division::minOutput), DensityFunction.FUNCTION_CODEC.optionalFieldOf("error_output").forGetter(Division::errorDf)).apply(instance, (Division::new)));
     public static final CodecHolder<Division> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
     @Override

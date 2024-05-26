@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public record Power(DensityFunction base, DensityFunction exponent, Optional<Double> minOutput, Optional<Double> maxOutput, Optional<DensityFunction> errorDf) implements DensityFunction {
 
-    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.FUNCTION_CODEC.fieldOf("exp").forGetter(Power::exponent), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).optionalFieldOf("min_output").forGetter(Power::minOutput), Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).optionalFieldOf("max_output").forGetter(Power::maxOutput), DensityFunction.FUNCTION_CODEC.optionalFieldOf("error_output").forGetter(Power::errorDf)).apply(instance, (Power::new)));
+    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.FUNCTION_CODEC.fieldOf("exp").forGetter(Power::exponent), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Power::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Power::maxOutput), DensityFunction.FUNCTION_CODEC.optionalFieldOf("error_output").forGetter(Power::errorDf)).apply(instance, (Power::new)));
     public static final CodecHolder<Power> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
