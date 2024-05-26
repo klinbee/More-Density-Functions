@@ -8,7 +8,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record Ceil(DensityFunction df) implements DensityFunctionTypes.Unary {
 
-    private static final MapCodec<Ceil> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("input").forGetter(Ceil::df)).apply(instance, (Ceil::new)));
+    private static final MapCodec<Ceil> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(Ceil::df)).apply(instance, (Ceil::new)));
     public static final CodecHolder<Ceil> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
     @Override
