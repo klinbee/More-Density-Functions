@@ -8,7 +8,7 @@ import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 
 public record Round(DensityFunction df) implements DensityFunctionTypes.Unary {
 
-    private static final MapCodec<Round> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("input").forGetter(Round::df)).apply(instance, (Round::new)));
+    private static final MapCodec<Round> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(Round::df)).apply(instance, (Round::new)));
     public static final CodecHolder<Round> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
     @Override
