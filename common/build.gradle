@@ -6,10 +6,6 @@ plugins {
 neoForge {
     neoFormVersion = neo_form_version
     // Automatically enable AccessTransformers if the file exists
-    // While this location can be changed, it is recommended for
-    // common and neoforge to share an accesstransformer file
-    // and this location is hardcoded in FML
-    // https://github.com/neoforged/FancyModLoader/blob/a952595eaaddd571fbc53f43847680b00894e0c1/loader/src/main/java/net/neoforged/fml/loading/moddiscovery/ModFile.java#L118
     def at = file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
         accessTransformers.add(at.absolutePath)
