@@ -26,12 +26,16 @@ repositories {
         filter { includeGroupAndSubgroups('org.spongepowered') }
     }
     exclusiveContent {
-        forRepository {
-            maven {
-                name = 'ParchmentMC'
-                url = 'https://maven.parchmentmc.org/'
-            }
-        }
+        forRepositories(
+                maven {
+                    name = 'ParchmentMC'
+                    url = 'https://maven.parchmentmc.org/'
+                },
+                maven {
+                    name = "NeoForge"
+                    url = 'https://maven.neoforged.net/releases'
+                }
+        )
         filter { includeGroup('org.parchmentmc.data') }
     }
     maven {
@@ -79,21 +83,21 @@ jar {
 
 processResources {
     def expandProps = [
-            'version': version,
-            'group': project.group, //Else we target the task's group.
-            'minecraft_version': minecraft_version,
-            'minecraft_version_range': minecraft_version_range,
-            'fabric_version': fabric_version,
-            'fabric_loader_version': fabric_loader_version,
-            'mod_name': mod_name,
-            'mod_author': mod_author,
-            'mod_id': mod_id,
-            'license': license,
-            'description': project.description,
-            'neoforge_version': neoforge_version,
+            'version'                      : version,
+            'group'                        : project.group, //Else we target the task's group.
+            'minecraft_version'            : minecraft_version,
+            'minecraft_version_range'      : minecraft_version_range,
+            'fabric_version'               : fabric_version,
+            'fabric_loader_version'        : fabric_loader_version,
+            'mod_name'                     : mod_name,
+            'mod_author'                   : mod_author,
+            'mod_id'                       : mod_id,
+            'license'                      : license,
+            'description'                  : project.description,
+            'neoforge_version'             : neoforge_version,
             'neoforge_loader_version_range': neoforge_loader_version_range,
-            'credits': credits,
-            'java_version': java_version
+            'credits'                      : credits,
+            'java_version'                 : java_version
     ]
 
     filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
