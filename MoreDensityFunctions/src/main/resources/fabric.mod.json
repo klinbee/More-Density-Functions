@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "more_density_functions",
-  "version": "${version}",
+  "version": "1.0.4",
   "name": "MoreDensityFunctions",
   "description": "Adds more density functions for terrain shaping.",
   "authors": [
@@ -23,6 +23,6 @@
   "depends": {
     "fabricloader": ">=0.15.11",
     "fabric": "*",
-    "minecraft": ">=1.20.5"
+    "minecraft": ">=1.21"
   }
 }
