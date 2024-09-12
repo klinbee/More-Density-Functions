@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public record FloorDivision(DensityFunction dividend, DensityFunction divisor, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> errorDf) implements DensityFunction {
 
-    private static final MapCodec<Modulo> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(Modulo::dividend), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("exponent").forGetter(Modulo::divisor), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Modulo::maxOutput), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Modulo::minOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_output").forGetter(Modulo::errorDf)).apply(instance, Modulo::new));
-    public static final KeyDispatchDataCodec<Modulo> CODEC = KeyDispatchDataCodec.of(DATA_CODEC);
+    private static final MapCodec<FloorDivision> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("dividend").forGetter(FloorDivision::dividend), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("divisor").forGetter(FloorDivision::divisor), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(FloorDivision::maxOutput), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(FloorDivision::minOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_output").forGetter(FloorDivision::errorDf)).apply(instance, FloorDivision::new));
+    public static final KeyDispatchDataCodec<FloorDivision> CODEC = KeyDispatchDataCodec.of(DATA_CODEC);
 
     @Override
     public double compute(@NotNull FunctionContext pContext) {
@@ -46,7 +46,7 @@ public record FloorDivision(DensityFunction dividend, DensityFunction divisor, O
     }
 
     public @NotNull DensityFunction mapAll(DensityFunction.Visitor pVisitor) {
-        return pVisitor.apply(new Modulo(this.dividend, this.divisor, this.maxOutput, this.minOutput, this.errorDf));
+        return pVisitor.apply(new FloorDivision(this.dividend, this.divisor, this.maxOutput, this.minOutput, this.errorDf));
     }
 
     public DensityFunction dividend() {

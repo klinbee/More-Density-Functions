@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 public record Negation(DensityFunction df) implements DensityFunctions.PureTransformer {
 
-    private static final MapCodec<Floor> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Floor::df)).apply(instance, Floor::new));
-    public static final KeyDispatchDataCodec<Floor> CODEC = KeyDispatchDataCodec.of(DATA_CODEC);
+    private static final MapCodec<Negation> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Negation::df)).apply(instance, Negation::new));
+    public static final KeyDispatchDataCodec<Negation> CODEC = KeyDispatchDataCodec.of(DATA_CODEC);
 
     @Override
     public @NotNull DensityFunction input() {
@@ -27,7 +27,7 @@ public record Negation(DensityFunction df) implements DensityFunctions.PureTrans
     }
 
     public @NotNull DensityFunction mapAll(DensityFunction.Visitor pVisitor) {
-        return pVisitor.apply(new Floor(this.df));
+        return pVisitor.apply(new Negation(this.df));
     }
 
     public double minValue() {

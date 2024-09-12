@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 public record Ceil(DensityFunction df) implements DensityFunctions.PureTransformer {
 
-    private static final MapCodec<Floor> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Floor::df)).apply(instance, Floor::new));
-    public static final KeyDispatchDataCodec<Floor> CODEC = KeyDispatchDataCodec.of(DATA_CODEC);
+    private static final MapCodec<Ceil> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Ceil::df)).apply(instance, Ceil::new));
+    public static final KeyDispatchDataCodec<Ceil> CODEC = KeyDispatchDataCodec.of(DATA_CODEC);
 
     @Override
     public @NotNull DensityFunction input() {
@@ -27,7 +27,7 @@ public record Ceil(DensityFunction df) implements DensityFunctions.PureTransform
     }
 
     public @NotNull DensityFunction mapAll(DensityFunction.Visitor pVisitor) {
-        return pVisitor.apply(new Floor(this.df));
+        return pVisitor.apply(new Ceil(this.df));
     }
 
     public double minValue() {
