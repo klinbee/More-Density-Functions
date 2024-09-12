@@ -2,7 +2,6 @@ package com.klinbee.more_density_functions.density_function_types;
 
 import com.klinbee.more_density_functions.MoreDensityFunctions;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -10,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record Modulo(DensityFunction dividend, DensityFunction divisor, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> errorDf) implements DensityFunction {
+public record Modulo(DensityFunction dividend, DensityFunction divisor, Optional<DensityFunction> errorDf) implements DensityFunction {
 
-    private static final MapCodec<Modulo> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(Modulo::dividend), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("exponent").forGetter(Modulo::divisor), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Modulo::maxOutput), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Modulo::minOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_output").forGetter(Modulo::errorDf)).apply(instance, Modulo::new));
+    private static final MapCodec<Modulo> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("dividend").forGetter(Modulo::dividend), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("divisor").forGetter(Modulo::divisor), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_output").forGetter(Modulo::errorDf)).apply(instance, Modulo::new));
     public static final KeyDispatchDataCodec<Modulo> CODEC = KeyDispatchDataCodec.of(DATA_CODEC);
 
     @Override
@@ -27,18 +26,7 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor, Optional
             return MoreDensityFunctions.DEFAULT_ERROR;
         }
 
-        double result = dividendValue % divisorValue;
-
-
-        if (result > this.maxOutput.orElse(MoreDensityFunctions.DEFAULT_MAX_OUTPUT)) {
-            return this.maxOutput.orElse(MoreDensityFunctions.DEFAULT_MAX_OUTPUT);
-        }
-
-        if (result < this.minOutput.orElse(MoreDensityFunctions.DEFAULT_MIN_OUTPUT)) {
-            return this.minOutput.orElse(MoreDensityFunctions.DEFAULT_MIN_OUTPUT);
-        }
-
-        return result;
+        return dividendValue % divisorValue;
     }
 
     public void fillArray(double @NotNull [] pArray, DensityFunction.ContextProvider pContextProvider) {
@@ -46,7 +34,7 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor, Optional
     }
 
     public @NotNull DensityFunction mapAll(DensityFunction.Visitor pVisitor) {
-        return pVisitor.apply(new Modulo(this.dividend, this.divisor, this.maxOutput, this.minOutput, this.errorDf));
+        return pVisitor.apply(new Modulo(this.dividend, this.divisor, this.errorDf));
     }
 
     public DensityFunction dividend() {
@@ -64,17 +52,17 @@ public record Modulo(DensityFunction dividend, DensityFunction divisor, Optional
     @Override
     public double minValue() {
         if (errorDf.isPresent()) {
-            return Math.min(this.errorDf.get().minValue(),this.minOutput.orElse(MoreDensityFunctions.DEFAULT_MIN_OUTPUT));
+            return Math.min(this.errorDf.get().minValue(),MoreDensityFunctions.DEFAULT_MIN_OUTPUT);
         }
-        return Math.min(MoreDensityFunctions.DEFAULT_ERROR,this.minOutput.orElse(MoreDensityFunctions.DEFAULT_MIN_OUTPUT));
+        return Math.min(MoreDensityFunctions.DEFAULT_ERROR,MoreDensityFunctions.DEFAULT_MIN_OUTPUT);
     }
 
     @Override
     public double maxValue() {
         if (errorDf.isPresent()) {
-            return Math.max(this.errorDf.get().maxValue(),this.maxOutput.orElse(MoreDensityFunctions.DEFAULT_MAX_OUTPUT));
+            return Math.max(this.errorDf.get().maxValue(),MoreDensityFunctions.DEFAULT_MAX_OUTPUT);
         }
-        return Math.max(MoreDensityFunctions.DEFAULT_ERROR,this.maxOutput.orElse(MoreDensityFunctions.DEFAULT_MAX_OUTPUT));
+        return Math.max(MoreDensityFunctions.DEFAULT_ERROR,MoreDensityFunctions.DEFAULT_MAX_OUTPUT);
     }
 
     public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {

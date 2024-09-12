@@ -15,7 +15,7 @@ public record ZClampedGradient(int fromZ, int toZ, double fromVal, double toVal)
 
     @Override
     public double compute(FunctionContext pContext) {
-        return Mth.clampedMap(pContext.blockX(), this.fromZ, this.toZ, this.fromVal, this.toVal);
+        return Mth.clampedMap(pContext.blockZ(), this.fromZ, this.toZ, this.fromVal, this.toVal);
     }
 
     public void fillArray(double @NotNull [] pArray, DensityFunction.ContextProvider pContextProvider) {
