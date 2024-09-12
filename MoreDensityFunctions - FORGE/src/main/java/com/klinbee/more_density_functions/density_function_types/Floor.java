@@ -27,7 +27,7 @@ public record Floor(DensityFunction df) implements DensityFunctions.PureTransfor
     }
 
     public @NotNull DensityFunction mapAll(DensityFunction.Visitor pVisitor) {
-        return pVisitor.apply(new Floor(this.df));
+        return new Floor(this.df.mapAll(pVisitor));
     }
 
     public double minValue() {

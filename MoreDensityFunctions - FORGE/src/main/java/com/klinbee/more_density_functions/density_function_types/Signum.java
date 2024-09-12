@@ -27,7 +27,7 @@ public record Signum(DensityFunction df) implements DensityFunctions.PureTransfo
     }
 
     public @NotNull DensityFunction mapAll(DensityFunction.Visitor pVisitor) {
-        return pVisitor.apply(new Signum(this.df));
+        return new Signum(this.df.mapAll(pVisitor));
     }
 
     public double minValue() {

@@ -27,7 +27,7 @@ public record Ceil(DensityFunction df) implements DensityFunctions.PureTransform
     }
 
     public @NotNull DensityFunction mapAll(DensityFunction.Visitor pVisitor) {
-        return pVisitor.apply(new Ceil(this.df));
+        return new Ceil(this.df.mapAll(pVisitor));
     }
 
     public double minValue() {
