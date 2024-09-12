@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "more_density_functions",
   "version": "1.0.5",
-  "name": "MoreDensityFunctions",
+  "name": "More Density Functions",
   "description": "Adds more density functions for terrain shaping.",
   "authors": [
     "Quidvio"
