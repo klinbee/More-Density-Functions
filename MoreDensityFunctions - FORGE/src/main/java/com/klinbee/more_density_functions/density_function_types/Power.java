@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public record Power(DensityFunction base, DensityFunction exponent, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> errorDf) implements DensityFunction {
 
-    private static final MapCodec<Power> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("exponent").forGetter(Power::exponent), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Power::maxOutput), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Power::minOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_output").forGetter(Power::errorDf)).apply(instance, Power::new));
+    private static final MapCodec<Power> DATA_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("exp").forGetter(Power::exponent), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Power::maxOutput), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Power::minOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_output").forGetter(Power::errorDf)).apply(instance, Power::new));
     public static final KeyDispatchDataCodec<Power> CODEC = KeyDispatchDataCodec.of(DATA_CODEC);
 
     @Override
