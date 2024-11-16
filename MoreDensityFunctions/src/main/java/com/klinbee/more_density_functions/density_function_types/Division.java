@@ -1,19 +1,13 @@
-package com.quidvio.more_density_functions.density_function_types;
+package com.klinbee.more_density_functions.density_function_types;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.quidvio.more_density_functions.MoreDensityFunctionsMain;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.structure.pool.StructurePool;
+import com.klinbee.more_density_functions.MoreDensityFunctionsMod;
 import net.minecraft.util.dynamic.CodecHolder;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
-import net.minecraft.world.gen.heightprovider.HeightProvider;
-import net.minecraft.world.gen.structure.Structure;
 
-import java.util.List;
 import java.util.Optional;
 
 public record Division(DensityFunction dividend, DensityFunction divisor, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> errorDf) implements DensityFunction {
@@ -30,18 +24,18 @@ public record Division(DensityFunction dividend, DensityFunction divisor, Option
             if (errorDf.isPresent()) {
                 return this.errorDf.get().sample(pos);
             }
-            return MoreDensityFunctionsMain.DEFAULT_ERROR;
+            return MoreDensityFunctionsMod.DEFAULT_ERROR;
         }
         
         double result = dividendValue / divisorValue;
 
 
-        if (result > this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT)) {
-            return this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT);
+        if (result > this.maxOutput.orElse(MoreDensityFunctionsMod.DEFAULT_MAX_OUTPUT)) {
+            return this.maxOutput.orElse(MoreDensityFunctionsMod.DEFAULT_MAX_OUTPUT);
         }
         
-        if (result < this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT)) {
-            return this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT);
+        if (result < this.minOutput.orElse(MoreDensityFunctionsMod.DEFAULT_MIN_OUTPUT)) {
+            return this.minOutput.orElse(MoreDensityFunctionsMod.DEFAULT_MIN_OUTPUT);
         }
         
         return result;
@@ -78,17 +72,17 @@ public record Division(DensityFunction dividend, DensityFunction divisor, Option
     @Override
     public double minValue() {
         if (errorDf.isPresent()) {
-            return Math.min(this.errorDf.get().minValue(),this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT));
+            return Math.min(this.errorDf.get().minValue(),this.minOutput.orElse(MoreDensityFunctionsMod.DEFAULT_MIN_OUTPUT));
         }
-        return Math.min(MoreDensityFunctionsMain.DEFAULT_ERROR,this.minOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MIN_OUTPUT));
+        return Math.min(MoreDensityFunctionsMod.DEFAULT_ERROR,this.minOutput.orElse(MoreDensityFunctionsMod.DEFAULT_MIN_OUTPUT));
     }
 
     @Override
     public double maxValue() {
         if (errorDf.isPresent()) {
-            return Math.max(this.errorDf.get().maxValue(),this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT));
+            return Math.max(this.errorDf.get().maxValue(),this.maxOutput.orElse(MoreDensityFunctionsMod.DEFAULT_MAX_OUTPUT));
         }
-        return Math.max(MoreDensityFunctionsMain.DEFAULT_ERROR,this.maxOutput.orElse(MoreDensityFunctionsMain.DEFAULT_MAX_OUTPUT));
+        return Math.max(MoreDensityFunctionsMod.DEFAULT_ERROR,this.maxOutput.orElse(MoreDensityFunctionsMod.DEFAULT_MAX_OUTPUT));
     }
 
     @Override

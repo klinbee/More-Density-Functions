@@ -1,12 +1,12 @@
-package com.quidvio.more_density_functions;
+package com.klinbee.more_density_functions;
 
-import com.quidvio.more_density_functions.density_function_types.*;
+import com.klinbee.more_density_functions.density_function_types.*;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
-public class MoreDensityFunctionsMain implements ModInitializer {
+public class MoreDensityFunctionsMod implements ModInitializer {
 
     public static final double DEFAULT_ERROR = 0.0;
     public static final double DEFAULT_MAX_OUTPUT = 1.0;

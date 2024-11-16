@@ -1,8 +1,8 @@
-package com.quidvio.more_density_functions.density_function_types;
+package com.klinbee.more_density_functions.density_function_types;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.quidvio.more_density_functions.MoreDensityFunctionsMain;
+import com.klinbee.more_density_functions.MoreDensityFunctionsMod;
 import net.minecraft.util.dynamic.CodecHolder;
 import net.minecraft.world.gen.densityfunction.DensityFunction;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
@@ -24,7 +24,7 @@ public record FloorModulo(DensityFunction dividend, DensityFunction divisor, Opt
             if (errorDf.isPresent()) {
                 return this.errorDf.get().sample(pos);
             }
-            return MoreDensityFunctionsMain.DEFAULT_ERROR;
+            return MoreDensityFunctionsMod.DEFAULT_ERROR;
         }
 
         return Math.floorMod(dividendValue, divisorValue);
@@ -58,7 +58,7 @@ public record FloorModulo(DensityFunction dividend, DensityFunction divisor, Opt
         if (errorDf.isPresent()) {
             return Math.min(this.errorDf.get().minValue(), Math.min(-Math.abs(this.divisor.minValue()), -Math.abs(this.divisor.maxValue())));
         }
-        return Math.min(MoreDensityFunctionsMain.DEFAULT_ERROR, Math.min(-Math.abs(this.divisor.minValue()), -Math.abs(this.divisor.maxValue())));
+        return Math.min(MoreDensityFunctionsMod.DEFAULT_ERROR, Math.min(-Math.abs(this.divisor.minValue()), -Math.abs(this.divisor.maxValue())));
     }
 
     @Override
@@ -66,7 +66,7 @@ public record FloorModulo(DensityFunction dividend, DensityFunction divisor, Opt
         if (errorDf.isPresent()) {
             return Math.max(this.errorDf.get().maxValue(), Math.max(Math.abs(this.divisor.minValue()), Math.abs(this.divisor.maxValue())));
         }
-        return Math.max(MoreDensityFunctionsMain.DEFAULT_ERROR, Math.max(Math.abs(this.divisor.minValue()), Math.abs(this.divisor.maxValue())));
+        return Math.max(MoreDensityFunctionsMod.DEFAULT_ERROR, Math.max(Math.abs(this.divisor.minValue()), Math.abs(this.divisor.maxValue())));
     }
 
     @Override

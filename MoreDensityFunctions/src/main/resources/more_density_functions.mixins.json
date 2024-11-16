@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.quidvio.more_density_functions.mixin",
+  "package": "com.klinbee.more_density_functions.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],

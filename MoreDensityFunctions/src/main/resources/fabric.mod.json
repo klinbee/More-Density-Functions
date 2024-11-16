@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "more_density_functions",
-  "version": "1.0.5",
+  "id": "more-density-functions",
+  "version": "1.0.6",
   "name": "MoreDensityFunctions",
   "description": "Adds more density functions for terrain shaping.",
   "authors": [
-    "Quidvio"
+    "Klinbee"
   ],
   "contact": {},
   "license": "MIT",
@@ -13,7 +13,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.quidvio.more_density_functions.MoreDensityFunctionsMain"
+      "com.klinbee.more_density_functions.MoreDensityFunctionsMod"
     ]
   },
   "mixins": [

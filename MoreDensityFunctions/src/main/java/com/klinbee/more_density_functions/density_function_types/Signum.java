@@ -1,4 +1,4 @@
-package com.quidvio.more_density_functions.density_function_types;
+package com.klinbee.more_density_functions.density_function_types;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
