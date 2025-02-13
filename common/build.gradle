@@ -6,7 +6,7 @@ plugins {
 legacyForge {
     mcpVersion = minecraft_version
     if (file("src/main/resources/META-INF/accesstransformer.cfg").exists()) {
-        accessWideners(file("src/main/resources/META-INF/accesstransformer.cfg"))
+        accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
     }
 }
 
