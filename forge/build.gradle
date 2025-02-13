@@ -17,7 +17,7 @@ legacyForge {
 
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
-        accessWideners(at)
+        accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
     }
     runs {
         client {
