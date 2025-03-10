@@ -17,7 +17,6 @@ public record XClampedGradient(int fromX, int toX, double fromVal, double toVal)
     @Override
     public double sample(DensityFunction.NoisePos pos) {
         return MathHelper.clampedMap(pos.blockX(), this.fromX, this.toX, this.fromVal, this.toVal);
-        return MathHelper.clampedMap(pos.blockX(), this.fromX, this.toX, this.fromVal, this.toVal);
     }
 
     @Override
