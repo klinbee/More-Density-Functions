@@ -12,10 +12,10 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
     public static final CodecHolder<Subtract> CODEC = DensityFunctionTypes.holderOf(MAP_CODEC);
 
 
-    @Override
-    public double sample(NoisePos pos) {
-        return this.arg1.sample(pos) - this.arg2.sample(pos);
-    }
+  @Override
+  public double sample(NoisePos pos) {
+    return this.arg1.sample(pos) - this.arg2.sample(pos);
+  }
 
     @Override
     public void fill(double[] densities, EachApplier applier) {
@@ -26,15 +26,15 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
         return visitor.apply(new Subtract(this.arg1.apply(visitor), this.arg2.apply(visitor)));
     }
 
-    @Override
-    public DensityFunction arg1() {
-        return arg1;
-    }
+  @Override
+  public DensityFunction arg1() {
+    return arg1;
+  }
 
-    @Override
-    public DensityFunction arg2() {
-        return arg2;
-    }
+  @Override
+  public DensityFunction arg2() {
+    return arg2;
+  }
 
     @Override
     public double minValue() {
@@ -46,8 +46,8 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
         return this.arg1.maxValue() - this.arg2.minValue();
     }
 
-    @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
-        return CODEC;
-    }
+  @Override
+  public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    return CODEC;
+  }
 }

@@ -17,16 +17,17 @@ public record XClampedGradient(int fromX, int toX, double fromVal, double toVal)
     @Override
     public double sample(DensityFunction.NoisePos pos) {
         return MathHelper.clampedMap(pos.blockX(), this.fromX, this.toX, this.fromVal, this.toVal);
+        return MathHelper.clampedMap(pos.blockX(), this.fromX, this.toX, this.fromVal, this.toVal);
     }
 
     @Override
     public double minValue() {
-        return Math.min(this.fromVal,this.toVal);
+        return Math.min(this.fromVal, this.toVal);
     }
 
     @Override
     public double maxValue() {
-        return Math.max(this.fromVal,this.toVal);
+        return Math.max(this.fromVal, this.toVal);
     }
 
     public int fromX() {

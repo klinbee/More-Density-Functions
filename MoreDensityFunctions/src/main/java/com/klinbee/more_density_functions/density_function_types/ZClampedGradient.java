@@ -20,12 +20,12 @@ public record ZClampedGradient(int fromZ, int toZ, double fromVal, double toVal)
 
     @Override
     public double minValue() {
-        return Math.min(this.fromVal,this.toVal);
+        return Math.min(this.fromVal, this.toVal);
     }
 
     @Override
     public double maxValue() {
-        return Math.max(this.fromVal,this.toVal);
+        return Math.max(this.fromVal, this.toVal);
     }
 
     public int fromZ() {

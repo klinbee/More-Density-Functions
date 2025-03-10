@@ -11,33 +11,33 @@ public record Sine(DensityFunction df) implements DensityFunctionTypes.Unary {
     private static final MapCodec<Sine> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.FUNCTION_CODEC.fieldOf("argument").forGetter(Sine::df)).apply(instance, (Sine::new)));
     public static final CodecHolder<Sine> CODEC  = DensityFunctionTypes.holderOf(MAP_CODEC);
 
-    @Override
-    public DensityFunction input() {
-        return this.df;
-    }
+  @Override
+  public DensityFunction input() {
+    return this.df;
+  }
 
-    @Override
-    public double apply(double density) {
-        return Math.sin(density);
-    }
+  @Override
+  public double apply(double density) {
+    return Math.sin(density);
+  }
 
-    @Override
-    public DensityFunction apply(DensityFunctionVisitor visitor) {
-        return new Sine(this.df.apply(visitor));
-    }
+  @Override
+  public DensityFunction apply(DensityFunctionVisitor visitor) {
+    return new Sine(this.df.apply(visitor));
+  }
 
-    @Override
-    public double minValue() {
-        return -1;
-    }
+  @Override
+  public double minValue() {
+    return -1;
+  }
 
-    @Override
-    public double maxValue() {
-        return 1;
-    }
+  @Override
+  public double maxValue() {
+    return 1;
+  }
 
-    @Override
-    public CodecHolder<? extends DensityFunction> getCodecHolder() {
-        return CODEC;
-    }
+  @Override
+  public CodecHolder<? extends DensityFunction> getCodecHolder() {
+    return CODEC;
+  }
 }

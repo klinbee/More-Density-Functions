@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "more-density-functions",
+  "id": "more_density_functions",
   "version": "1.0.6",
   "name": "MoreDensityFunctions",
   "description": "Adds more density functions for terrain shaping.",
