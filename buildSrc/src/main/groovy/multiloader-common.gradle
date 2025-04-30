@@ -95,11 +95,15 @@ processResources {
             'mod_id'                       : mod_id,
             'license'                      : license,
             'description'                  : project.description,
-            "forge_version": forge_version,
-            "forge_loader_version_range": forge_loader_version_range,
+            "forge_version"                : forge_version,
+            "forge_loader_version_range"   : forge_loader_version_range,
             'credits'                      : credits,
-            'java_version'                 : java_version
-    ]
+            'java_version'                 : java_version,
+            // My Additions
+            'namespace'                    : namespace,
+            'github_page'                  : github_page,
+            'issue_page'                   : issue_page
+     ]
 
     var jsonExpandProps = expandProps.collectEntries {
         key, value -> [(key): value instanceof String ? value.replace("\n", "\\\\n") : value]

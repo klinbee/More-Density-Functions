@@ -1,6 +1,6 @@
 {
     "schemaVersion": 1,
-    "id": "mod_id",
+    "id": "change_fabric_mod_json_id!",
     "version": "${version}",
     "name": "${mod_name}",
     "description": "${description}",
@@ -8,15 +8,14 @@
         "${mod_author}"
     ],
     "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
+        "sources": "${github_page}"
     },
     "license": "${license}",
-    "icon": "assets/modid/${mod_id}.png",
+    "icon": "assets/${namespace}/${mod_id}.png",
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.example.examplemod.ExampleMod"
+            "${group}.ExampleMod"
         ]
     },
     "mixins": [
@@ -28,9 +27,6 @@
         "fabric": "*",
         "minecraft": "${minecraft_version}",
         "java": ">=17"
-    },
-    "suggests": {
-        "another-mod": "*"
     }
 }
   
