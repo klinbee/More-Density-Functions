@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.klinbee.examplemod;
 
 import net.minecraftforge.fml.common.Mod;
 
