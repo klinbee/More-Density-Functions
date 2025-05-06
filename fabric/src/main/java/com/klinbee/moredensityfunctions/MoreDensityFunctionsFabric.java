@@ -1,8 +1,8 @@
-package com.klinbee.examplemod;
+package com.klinbee.moredensityfunctions;
 
 import net.fabricmc.api.ModInitializer;
 
-public class ExampleMod implements ModInitializer {
+public class MoreDensityFunctionsFabric implements ModInitializer {
     
     @Override
     public void onInitialize() {

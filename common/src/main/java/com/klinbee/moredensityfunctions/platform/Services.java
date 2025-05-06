@@ -1,7 +1,7 @@
-package com.klinbee.examplemod.platform;
+package com.klinbee.moredensityfunctions.platform;
 
-import com.klinbee.examplemod.Constants;
-import com.klinbee.examplemod.platform.services.IPlatformHelper;
+import com.klinbee.moredensityfunctions.Constants;
+import com.klinbee.moredensityfunctions.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
 
