@@ -6,13 +6,12 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 
 public record SquareRoot(DensityFunction arg, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<SquareRoot> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(SquareRoot::arg), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(SquareRoot::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(SquareRoot::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(SquareRoot::argError)).apply(instance, (SquareRoot::new)));
+    private static final MapCodec<SquareRoot> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(SquareRoot::arg), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(SquareRoot::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(SquareRoot::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(SquareRoot::argError)).apply(instance, (SquareRoot::new)));
     public static final KeyDispatchDataCodec<SquareRoot> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {
@@ -20,7 +19,7 @@ public record SquareRoot(DensityFunction arg, Optional<Double> maxOutput, Option
     }
 
     @Override
-    public double compute(@NotNull FunctionContext pos) {
+    public double compute( FunctionContext pos) {
         double discriminantValue = this.arg.compute(pos);
 
         if (discriminantValue < 0) {
@@ -34,12 +33,12 @@ public record SquareRoot(DensityFunction arg, Optional<Double> maxOutput, Option
     }
 
     @Override
-    public void fillArray(double @NotNull [] densities, ContextProvider applier) {
+    public void fillArray(double  [] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public @NotNull DensityFunction mapAll(Visitor visitor) {
+    public  DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new SquareRoot(this.arg, this.minOutput, this.maxOutput, this.argError));
     }
 
@@ -85,7 +84,7 @@ public record SquareRoot(DensityFunction arg, Optional<Double> maxOutput, Option
     }
 
     @Override
-    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

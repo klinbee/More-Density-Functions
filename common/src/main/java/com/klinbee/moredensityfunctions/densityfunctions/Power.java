@@ -6,7 +6,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -18,7 +17,7 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
     public static final KeyDispatchDataCodec<Power> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute(@NotNull FunctionContext pos) {
+    public double compute( FunctionContext pos) {
         double exponentValue = this.exponent.compute(pos);
         double baseValue = this.base.compute(pos);
 
@@ -53,12 +52,12 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
     }
 
     @Override
-    public void fillArray(double @NotNull [] densities, ContextProvider applier) {
+    public void fillArray(double  [] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public @NotNull DensityFunction mapAll(Visitor visitor) {
+    public  DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new Power(this.base, this.exponent, this.minOutput, this.maxOutput, this.argError));
     }
 
@@ -96,7 +95,7 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
     }
 
     @Override
-    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

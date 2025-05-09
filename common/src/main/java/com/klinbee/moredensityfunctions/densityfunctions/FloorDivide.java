@@ -6,18 +6,17 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 
 public record FloorDivide(DensityFunction numerator, DensityFunction denominator, Optional<Double> maxOutput,
                           Optional<Double> minOutput, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<FloorDivide> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(FloorDivide::numerator), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(FloorDivide::denominator), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(FloorDivide::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(FloorDivide::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(FloorDivide::argError)).apply(instance, (FloorDivide::new)));
+    private static final MapCodec<FloorDivide> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(FloorDivide::numerator), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorDivide::denominator), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(FloorDivide::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(FloorDivide::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(FloorDivide::argError)).apply(instance, (FloorDivide::new)));
     public static final KeyDispatchDataCodec<FloorDivide> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute(@NotNull FunctionContext pos) {
+    public double compute( FunctionContext pos) {
         int numeratorValue = (int) StrictMath.floor(this.numerator.compute(pos));
         int denominatorValue = (int) StrictMath.floor(this.denominator.compute(pos));
 
@@ -43,12 +42,12 @@ public record FloorDivide(DensityFunction numerator, DensityFunction denominator
     }
 
     @Override
-    public void fillArray(double @NotNull [] densities, ContextProvider applier) {
+    public void fillArray(double  [] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public @NotNull DensityFunction mapAll(Visitor visitor) {
+    public  DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new FloorDivide(this.numerator, this.denominator, this.minOutput, this.maxOutput, this.argError));
     }
 
@@ -92,7 +91,7 @@ public record FloorDivide(DensityFunction numerator, DensityFunction denominator
     }
 
     @Override
-    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

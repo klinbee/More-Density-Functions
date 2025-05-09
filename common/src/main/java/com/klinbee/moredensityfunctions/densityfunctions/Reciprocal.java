@@ -6,17 +6,16 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 
 public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<Reciprocal> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(Reciprocal::denominator), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Reciprocal::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Reciprocal::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Reciprocal::argError)).apply(instance, (Reciprocal::new)));
+    private static final MapCodec<Reciprocal> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Reciprocal::denominator), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Reciprocal::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Reciprocal::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Reciprocal::argError)).apply(instance, (Reciprocal::new)));
     public static final KeyDispatchDataCodec<Reciprocal> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute(@NotNull FunctionContext pos) {
+    public double compute( FunctionContext pos) {
         double denominatorValue = this.denominator.compute(pos);
 
         if (denominatorValue == 0) {
@@ -41,12 +40,12 @@ public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput
     }
 
     @Override
-    public void fillArray(double @NotNull [] densities, ContextProvider applier) {
+    public void fillArray(double  [] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public @NotNull DensityFunction mapAll(Visitor visitor) {
+    public  DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new Reciprocal(this.denominator, this.minOutput, this.maxOutput, this.argError));
     }
 
@@ -86,7 +85,7 @@ public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput
     }
 
     @Override
-    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

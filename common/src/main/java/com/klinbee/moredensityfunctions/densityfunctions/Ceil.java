@@ -4,8 +4,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import java.lang.StrictMath;
-import org.jetbrains.annotations.NotNull;
 
 
 public record Ceil(DensityFunction arg) implements DensityFunction {
@@ -17,17 +15,17 @@ public record Ceil(DensityFunction arg) implements DensityFunction {
     }
 
     @Override
-    public double compute(DensityFunction.@NotNull FunctionContext pos) {
+    public double compute(DensityFunction. FunctionContext pos) {
         return this.eval(arg.compute(pos));
     }
 
     @Override
-    public void fillArray(double @NotNull [] densities, DensityFunction.ContextProvider applier) {
+    public void fillArray(double  [] densities, DensityFunction.ContextProvider applier) {
         applier.fillAllDirectly(densities,this);
     }
 
     @Override
-    public @NotNull DensityFunction mapAll(DensityFunction.Visitor visitor) {
+    public  DensityFunction mapAll(DensityFunction.Visitor visitor) {
         return visitor.apply(new Ceil(this.arg));
     }
 
@@ -46,7 +44,7 @@ public record Ceil(DensityFunction arg) implements DensityFunction {
     }
 
     @Override
-    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

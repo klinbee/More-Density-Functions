@@ -5,7 +5,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -15,7 +14,7 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
     public static final KeyDispatchDataCodec<IEEERemainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute(@NotNull FunctionContext pos) {
+    public double compute( FunctionContext pos) {
         double numeratorValue = this.numerator.compute(pos);
         double denominatorValue = this.denominator.compute(pos);
 
@@ -30,12 +29,12 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
     }
 
     @Override
-    public void fillArray(double @NotNull [] densities, ContextProvider applier) {
+    public void fillArray(double  [] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public @NotNull DensityFunction mapAll(Visitor visitor) {
+    public  DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new IEEERemainder(this.numerator, this.denominator, this.argError));
     }
 
@@ -69,7 +68,7 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
     }
 
     @Override
-    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

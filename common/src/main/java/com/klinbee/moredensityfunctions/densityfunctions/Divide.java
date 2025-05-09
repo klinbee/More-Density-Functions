@@ -6,17 +6,16 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 
 public record Divide(DensityFunction numerator, DensityFunction denominator, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<Divide> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(Divide::numerator), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(Divide::denominator), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Divide::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Divide::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Divide::argError)).apply(instance, (Divide::new)));
+    private static final MapCodec<Divide> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(Divide::numerator), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Divide::denominator), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Divide::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Divide::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Divide::argError)).apply(instance, (Divide::new)));
     public static final KeyDispatchDataCodec<Divide> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute(@NotNull FunctionContext pos) {
+    public double compute( FunctionContext pos) {
         double numeratorValue = this.numerator.compute(pos);
         double denominatorValue = this.denominator.compute(pos);
 
@@ -42,12 +41,12 @@ public record Divide(DensityFunction numerator, DensityFunction denominator, Opt
     }
 
     @Override
-    public void fillArray(double @NotNull [] densities, ContextProvider applier) {
+    public void fillArray(double  [] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public @NotNull DensityFunction mapAll(Visitor visitor) {
+    public  DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new Divide(this.numerator, this.denominator, this.minOutput, this.maxOutput, this.argError));
     }
 
@@ -91,7 +90,7 @@ public record Divide(DensityFunction numerator, DensityFunction denominator, Opt
     }
 
     @Override
-    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

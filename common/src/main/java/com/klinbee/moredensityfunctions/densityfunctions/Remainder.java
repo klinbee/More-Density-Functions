@@ -5,17 +5,16 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 
 public record Remainder(DensityFunction numerator, DensityFunction denominator, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<Remainder> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Remainder::numerator), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(Remainder::denominator), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Remainder::argError)).apply(instance, (Remainder::new)));
+    private static final MapCodec<Remainder> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(Remainder::numerator), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Remainder::denominator), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Remainder::argError)).apply(instance, (Remainder::new)));
     public static final KeyDispatchDataCodec<Remainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute(@NotNull FunctionContext pos) {
+    public double compute( FunctionContext pos) {
         double numeratorValue = this.numerator.compute(pos);
         double denominatorValue = this.denominator.compute(pos);
 
@@ -30,12 +29,12 @@ public record Remainder(DensityFunction numerator, DensityFunction denominator, 
     }
 
     @Override
-    public void fillArray(double @NotNull [] densities, ContextProvider applier) {
+    public void fillArray(double  [] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public @NotNull DensityFunction mapAll(Visitor visitor) {
+    public  DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new Remainder(this.numerator, this.denominator, this.argError));
     }
 
@@ -69,7 +68,7 @@ public record Remainder(DensityFunction numerator, DensityFunction denominator, 
     }
 
     @Override
-    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }
