@@ -19,7 +19,7 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod(MoreDensityFunctionsConstants.MOD_ID)
 public class MoreDensityFunctionsForge {
 
-    private static final DeferredRegister<Codec<? extends DensityFunction>> DENSITY_FUNCTIONS = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Constants.MOD_ID);
+    private static final DeferredRegister<Codec<? extends DensityFunction>> DENSITY_FUNCTIONS = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, MoreDensityFunctionsConstants.MOD_NAMESPACE);
     public static final RegistryObject<Codec<? extends DensityFunction>> ASIN = DENSITY_FUNCTIONS.register("asin", ArcSine.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> ACOS = DENSITY_FUNCTIONS.register("acos", ArcCosine.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> ATAN = DENSITY_FUNCTIONS.register("atan", ArcTangent.CODEC::codec);
@@ -65,7 +65,7 @@ public class MoreDensityFunctionsForge {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        Constants.LOG.info("Hello Forge world!");
+        MoreDensityFunctionsConstants.LOG.info("Hello Forge world!");
         MoreDensityFunctionsCommon.init();
 
     }
@@ -79,7 +79,7 @@ public class MoreDensityFunctionsForge {
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = MoreDensityFunctionsConstants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
