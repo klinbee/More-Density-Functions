@@ -1,6 +1,6 @@
 {
     "schemaVersion": 1,
-    "id": "change_fabric_mod_json_id!",
+    "id": "moredensityfunctions",
     "version": "${version}",
     "name": "${mod_name}",
     "description": "${description}",
@@ -15,7 +15,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "${group}.ExampleMod"
+            "${group}.MoreDensityFunctionsFabric"
         ]
     },
     "mixins": [

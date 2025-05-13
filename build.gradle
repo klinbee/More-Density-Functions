@@ -60,6 +60,7 @@ subprojects {
         def expandProps = [
                 "version": version,
                 "group": project.group, //Else we target the task's group.
+                "java_version": java_version,
                 "minecraft_version": minecraft_version,
                 "forge_version": forge_version,
                 "forge_loader_version_range": forge_loader_version_range,
@@ -71,7 +72,13 @@ subprojects {
                 "mod_author": mod_author,
                 "mod_id": mod_id,
                 "license": license,
-                "description": project.description
+                "description": project.description,
+                "github_page": github_page,
+                "issue_page": issue_page,
+                "namespace": namespace,
+                "parchment_minecraft": parchment_minecraft,
+                "parchment_version": parchment_version,
+                "credits": credits
         ]
 
         filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', '*.mixins.json']) {
