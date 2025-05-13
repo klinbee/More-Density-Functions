@@ -1,4 +1,4 @@
-package com.klinbee.moredensityfunctions.platform.services;
+package com.klinbee.examplemod.platform.services;
 
 public interface IPlatformHelper {
 

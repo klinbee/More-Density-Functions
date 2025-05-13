@@ -1,6 +1,6 @@
-package com.klinbee.moredensityfunctions.platform;
+package com.klinbee.examplemod.platform;
 
-import com.klinbee.moredensityfunctions.platform.services.IPlatformHelper;
+import com.klinbee.examplemod.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 
