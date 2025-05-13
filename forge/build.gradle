@@ -1,10 +1,13 @@
 plugins {
     id 'multiloader-loader'
     id 'net.neoforged.moddev.legacyforge'
+    // Required for NeoGradle
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
 }
 
 mixin {
     add(sourceSets.main, "${mod_id}.refmap.json")
+    config("${mod_id}.mixins.json")
     config("${mod_id}.forge.mixins.json")
 }
 
@@ -46,6 +49,7 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 dependencies {
     compileOnly project(":common")
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
+    compileOnly 'org.jetbrains:annotations:23.0.0'
 }
 
 jar {
