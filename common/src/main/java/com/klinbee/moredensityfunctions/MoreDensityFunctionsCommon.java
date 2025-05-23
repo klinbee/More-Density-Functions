@@ -9,6 +9,23 @@ public class MoreDensityFunctionsCommon {
     // The loader specific projects are able to import and use any code from the common project. This allows you to
     // write the majority of your code here and load it from your loader specific projects. This example has some
     // code that gets invoked by the entry point of the loader specific projects.
+
+    // For capturing seed unfortunately...
+    private static long worldSeed = 0;
+    private static boolean worldSeedInitialized = false;
+
+    public static void setWorldSeed(long seed) {
+        worldSeed = seed;
+        worldSeedInitialized = true;
+    }
+
+    public static long getWorldSeed() throws IllegalAccessException {
+        if (!worldSeedInitialized) {
+            throw new IllegalAccessException("MoreDensityFunctions: World Seed not yet Initialized.");
+        }
+        return worldSeed;
+    }
+
     public static void init() {
 
     }
