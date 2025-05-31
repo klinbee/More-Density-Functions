@@ -10,7 +10,7 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 
 public record XClampedGradient(int fromX, int toX, double fromValue, double toValue) implements DensityFunction {
-    private static final MapCodec<XClampedGradient> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(Codec.intRange(MoreDensityFunctionsConstants.MIN_POS_INT, MoreDensityFunctionsConstants.MAX_POS_INT).fieldOf("from_x").forGetter(XClampedGradient::fromX), Codec.intRange(MoreDensityFunctionsConstants.MIN_POS_INT, MoreDensityFunctionsConstants.MAX_POS_INT).fieldOf("to_x").forGetter(XClampedGradient::toX), Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("from_value").forGetter(XClampedGradient::fromValue), Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("to_value").forGetter(XClampedGradient::toValue)).apply(instance, (XClampedGradient::new)));
+    private static final MapCodec<XClampedGradient> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("from_x").forGetter(XClampedGradient::fromX), MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("to_x").forGetter(XClampedGradient::toX), Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("from_value").forGetter(XClampedGradient::fromValue), Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("to_value").forGetter(XClampedGradient::toValue)).apply(instance, (XClampedGradient::new)));
     public static final KeyDispatchDataCodec<XClampedGradient> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override

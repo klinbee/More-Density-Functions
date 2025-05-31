@@ -27,12 +27,12 @@ public record XPos() implements DensityFunction {
 
     @Override
     public double minValue() {
-        return MoreDensityFunctionsConstants.MIN_POS_DOUBLE;
+        return MoreDensityFunctionsConstants.MIN_COORD_DOUBLE;
     }
 
     @Override
     public double maxValue() {
-        return MoreDensityFunctionsConstants.MAX_POS_DOUBLE;
+        return MoreDensityFunctionsConstants.MAX_COORD_DOUBLE;
     }
 
     @Override
