@@ -1,16 +1,14 @@
 package com.klinbee.moredensityfunctions.util;
 
-import com.klinbee.moredensityfunctions.distribution.DistributionFunction;
-
 import java.util.Random;
 
 public class MDFUtil {
 
-    public static int binomial(int n, float p, long seed) {
+    public static int binomial(int n, double p, long seed) {
         Random random = new Random(seed);
         int successes = 0;
         for (int i = 0; i < n; i++) {
-            if (random.nextFloat() < p) {
+            if (random.nextDouble() < p) {
                 successes++;
             }
         }
@@ -54,7 +52,7 @@ public class MDFUtil {
         }
         // Normal approximation
         else {
-            return Math.max(0, (int) Math.round(DistributionFunction.normal(lambda, Math.sqrt(lambda), seed)));
+            return Math.max(0, (int) Math.round(MDFUtil.normal(lambda, Math.sqrt(lambda), seed)));
         }
     }
 
@@ -111,8 +109,8 @@ public class MDFUtil {
     }
 
     public static double beta(double alpha, double beta, long seed) {
-        double x = DistributionFunction.gamma(alpha, seed);
-        double y = DistributionFunction.gamma(beta, seed);
+        double x = MDFUtil.gamma(alpha, seed);
+        double y = MDFUtil.gamma(beta, seed);
         return x / (x + y);
     }
 
