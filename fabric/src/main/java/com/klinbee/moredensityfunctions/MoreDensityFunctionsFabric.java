@@ -1,50 +1,92 @@
 package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.densityfunctions.*;
+import com.klinbee.moredensityfunctions.distribution.NormalDistribution;
+import com.klinbee.moredensityfunctions.distribution.RandomDistribution;
+
+import com.mojang.serialization.Codec;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.DensityFunction;
 
 public class MoreDensityFunctionsFabric implements ModInitializer {
+
+    public static final WritableRegistry<Codec<? extends RandomDistribution>> RANDOM_DISTRIBUTION_TYPE = FabricRegistryBuilder.createSimple(MoreDensityFunctionsConstants.RANDOM_DISTRIBUTION_TYPE).buildAndRegister();
 
     @Override
     public void onInitialize() {
 
-        // This method is invoked by the Fabric mod loader when it is ready
-        // to load your mod. You can access Fabric and Common code in this
-        // project.
+        DynamicRegistries.register(MoreDensityFunctionsConstants.RANDOM_DISTRIBUTION, RandomDistribution.CODEC);
 
-        // Use Fabric to bootstrap the Common mod.
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"asin"), ArcSine.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"acos"), ArcCosine.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"atan"), ArcTangent.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"ceil"), Ceil.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"cos"), Cosine.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"div"), Divide.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"floor"), Floor.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"floor_div"), FloorDivide.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"floor_mod"), FloorModulo.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"ieee_rem"), IEEERemainder.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"negate"), Negate.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"polar_coords"), PolarCoords.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"power"), Power.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"reciprocal"), Reciprocal.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"rem"), Remainder.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"round"), Round.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"shift_df"), ShiftDensityFunction.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"sigmoid"), Sigmoid.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"signum"), Signum.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"sine"), Sine.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"sqrt"), SquareRoot.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"subtract"), Subtract.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"tan"), Tangent.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"vector_angle"), VectorAngle.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE, "x_clamped_gradient"), XClampedGradient.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"x"), XPos.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"y"), YPos.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"z_clamped_gradient"), ZClampedGradient.CODEC.codec());
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, ResourceLocation.tryBuild(MoreDensityFunctionsConstants.MOD_NAMESPACE,"z"), ZPos.CODEC.codec());
+        registerRandomDistribution("normal_distribution", NormalDistribution.CODEC.codec());
+
+        /// Density Functions ///
+        registerDensityFunction("asin",ArcSine.CODEC.codec());
+        registerDensityFunction("acos", ArcCosine.CODEC.codec());
+        registerDensityFunction("atan", ArcTangent.CODEC.codec());
+        registerDensityFunction("ceil", Ceil.CODEC.codec());
+        registerDensityFunction("cellular_noise", CellularNoise.CODEC.codec());
+        registerDensityFunction("cos", Cosine.CODEC.codec());
+        registerDensityFunction("div", Divide.CODEC.codec());
+        registerDensityFunction("floor", Floor.CODEC.codec());
+        registerDensityFunction("floor_div", FloorDivide.CODEC.codec());
+        registerDensityFunction("floor_mod", FloorModulo.CODEC.codec());
+        registerDensityFunction("ieee_rem", IEEERemainder.CODEC.codec());
+        registerDensityFunction("negate", Negate.CODEC.codec());
+        registerDensityFunction("polar_coords", PolarCoords.CODEC.codec());
+        registerDensityFunction("power", Power.CODEC.codec());
+        registerDensityFunction("reciprocal", Reciprocal.CODEC.codec());
+        registerDensityFunction("rem", Remainder.CODEC.codec());
+        registerDensityFunction("round", Round.CODEC.codec());
+        registerDensityFunction("shift_df", ShiftDensityFunction.CODEC.codec());
+        registerDensityFunction("sigmoid", Sigmoid.CODEC.codec());
+        registerDensityFunction("signum", Signum.CODEC.codec());
+        registerDensityFunction("sine", Sine.CODEC.codec());
+        registerDensityFunction("sqrt", SquareRoot.CODEC.codec());
+        registerDensityFunction("subtract", Subtract.CODEC.codec());
+        registerDensityFunction("tan", Tangent.CODEC.codec());
+        registerDensityFunction("vector_angle", VectorAngle.CODEC.codec());
+        registerDensityFunction( "x_clamped_gradient", XClampedGradient.CODEC.codec());
+        registerDensityFunction("x", XPos.CODEC.codec());
+        registerDensityFunction("y", YPos.CODEC.codec());
+        registerDensityFunction("z_clamped_gradient", ZClampedGradient.CODEC.codec());
+        registerDensityFunction("z", ZPos.CODEC.codec());
+
         MoreDensityFunctionsCommon.init();
     }
+
+    /**
+     * Registers DensityFunction types
+     * Method for ease of reading
+     * Not generic, because Java hates that (makes it really annoying)
+     *
+     * @param name: name of the DensityFunction type used for JSON
+     * @param codec: the codec from the KeyDispatchDataCodec of the DensityFunction class
+     */
+    public void registerDensityFunction(String name, Codec<? extends DensityFunction> codec) {
+        ResourceLocation resourceLocation = new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, name);
+        ResourceKey<Codec<? extends DensityFunction>> resourceKey = ResourceKey.create(BuiltInRegistries.DENSITY_FUNCTION_TYPE.key(), resourceLocation);
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE,resourceKey,codec);
+    }
+
+    /**
+     * Registers RandomDistribution types
+     * Method for ease of reading
+     * Not generic, because Java hates that (makes it really annoying)
+     *
+     * @param name: name of the RandomDistribution type used for JSON
+     * @param codec: the codec from the KeyDispatchDataCodec of the RandomDistribution class
+     */
+    public void registerRandomDistribution(String name, Codec<? extends RandomDistribution> codec) {
+        ResourceLocation resourceLocation = new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, name);
+        ResourceKey<Codec<? extends RandomDistribution>> resourceKey = ResourceKey.create(RANDOM_DISTRIBUTION_TYPE.key(), resourceLocation);
+        Registry.register(RANDOM_DISTRIBUTION_TYPE,resourceKey,codec);
+    }
+
 }
