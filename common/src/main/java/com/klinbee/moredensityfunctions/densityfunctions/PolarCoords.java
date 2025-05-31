@@ -10,17 +10,17 @@ public record PolarCoords() implements DensityFunction {
     public static final KeyDispatchDataCodec<PolarCoords> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute( FunctionContext pos) {
-        return StrictMath.atan2(pos.blockX(),pos.blockZ());
+    public double compute(FunctionContext pos) {
+        return StrictMath.atan2(pos.blockX(), pos.blockZ());
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
+    public void fillArray(double[] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
+    public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new PolarCoords());
     }
 
@@ -35,7 +35,7 @@ public record PolarCoords() implements DensityFunction {
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

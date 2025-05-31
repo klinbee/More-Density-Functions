@@ -10,8 +10,11 @@ import java.util.Optional;
 /*
 TODO: IMPROPER LIMITS/MIN/MAX
  */
-public record Tangent(DensityFunction arg, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<Tangent> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Tangent::arg), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Tangent::argError)).apply(instance, (Tangent::new)));
+public record Tangent(DensityFunction arg, Optional<DensityFunction> errorArg) implements DensityFunction {
+    private static final MapCodec<Tangent> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Tangent::arg),
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Tangent::errorArg)
+    ).apply(instance, (Tangent::new)));
     public static final KeyDispatchDataCodec<Tangent> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {
@@ -19,18 +22,18 @@ public record Tangent(DensityFunction arg, Optional<DensityFunction> argError) i
     }
 
     @Override
-    public double compute( FunctionContext pos) {
+    public double compute(FunctionContext pos) {
         return this.eval(arg.compute(pos));
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
-        applier.fillAllDirectly(densities,this);
+    public void fillArray(double[] densities, ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Tangent(this.arg, this.argError));
+    public DensityFunction mapAll(Visitor visitor) {
+        return visitor.apply(new Tangent(this.arg, this.errorArg));
     }
 
     public DensityFunction arg() {
@@ -48,7 +51,7 @@ public record Tangent(DensityFunction arg, Optional<DensityFunction> argError) i
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

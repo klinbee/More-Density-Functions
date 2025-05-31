@@ -13,7 +13,8 @@ public interface RandomDistribution {
     @SuppressWarnings("unchecked")
     Codec<RandomDistribution> CODEC = ExtraCodecs.lazyInitializedCodec(() -> {
         var randomDistributionRegistry = BuiltInRegistries.REGISTRY.get(MoreDensityFunctionsConstants.RANDOM_DISTRIBUTION_TYPE.location());
-        if (randomDistributionRegistry == null) throw new NullPointerException("Worldgen modifier registry does not exist yet!");
+        if (randomDistributionRegistry == null)
+            throw new NullPointerException("Worldgen modifier registry does not exist yet!");
         return ((Registry<Codec<? extends RandomDistribution>>) randomDistributionRegistry).byNameCodec();
     }).dispatch(RandomDistribution::codec, Function.identity());
 

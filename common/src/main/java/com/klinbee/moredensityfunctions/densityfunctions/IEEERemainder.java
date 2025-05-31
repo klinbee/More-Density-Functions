@@ -9,33 +9,38 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import java.util.Optional;
 
 
-public record IEEERemainder(DensityFunction numerator, DensityFunction denominator, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<IEEERemainder> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(IEEERemainder::numerator), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(IEEERemainder::denominator), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(IEEERemainder::argError)).apply(instance, (IEEERemainder::new)));
+public record IEEERemainder(DensityFunction numerator, DensityFunction denominator,
+                            Optional<DensityFunction> errorArg) implements DensityFunction {
+    private static final MapCodec<IEEERemainder> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(IEEERemainder::numerator),
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(IEEERemainder::denominator),
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(IEEERemainder::errorArg)
+    ).apply(instance, (IEEERemainder::new)));
     public static final KeyDispatchDataCodec<IEEERemainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute( FunctionContext pos) {
+    public double compute(FunctionContext pos) {
         double numeratorValue = this.numerator.compute(pos);
         double denominatorValue = this.denominator.compute(pos);
 
         if (denominatorValue == 0) {
-            if (argError.isPresent()) {
-                return this.argError.get().compute(pos);
+            if (errorArg.isPresent()) {
+                return this.errorArg.get().compute(pos);
             }
             return MoreDensityFunctionsConstants.DEFAULT_ERROR;
         }
 
-        return  StrictMath.IEEEremainder(numeratorValue,denominatorValue);
+        return StrictMath.IEEEremainder(numeratorValue, denominatorValue);
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
+    public void fillArray(double[] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new IEEERemainder(this.numerator, this.denominator, this.argError));
+    public DensityFunction mapAll(Visitor visitor) {
+        return visitor.apply(new IEEERemainder(this.numerator, this.denominator, this.errorArg));
     }
 
     public DensityFunction numerator() {
@@ -46,29 +51,28 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
         return denominator;
     }
 
-    @Override
-    public Optional<DensityFunction> argError() {
-        return argError;
+    public Optional<DensityFunction> errorArg() {
+        return errorArg;
     }
 
     @Override
     public double minValue() {
-        if (argError.isPresent()) {
-            return Math.min(this.argError.get().minValue(), Math.min(-Math.abs(this.denominator.minValue()), -Math.abs(this.denominator.maxValue())));
+        if (errorArg.isPresent()) {
+            return Math.min(this.errorArg.get().minValue(), Math.min(-Math.abs(this.denominator.minValue()), -Math.abs(this.denominator.maxValue())));
         }
         return Math.min(MoreDensityFunctionsConstants.DEFAULT_ERROR, Math.min(-Math.abs(this.denominator.minValue()), -Math.abs(this.denominator.maxValue())));
     }
 
     @Override
     public double maxValue() {
-        if (argError.isPresent()) {
-            return Math.max(this.argError.get().maxValue(), Math.max(Math.abs(this.denominator.minValue()), Math.abs(this.denominator.maxValue())));
+        if (errorArg.isPresent()) {
+            return Math.max(this.errorArg.get().maxValue(), Math.max(Math.abs(this.denominator.minValue()), Math.abs(this.denominator.maxValue())));
         }
         return Math.max(MoreDensityFunctionsConstants.DEFAULT_ERROR, Math.max(Math.abs(this.denominator.minValue()), Math.abs(this.denominator.maxValue())));
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

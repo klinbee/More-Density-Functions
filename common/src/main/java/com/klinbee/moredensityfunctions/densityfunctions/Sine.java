@@ -7,7 +7,9 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 
 public record Sine(DensityFunction arg) implements DensityFunction {
-    private static final MapCodec<Sine> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Sine::arg)).apply(instance, (Sine::new)));
+    private static final MapCodec<Sine> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Sine::arg)
+    ).apply(instance, (Sine::new)));
     public static final KeyDispatchDataCodec<Sine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {
@@ -15,17 +17,17 @@ public record Sine(DensityFunction arg) implements DensityFunction {
     }
 
     @Override
-    public double compute( FunctionContext pos) {
+    public double compute(FunctionContext pos) {
         return this.eval(arg.compute(pos));
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
-        applier.fillAllDirectly(densities,this);
+    public void fillArray(double[] densities, ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
+    public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new Sine(this.arg));
     }
 
@@ -44,7 +46,7 @@ public record Sine(DensityFunction arg) implements DensityFunction {
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

@@ -7,7 +7,9 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 
 public record Ceil(DensityFunction arg) implements DensityFunction {
-    private static final MapCodec<Ceil> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Ceil::arg)).apply(instance, (Ceil::new)));
+    private static final MapCodec<Ceil> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Ceil::arg)
+    ).apply(instance, (Ceil::new)));
     public static final KeyDispatchDataCodec<Ceil> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {
@@ -15,17 +17,17 @@ public record Ceil(DensityFunction arg) implements DensityFunction {
     }
 
     @Override
-    public double compute(DensityFunction. FunctionContext pos) {
+    public double compute(DensityFunction.FunctionContext pos) {
         return this.eval(arg.compute(pos));
     }
 
     @Override
-    public void fillArray(double  [] densities, DensityFunction.ContextProvider applier) {
-        applier.fillAllDirectly(densities,this);
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(DensityFunction.Visitor visitor) {
+    public DensityFunction mapAll(DensityFunction.Visitor visitor) {
         return visitor.apply(new Ceil(this.arg));
     }
 
@@ -44,7 +46,7 @@ public record Ceil(DensityFunction arg) implements DensityFunction {
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

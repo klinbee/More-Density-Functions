@@ -7,21 +7,24 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 
 public record Subtract(DensityFunction arg1, DensityFunction arg2) implements DensityFunction {
-    private static final MapCodec<Subtract> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument1").forGetter(Subtract::arg1), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument2").forGetter(Subtract::arg2)).apply(instance, (Subtract::new)));
+    private static final MapCodec<Subtract> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument1").forGetter(Subtract::arg1),
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument2").forGetter(Subtract::arg2)
+    ).apply(instance, (Subtract::new)));
     public static final KeyDispatchDataCodec<Subtract> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute( FunctionContext pos) {
+    public double compute(FunctionContext pos) {
         return this.arg1.compute(pos) - this.arg2.compute(pos);
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
+    public void fillArray(double[] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
+    public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new Subtract(this.arg1, this.arg2));
     }
 
@@ -46,7 +49,7 @@ public record Subtract(DensityFunction arg1, DensityFunction arg2) implements De
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

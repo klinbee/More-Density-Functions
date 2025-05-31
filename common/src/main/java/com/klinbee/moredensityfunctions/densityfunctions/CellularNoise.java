@@ -12,7 +12,8 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import java.util.Optional;
 
 
-public record CellularNoise(int sizeX, int sizeY, int sizeZ, Optional<Integer> salt, RandomDistribution distribution) implements DensityFunction {
+public record CellularNoise(int sizeX, int sizeY, int sizeZ, Optional<Integer> salt,
+                            RandomDistribution distribution) implements DensityFunction {
     private static final MapCodec<CellularNoise> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_x").forGetter(CellularNoise::sizeX),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_y").forGetter(CellularNoise::sizeY),
@@ -47,6 +48,7 @@ public record CellularNoise(int sizeX, int sizeY, int sizeZ, Optional<Integer> s
 
     /**
      * No divide by 0, easy way of making it 2D.
+     *
      * @param numerator
      * @param denominator
      * @return
@@ -64,7 +66,7 @@ public record CellularNoise(int sizeX, int sizeY, int sizeZ, Optional<Integer> s
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
+    public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new CellularNoise(this.sizeX, this.sizeY, this.sizeZ, this.salt, this.distribution));
     }
 
@@ -104,7 +106,7 @@ public record CellularNoise(int sizeX, int sizeY, int sizeZ, Optional<Integer> s
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

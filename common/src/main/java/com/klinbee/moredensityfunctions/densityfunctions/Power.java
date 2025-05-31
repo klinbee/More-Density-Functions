@@ -12,12 +12,19 @@ import java.util.Optional;
 /*
 TODO: Make this function's minValue()/maxValue() functions more accurate...
  */
-public record Power(DensityFunction base, DensityFunction exponent, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(Power::base), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("exponent").forGetter(Power::exponent), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Power::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Power::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Power::argError)).apply(instance, (Power::new)));
+public record Power(DensityFunction base, DensityFunction exponent, Optional<Double> maxOutput,
+                    Optional<Double> minOutput, Optional<DensityFunction> errorArg) implements DensityFunction {
+    private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(Power::base),
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("exponent").forGetter(Power::exponent),
+            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Power::minOutput),
+            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Power::maxOutput),
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Power::errorArg)
+    ).apply(instance, (Power::new)));
     public static final KeyDispatchDataCodec<Power> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute( FunctionContext pos) {
+    public double compute(FunctionContext pos) {
         double exponentValue = this.exponent.compute(pos);
         double baseValue = this.base.compute(pos);
 
@@ -29,12 +36,12 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
             return this.base.compute(pos);
         }
 
-        double result = StrictMath.pow(baseValue,exponentValue);
+        double result = StrictMath.pow(baseValue, exponentValue);
 
         // Ain't no way I doin' all those cases, Power is messed up.
         if (Double.isNaN(result)) {
-            if (argError().isPresent()) {
-                return argError.get().compute(pos);
+            if (errorArg().isPresent()) {
+                return errorArg.get().compute(pos);
             }
             return MoreDensityFunctionsConstants.DEFAULT_ERROR;
         }
@@ -52,13 +59,13 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
+    public void fillArray(double[] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Power(this.base, this.exponent, this.minOutput, this.maxOutput, this.argError));
+    public DensityFunction mapAll(Visitor visitor) {
+        return visitor.apply(new Power(this.base, this.exponent, this.minOutput, this.maxOutput, this.errorArg));
     }
 
     public DensityFunction base() {
@@ -79,9 +86,8 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
         return maxOutput;
     }
 
-    @Override
-    public Optional<DensityFunction> argError() {
-        return argError;
+    public Optional<DensityFunction> errorArg() {
+        return errorArg;
     }
 
     @Override
@@ -95,7 +101,7 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

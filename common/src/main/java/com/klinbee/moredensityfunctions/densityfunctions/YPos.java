@@ -11,17 +11,17 @@ public record YPos() implements DensityFunction {
     public static final KeyDispatchDataCodec<YPos> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute( FunctionContext pos) {
+    public double compute(FunctionContext pos) {
         return pos.blockY();
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
+    public void fillArray(double[] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
+    public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new YPos());
     }
 
@@ -36,7 +36,7 @@ public record YPos() implements DensityFunction {
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

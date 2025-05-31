@@ -9,7 +9,9 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 TODO: IMPROPER LIMITS/MIN/MAX
  */
 public record ArcCosine(DensityFunction arg) implements DensityFunction {
-    private static final MapCodec<ArcCosine> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(ArcCosine::arg)).apply(instance, (ArcCosine::new)));
+    private static final MapCodec<ArcCosine> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(ArcCosine::arg)
+    ).apply(instance, (ArcCosine::new)));
     public static final KeyDispatchDataCodec<ArcCosine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {

@@ -7,21 +7,24 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 
 public record VectorAngle(DensityFunction arg1, DensityFunction arg2) implements DensityFunction {
-    private static final MapCodec<VectorAngle> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument1").forGetter(VectorAngle::arg1), DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument2").forGetter(VectorAngle::arg2)).apply(instance, (VectorAngle::new)));
+    private static final MapCodec<VectorAngle> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument1").forGetter(VectorAngle::arg1),
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument2").forGetter(VectorAngle::arg2)
+    ).apply(instance, (VectorAngle::new)));
     public static final KeyDispatchDataCodec<VectorAngle> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute( FunctionContext pos) {
+    public double compute(FunctionContext pos) {
         return StrictMath.atan2(this.arg1.compute(pos), this.arg2.compute(pos));
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
+    public void fillArray(double[] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
+    public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new VectorAngle(this.arg1, this.arg2));
     }
 
@@ -46,7 +49,7 @@ public record VectorAngle(DensityFunction arg1, DensityFunction arg2) implements
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

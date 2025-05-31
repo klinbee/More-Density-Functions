@@ -10,17 +10,23 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import java.util.Optional;
 
 
-public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput, Optional<Double> minOutput, Optional<DensityFunction> argError) implements DensityFunction {
-    private static final MapCodec<Reciprocal> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Reciprocal::denominator), Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Reciprocal::minOutput), Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Reciprocal::maxOutput), DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Reciprocal::argError)).apply(instance, (Reciprocal::new)));
+public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput, Optional<Double> minOutput,
+                         Optional<DensityFunction> errorArg) implements DensityFunction {
+    private static final MapCodec<Reciprocal> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Reciprocal::denominator),
+            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Reciprocal::minOutput),
+            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Reciprocal::maxOutput),
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Reciprocal::errorArg)
+    ).apply(instance, (Reciprocal::new)));
     public static final KeyDispatchDataCodec<Reciprocal> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public double compute( FunctionContext pos) {
+    public double compute(FunctionContext pos) {
         double denominatorValue = this.denominator.compute(pos);
 
         if (denominatorValue == 0) {
-            if (argError.isPresent()) {
-                return this.argError.get().compute(pos);
+            if (errorArg.isPresent()) {
+                return this.errorArg.get().compute(pos);
             }
             return MoreDensityFunctionsConstants.DEFAULT_ERROR;
         }
@@ -40,13 +46,13 @@ public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput
     }
 
     @Override
-    public void fillArray(double  [] densities, ContextProvider applier) {
+    public void fillArray(double[] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public  DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Reciprocal(this.denominator, this.minOutput, this.maxOutput, this.argError));
+    public DensityFunction mapAll(Visitor visitor) {
+        return visitor.apply(new Reciprocal(this.denominator, this.minOutput, this.maxOutput, this.errorArg));
     }
 
     public DensityFunction denominator() {
@@ -63,29 +69,28 @@ public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput
         return maxOutput;
     }
 
-    @Override
-    public Optional<DensityFunction> argError() {
-        return argError;
+    public Optional<DensityFunction> errorArg() {
+        return errorArg;
     }
 
     @Override
     public double minValue() {
-        if (argError.isPresent()) {
-            return Math.min(this.argError.get().minValue(),this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT));
+        if (errorArg.isPresent()) {
+            return Math.min(this.errorArg.get().minValue(), this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT));
         }
-        return Math.min(MoreDensityFunctionsConstants.DEFAULT_ERROR,this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT));
+        return Math.min(MoreDensityFunctionsConstants.DEFAULT_ERROR, this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT));
     }
 
     @Override
     public double maxValue() {
-        if (argError.isPresent()) {
-            return Math.max(this.argError.get().maxValue(),this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT));
+        if (errorArg.isPresent()) {
+            return Math.max(this.errorArg.get().maxValue(), this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT));
         }
-        return Math.max(MoreDensityFunctionsConstants.DEFAULT_ERROR,this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT));
+        return Math.max(MoreDensityFunctionsConstants.DEFAULT_ERROR, this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT));
     }
 
     @Override
-    public  KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }
