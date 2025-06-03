@@ -9,12 +9,12 @@ import net.minecraft.util.KeyDispatchDataCodec;
 public record BinomialDistribution(int numIterations, double probability) implements RandomDistribution {
     private static final MapCodec<BinomialDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Codec.intRange(0, 1_000_000).fieldOf("num_iterations").forGetter(BinomialDistribution::numIterations),
-            Codec.doubleRange(0, 1).fieldOf("probability").forGetter(BinomialDistribution::probability)
+            Codec.doubleRange(0.0D, 1.0D).fieldOf("probability").forGetter(BinomialDistribution::probability)
     ).apply(instance, (BinomialDistribution::new)));
     public static final KeyDispatchDataCodec<BinomialDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double getRandom(long hashedSeed) {
-        return MDFUtil.binomial(numIterations, probability, hashedSeed);
+        return MDFUtil.getBinomial(numIterations, probability, hashedSeed);
     }
 
     @Override
