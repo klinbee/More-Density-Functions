@@ -1,8 +1,7 @@
 package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.densityfunctions.*;
-import com.klinbee.moredensityfunctions.distribution.NormalDistribution;
-import com.klinbee.moredensityfunctions.distribution.RandomDistribution;
+import com.klinbee.moredensityfunctions.distribution.*;
 
 import com.mojang.serialization.Codec;
 import net.fabricmc.api.ModInitializer;
@@ -24,7 +23,14 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
 
         DynamicRegistries.register(MoreDensityFunctionsConstants.RANDOM_DISTRIBUTION, RandomDistribution.CODEC);
 
-        registerRandomDistribution("normal_distribution", NormalDistribution.CODEC.codec());
+        registerRandomDistribution("beta", BetaDistribution.CODEC.codec());
+        registerRandomDistribution("binomial", BinomialDistribution.CODEC.codec());
+        registerRandomDistribution("exponential", ExponentialDistribution.CODEC.codec());
+        registerRandomDistribution("gamma", GammaDistribution.CODEC.codec());
+        registerRandomDistribution("geometric", GeometricDistribution.CODEC.codec());
+        registerRandomDistribution("normal", NormalDistribution.CODEC.codec());
+        registerRandomDistribution("poisson", PoissonDistribution.CODEC.codec());
+        registerRandomDistribution("uniform", UniformDistribution.CODEC.codec());
 
         /// Density Functions ///
         registerDensityFunction("asin",ArcSine.CODEC.codec());
@@ -51,6 +57,7 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerDensityFunction("sqrt", SquareRoot.CODEC.codec());
         registerDensityFunction("subtract", Subtract.CODEC.codec());
         registerDensityFunction("tan", Tangent.CODEC.codec());
+        registerDensityFunction("value_noise", ValueNoise.CODEC.codec());
         registerDensityFunction("vector_angle", VectorAngle.CODEC.codec());
         registerDensityFunction( "x_clamped_gradient", XClampedGradient.CODEC.codec());
         registerDensityFunction("x", XPos.CODEC.codec());
