@@ -47,21 +47,6 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
     private static long worldSeed;
     private static boolean worldSeedInitialized;
 
-    public ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, int sizeZ, Optional<Integer> octaveHolder, Optional<Double> lacunarityHolder, double[] phases, Optional<Double> persistenceHolder, double[] amplitudes, boolean useSmoothstep, Optional<Integer> saltHolder, int salt) {
-        this.distribution = distribution;
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-        this.sizeZ = sizeZ;
-        this.octaveHolder = octaveHolder;
-        this.lacunarityHolder = lacunarityHolder;
-        this.phases = phases;
-        this.persistenceHolder = persistenceHolder;
-        this.amplitudes = amplitudes;
-        this.useSmoothstep = useSmoothstep;
-        this.saltHolder = saltHolder;
-        this.salt = salt;
-    }
-
     public static double[] computeNoiseRatios(int octaves, double ratio) {
         double[] ratios = new double[octaves];
         double baseRatio = ratio;
