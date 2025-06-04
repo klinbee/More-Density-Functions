@@ -8,51 +8,80 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Optional;
 
 
 public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, int sizeZ,
-                         Optional<Integer> octaves, Optional<Double> lacunarity,
-                         Optional<Double> persistence, boolean useSmoothstep, Optional<Integer> salt
+                         Optional<Integer> octaveHolder, Optional<Double> lacunarityHolder, double[] phases,
+                         Optional<Double> persistenceHolder, double[] amplitudes, boolean useSmoothstep,
+                         Optional<Integer> saltHolder, int salt
 ) implements DensityFunction {
     private static final MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             RandomDistribution.CODEC.fieldOf("distribution").forGetter(ValueNoise::distribution),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_x").forGetter(ValueNoise::sizeX),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
-            Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("octaves").forGetter(ValueNoise::octaves),
-            Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).optionalFieldOf("lacunarity").forGetter(ValueNoise::lacunarity),
-            Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).optionalFieldOf("persistence").forGetter(ValueNoise::persistence),
+            Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("octaveHolder").forGetter(ValueNoise::octaveHolder),
+            Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).optionalFieldOf("lacunarityHolder").forGetter(ValueNoise::lacunarityHolder),
+            Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).optionalFieldOf("persistenceHolder").forGetter(ValueNoise::persistenceHolder),
             Codec.BOOL.fieldOf("use_smoothstep").forGetter(ValueNoise::useSmoothstep),
-            MoreDensityFunctionsConstants.COORD_CODEC_INT.optionalFieldOf("salt").forGetter(ValueNoise::salt)
-    ).apply(instance, (ValueNoise::new)));
-    public static final KeyDispatchDataCodec<ValueNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+            MoreDensityFunctionsConstants.COORD_CODEC_INT.optionalFieldOf("saltHolder").forGetter(ValueNoise::saltHolder)
+    ).apply(instance, (distribution, sizeX, sizeY, sizeZ, octaves, lacunarity, persistence, useSmoothstep, saltHolder) -> {
+        int salt = saltHolder.orElse(0);
+        int octave = octaves.orElse(0);
 
-    public ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, int sizeZ, Optional<Integer> octaves, Optional<Double> lacunarity, Optional<Double> persistence, boolean useSmoothstep, Optional<Integer> salt) {
+        if (octave == 0 || persistence.isEmpty() || lacunarity.isEmpty()) {
+            return new ValueNoise(distribution, sizeX, sizeY, sizeZ, octaves, lacunarity, null,
+                    persistence, null, useSmoothstep, saltHolder, salt);
+        }
+
+        double[] amplitudes = computeNoiseRatios(octave, persistence.get());
+        double[] phases = computeNoiseRatios(octave, lacunarity.get());
+        return new ValueNoise(distribution, sizeX, sizeY, sizeZ, octaves, lacunarity, phases,
+                persistence, amplitudes, useSmoothstep, saltHolder, salt);
+    }));
+    public static final KeyDispatchDataCodec<ValueNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    private static long worldSeed;
+    private static boolean worldSeedInitialized;
+
+    public ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, int sizeZ, Optional<Integer> octaveHolder, Optional<Double> lacunarityHolder, double[] phases, Optional<Double> persistenceHolder, double[] amplitudes, boolean useSmoothstep, Optional<Integer> saltHolder, int salt) {
+        this.distribution = distribution;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.sizeZ = sizeZ;
-        this.octaves = octaves;
-        this.lacunarity = lacunarity;
-        this.persistence = persistence;
+        this.octaveHolder = octaveHolder;
+        this.lacunarityHolder = lacunarityHolder;
+        this.phases = phases;
+        this.persistenceHolder = persistenceHolder;
+        this.amplitudes = amplitudes;
         this.useSmoothstep = useSmoothstep;
+        this.saltHolder = saltHolder;
         this.salt = salt;
-        this.distribution = distribution;
+    }
+
+    public static double[] computeNoiseRatios(int octaves, double ratio) {
+        double[] ratios = new double[octaves];
+        double baseRatio = ratio;
+        for (int i = 0; i < octaves; i++) {
+            ratios[i] = ratio;
+            ratio *= baseRatio;
+        }
+        return ratios;
     }
 
     @Override
     public double compute(FunctionContext context) {
-
-        long worldSeed;
-        try {
-            worldSeed = MoreDensityFunctionsCommon.getWorldSeed();
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+        if (!worldSeedInitialized) {
+            try {
+                worldSeed = MoreDensityFunctionsCommon.getWorldSeed();
+                worldSeedInitialized = true;
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
-
-        int funcSalt = salt.orElse(0);
 
         int coordX, coordY, coordZ;
         coordX = context.blockX();
@@ -60,118 +89,40 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         coordZ = context.blockZ();
 
         if (useSmoothstep) {
-            double noiseResult = evalSmoothValueNoise(worldSeed, funcSalt, coordX, coordY, coordZ, sizeX, sizeY, sizeZ);
-            if (octaves.isEmpty() || lacunarity.isEmpty() || persistence().isEmpty()) {
+            double noiseResult = evalSmoothValueNoise(worldSeed, salt, coordX, coordY, coordZ, sizeX, sizeY, sizeZ);
+            if (phases == null) {
                 return noiseResult;
             }
-            double baseLacunarity, currLacunarity, basePersistence, currPersistence;
-            baseLacunarity = lacunarity.get();
-            basePersistence = persistence.get();
-            currLacunarity = baseLacunarity;
-            currPersistence = basePersistence;
-
-            int currSizeX, currSizeY, currSizeZ;
-            currSizeX = (int) StrictMath.floor(sizeX * currLacunarity);
-            currSizeY = (int) StrictMath.floor(sizeY * currLacunarity);
-            currSizeZ = (int) StrictMath.floor(sizeZ * currLacunarity);
-
-            noiseResult += currPersistence * evalSmoothValueNoise(worldSeed, funcSalt, coordX, coordY, coordZ, currSizeX, currSizeY, currSizeZ);
-
-            for (int i = 1; i < octaves.get(); i++) {
-                currLacunarity *= baseLacunarity;
-                currPersistence *= basePersistence;
-                currSizeX = (int) StrictMath.floor(sizeX * currLacunarity);
-                currSizeY = (int) StrictMath.floor(sizeY * currLacunarity);
-                currSizeZ = (int) StrictMath.floor(sizeZ * currLacunarity);
-                noiseResult += currPersistence * evalSmoothValueNoise(worldSeed, funcSalt, coordX, coordY, coordZ, currSizeX, currSizeY, currSizeZ);
+            for (int i = 0; i < phases.length; i++) {
+                noiseResult += amplitudes[i] * evalSmoothValueNoise(
+                        worldSeed, salt, coordX, coordY, coordZ,
+                        Mth.floor(sizeX * phases[i]),
+                        Mth.floor(sizeY * phases[i]),
+                        Mth.floor(sizeZ * phases[i]));
             }
 
             return noiseResult;
         }
-        double noiseResult = evalLerpValueNoise(worldSeed, funcSalt, coordX, coordY, coordZ, sizeX, sizeY, sizeZ);
-        if (octaves.isEmpty() || lacunarity.isEmpty() || persistence().isEmpty()) {
+        double noiseResult = evalLerpValueNoise(worldSeed, salt, coordX, coordY, coordZ, sizeX, sizeY, sizeZ);
+        if (phases == null) {
             return noiseResult;
         }
-        double baseLacunarity, currLacunarity, basePersistence, currPersistence;
-        baseLacunarity = lacunarity.get();
-        basePersistence = persistence.get();
-        currLacunarity = baseLacunarity;
-        currPersistence = basePersistence;
-
-        int currSizeX, currSizeY, currSizeZ;
-        currSizeX = (int) StrictMath.floor(sizeX * currLacunarity);
-        currSizeY = (int) StrictMath.floor(sizeY * currLacunarity);
-        currSizeZ = (int) StrictMath.floor(sizeZ * currLacunarity);
-
-        noiseResult += currPersistence * evalLerpValueNoise(worldSeed, funcSalt, coordX, coordY, coordZ, currSizeX, currSizeY, currSizeZ);
-
-        for (int i = 1; i < octaves.get(); i++) {
-            currLacunarity *= baseLacunarity;
-            currPersistence *= basePersistence;
-            currSizeX = (int) StrictMath.floor(sizeX * currLacunarity);
-            currSizeY = (int) StrictMath.floor(sizeY * currLacunarity);
-            currSizeZ = (int) StrictMath.floor(sizeZ * currLacunarity);
-            noiseResult += currPersistence * evalLerpValueNoise(worldSeed, funcSalt, coordX, coordY, coordZ, currSizeX, currSizeY, currSizeZ);
+        for (int i = 0; i < phases.length; i++) {
+            noiseResult += amplitudes[i] * evalLerpValueNoise(
+                    worldSeed, salt, coordX, coordY, coordZ,
+                    Mth.floor(sizeX * phases[i]),
+                    Mth.floor(sizeY * phases[i]),
+                    Mth.floor(sizeZ * phases[i]));
         }
 
         return noiseResult;
     }
 
-    public double lerp(double a, double b, double t) {
-        return a * (1 - t) + b * t;
-    }
-
-    public double smoothstep(double t) {
-        return t * t * (3.0D - 2.0D * t);
-    }
-
-    public double trilerp(double gridVal0, double gridVal1,
-                          double gridVal2, double gridVal3,
-                          double gridVal4, double gridVal5,
-                          double gridVal6, double gridVal7,
-                          double cellX, double cellY, double cellZ) {
-
-        double x0, x1, x2, x3, y0, y1;
-
-        x0 = lerp(gridVal0, gridVal1, cellX);
-        x1 = lerp(gridVal2, gridVal3, cellX);
-        x2 = lerp(gridVal4, gridVal5, cellX);
-        x3 = lerp(gridVal6, gridVal7, cellX);
-
-        y0 = lerp(x0, x1, cellY);
-        y1 = lerp(x2, x3, cellY);
-
-        return lerp(y0, y1, cellZ);
-    }
-
-    public double smoothTrilerp(double gridVal0, double gridVal1,
-                          double gridVal2, double gridVal3,
-                          double gridVal4, double gridVal5,
-                          double gridVal6, double gridVal7,
-                          double cellX, double cellY, double cellZ) {
-
-        double x0, x1, x2, x3, y0, y1;
-
-        cellX = smoothstep(cellX);
-        cellY = smoothstep(cellY);
-        cellZ = smoothstep(cellZ);
-
-        x0 = lerp(gridVal0, gridVal1, cellX);
-        x1 = lerp(gridVal2, gridVal3, cellX);
-        x2 = lerp(gridVal4, gridVal5, cellX);
-        x3 = lerp(gridVal6, gridVal7, cellX);
-
-        y0 = lerp(x0, x1, cellY);
-        y1 = lerp(x2, x3, cellY);
-
-        return lerp(y0, y1, cellZ);
-    }
-
     public double evalLerpValueNoise(long worldSeed, int funcSalt, int coordX, int coordY, int coordZ, int sizeX, int sizeY, int sizeZ) {
         int gridX0, gridY0, gridZ0, gridX1, gridY1, gridZ1;
-        gridX0 = safeFloorDiv(coordX, sizeX);
-        gridY0 = safeFloorDiv(coordY, sizeY);
-        gridZ0 = safeFloorDiv(coordZ, sizeZ);
+        gridX0 = MDFUtil.safeFloorDiv(coordX, sizeX);
+        gridY0 = MDFUtil.safeFloorDiv(coordY, sizeY);
+        gridZ0 = MDFUtil.safeFloorDiv(coordZ, sizeZ);
         gridX1 = gridX0 + 1;
         gridY1 = gridY0 + 1;
         gridZ1 = gridZ0 + 1;
@@ -201,14 +152,24 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         gridVal6 = distribution.getRandom(hash6);
         gridVal7 = distribution.getRandom(hash7);
 
-        return trilerp(gridVal0, gridVal1, gridVal2, gridVal3, gridVal4, gridVal5, gridVal6, gridVal7, cellX, cellY, cellZ);
+        double x0, x1, x2, x3, y0, y1;
+
+        x0 = gridVal0 * (1 - cellX) + gridVal1 * cellX;
+        x1 = gridVal2 * (1 - cellX) + gridVal3 * cellX;
+        x2 = gridVal4 * (1 - cellX) + gridVal5 * cellX;
+        x3 = gridVal6 * (1 - cellX) + gridVal7 * cellX;
+
+        y0 = x0 * (1 - cellY) + x1 * cellY;
+        y1 = x2 * (1 - cellY) + x3 * cellY;
+
+        return y0 * (1 - cellZ) + y1 * cellZ;
     }
 
     public double evalSmoothValueNoise(long worldSeed, int funcSalt, int coordX, int coordY, int coordZ, int sizeX, int sizeY, int sizeZ) {
         int gridX0, gridY0, gridZ0, gridX1, gridY1, gridZ1;
-        gridX0 = safeFloorDiv(coordX, sizeX);
-        gridY0 = safeFloorDiv(coordY, sizeY);
-        gridZ0 = safeFloorDiv(coordZ, sizeZ);
+        gridX0 = MDFUtil.safeFloorDiv(coordX, sizeX);
+        gridY0 = MDFUtil.safeFloorDiv(coordY, sizeY);
+        gridZ0 = MDFUtil.safeFloorDiv(coordZ, sizeZ);
         gridX1 = gridX0 + 1;
         gridY1 = gridY0 + 1;
         gridZ1 = gridZ0 + 1;
@@ -218,7 +179,13 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         cellY = cellCoord(coordY, sizeY);
         cellZ = cellCoord(coordZ, sizeZ);
 
+        /// Smooth Step ///
+        cellX = cellX * cellX * (3.0D - 2.0D * cellX);
+        cellY = cellY * cellY * (3.0D - 2.0D * cellY);
+        cellZ = cellZ * cellZ * (3.0D - 2.0D * cellZ);
+
         long hash0, hash1, hash2, hash3, hash4, hash5, hash6, hash7;
+
         hash0 = MDFUtil.hashPosition(worldSeed, gridX0, gridY0, gridZ0, funcSalt);
         hash1 = MDFUtil.hashPosition(worldSeed, gridX1, gridY0, gridZ0, funcSalt);
         hash2 = MDFUtil.hashPosition(worldSeed, gridX0, gridY1, gridZ0, funcSalt);
@@ -229,6 +196,7 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         hash7 = MDFUtil.hashPosition(worldSeed, gridX1, gridY1, gridZ1, funcSalt);
 
         double gridVal0, gridVal1, gridVal2, gridVal3, gridVal4, gridVal5, gridVal6, gridVal7;
+
         gridVal0 = distribution.getRandom(hash0);
         gridVal1 = distribution.getRandom(hash1);
         gridVal2 = distribution.getRandom(hash2);
@@ -238,21 +206,18 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         gridVal6 = distribution.getRandom(hash6);
         gridVal7 = distribution.getRandom(hash7);
 
-        return smoothTrilerp(gridVal0, gridVal1, gridVal2, gridVal3, gridVal4, gridVal5, gridVal6, gridVal7, cellX, cellY, cellZ);
-    }
+        /// Trilinear Interpolation ///
+        double x0, x1, x2, x3, y0, y1;
 
-    /**
-     * No divide by 0, easy way of making it 2D.
-     *
-     * @param numerator
-     * @param denominator
-     * @return
-     */
-    public int safeFloorDiv(int numerator, int denominator) {
-        if (denominator == 0) {
-            return 0;
-        }
-        return StrictMath.floorDiv(numerator, denominator);
+        x0 = gridVal0 * (1 - cellX) + gridVal1 * cellX;
+        x1 = gridVal2 * (1 - cellX) + gridVal3 * cellX;
+        x2 = gridVal4 * (1 - cellX) + gridVal5 * cellX;
+        x3 = gridVal6 * (1 - cellX) + gridVal7 * cellX;
+
+        y0 = x0 * (1 - cellY) + x1 * cellY;
+        y1 = x2 * (1 - cellY) + x3 * cellY;
+
+        return y0 * (1 - cellZ) + y1 * cellZ;
     }
 
     public double cellCoord(int coord, int size) {
@@ -269,7 +234,7 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new ValueNoise(this.distribution, this.sizeX, this.sizeY, this.sizeZ, this.octaves, this.lacunarity, this.persistence, this.useSmoothstep, this.salt));
+        return visitor.apply(new ValueNoise(this.distribution, this.sizeX, this.sizeY, this.sizeZ, this.octaveHolder, this.lacunarityHolder, this.phases, this.persistenceHolder, this.amplitudes, this.useSmoothstep, this.saltHolder, this.salt));
     }
 
     @Override
@@ -292,24 +257,20 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         return sizeZ;
     }
 
-    @Override
-    public Optional<Integer> octaves() {
-        return octaves;
+    public Optional<Integer> octaveHolder() {
+        return octaveHolder;
     }
 
-    @Override
-    public Optional<Double> lacunarity() {
-        return lacunarity;
+    public Optional<Double> lacunarityHolder() {
+        return lacunarityHolder;
     }
 
-    @Override
-    public Optional<Double> persistence() {
-        return persistence;
+    public Optional<Double> persistenceHolder() {
+        return persistenceHolder;
     }
 
-    @Override
-    public Optional<Integer> salt() {
-        return salt;
+    public Optional<Integer> saltHolder() {
+        return saltHolder;
     }
 
     @Override
