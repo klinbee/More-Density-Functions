@@ -1,23 +1,27 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
-import com.klinbee.moredensityfunctions.util.MDFUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 import java.util.Optional;
 
 
 public record FloorModulo(DensityFunction numerator, DensityFunction denominator,
-                          Optional<DensityFunction> errorArg) implements DensityFunction {
-    private static final MapCodec<FloorModulo> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(FloorModulo::numerator),
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorModulo::denominator),
-            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(FloorModulo::errorArg)
-    ).apply(instance, (FloorModulo::new)));
+                          Optional<DensityFunction> errorArgHolder, DensityFunction errorArg
+) implements DensityFunction {
+    private static final MapCodec<FloorModulo> MAP_CODEC = RecordCodecBuilder.mapCodec(
+            (instance) -> instance.group(
+                    DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(FloorModulo::numerator),
+                    DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorModulo::denominator),
+                    DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(FloorModulo::errorArgHolder)
+            ).apply(instance, (numerator, denominator, errorArgHolder) ->
+                    new FloorModulo(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+            ));
     public static final KeyDispatchDataCodec<FloorModulo> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
@@ -26,10 +30,7 @@ public record FloorModulo(DensityFunction numerator, DensityFunction denominator
         int denominatorValue = Mth.floor(this.denominator.compute(pos));
 
         if (denominatorValue == 0) {
-            if (errorArg.isPresent()) {
-                return this.errorArg.get().compute(pos);
-            }
-            return MoreDensityFunctionsConstants.DEFAULT_ERROR;
+            return errorArg.compute(pos);
         }
 
         return StrictMath.floorMod(numeratorValue, denominatorValue);
@@ -42,7 +43,7 @@ public record FloorModulo(DensityFunction numerator, DensityFunction denominator
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new FloorModulo(this.numerator, this.denominator, this.errorArg));
+        return visitor.apply(new FloorModulo(this.numerator, this.denominator, this.errorArgHolder, this.errorArg));
     }
 
     public DensityFunction numerator() {
@@ -53,24 +54,36 @@ public record FloorModulo(DensityFunction numerator, DensityFunction denominator
         return denominator;
     }
 
-    public Optional<DensityFunction> errorArg() {
-        return errorArg;
+    public Optional<DensityFunction> errorArgHolder() {
+        return errorArgHolder;
     }
 
     @Override
     public double minValue() {
-        if (errorArg.isPresent()) {
-            return Math.min(this.errorArg.get().minValue(), Math.min(-Math.abs(this.denominator.minValue()), -Math.abs(this.denominator.maxValue())));
+        double minError = errorArg.minValue();
+        double minDenom = denominator.minValue();
+
+        if (Mth.floor(minDenom) < 0) {
+            // Worst case for negative: floorMod returns floor(minDenom) + 1
+            return Math.min(minError, Mth.floor(minDenom) + 1);
+        } else {
+            // Worst case for positive: floorMod returns 0
+            return Math.min(minError, 0);
         }
-        return Math.min(MoreDensityFunctionsConstants.DEFAULT_ERROR, Math.min(-Math.abs(this.denominator.minValue()), -Math.abs(this.denominator.maxValue())));
     }
 
     @Override
     public double maxValue() {
-        if (errorArg.isPresent()) {
-            return Math.max(this.errorArg.get().maxValue(), Math.max(Math.abs(this.denominator.minValue()), Math.abs(this.denominator.maxValue())));
+        double maxError = errorArg.maxValue();
+        double maxDenom = denominator.maxValue();
+
+        if (Mth.floor(maxDenom) > 0) {
+            // Worst case for negative: floorMod returns floor(maxDenom)  - 1
+            return Math.max(maxError, Mth.floor(maxDenom) - 1);
+        } else {
+            // Worst case for positive: floorMod returns 0
+            return Math.max(maxError, 0);
         }
-        return Math.max(MoreDensityFunctionsConstants.DEFAULT_ERROR, Math.max(Math.abs(this.denominator.minValue()), Math.abs(this.denominator.maxValue())));
     }
 
     @Override

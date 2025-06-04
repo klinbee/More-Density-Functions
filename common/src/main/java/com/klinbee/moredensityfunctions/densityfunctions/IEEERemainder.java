@@ -4,18 +4,23 @@ import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 import java.util.Optional;
 
 
 public record IEEERemainder(DensityFunction numerator, DensityFunction denominator,
-                            Optional<DensityFunction> errorArg) implements DensityFunction {
+                            Optional<DensityFunction> errorArgHolder,
+                            DensityFunction errorArg) implements DensityFunction {
     private static final MapCodec<IEEERemainder> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(IEEERemainder::numerator),
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(IEEERemainder::denominator),
-            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(IEEERemainder::errorArg)
-    ).apply(instance, (IEEERemainder::new)));
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(IEEERemainder::errorArgHolder)
+    ).apply(instance, (numerator, denominator, errorArgHolder) ->
+            new IEEERemainder(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+    ));
     public static final KeyDispatchDataCodec<IEEERemainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
@@ -24,10 +29,7 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
         double denominatorValue = this.denominator.compute(pos);
 
         if (denominatorValue == 0) {
-            if (errorArg.isPresent()) {
-                return this.errorArg.get().compute(pos);
-            }
-            return MoreDensityFunctionsConstants.DEFAULT_ERROR;
+            return errorArg.compute(pos);
         }
 
         return StrictMath.IEEEremainder(numeratorValue, denominatorValue);
@@ -40,7 +42,7 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new IEEERemainder(this.numerator, this.denominator, this.errorArg));
+        return visitor.apply(new IEEERemainder(this.numerator, this.denominator, this.errorArgHolder, this.errorArg));
     }
 
     public DensityFunction numerator() {
@@ -51,24 +53,35 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
         return denominator;
     }
 
-    public Optional<DensityFunction> errorArg() {
-        return errorArg;
+    public Optional<DensityFunction> errorArgHolder() {
+        return errorArgHolder;
     }
 
     @Override
     public double minValue() {
-        if (errorArg.isPresent()) {
-            return Math.min(this.errorArg.get().minValue(), Math.min(-Math.abs(this.denominator.minValue()), -Math.abs(this.denominator.maxValue())));
-        }
-        return Math.min(MoreDensityFunctionsConstants.DEFAULT_ERROR, Math.min(-Math.abs(this.denominator.minValue()), -Math.abs(this.denominator.maxValue())));
+        double minError = errorArg.minValue();
+        double minDenom = denominator.minValue();
+        double maxDenom = denominator.maxValue();
+
+        // Most negative possible: -|y|/2 where |y| is maximized
+
+        double largestMagnitude = Math.max(Math.abs(minDenom), Math.abs(maxDenom));
+
+        // Conservative: assume both error and mathematical minimum are possible
+        return Math.min(minError, -largestMagnitude / 2);
     }
 
     @Override
     public double maxValue() {
-        if (errorArg.isPresent()) {
-            return Math.max(this.errorArg.get().maxValue(), Math.max(Math.abs(this.denominator.minValue()), Math.abs(this.denominator.maxValue())));
-        }
-        return Math.max(MoreDensityFunctionsConstants.DEFAULT_ERROR, Math.max(Math.abs(this.denominator.minValue()), Math.abs(this.denominator.maxValue())));
+        double maxError = errorArg.maxValue();
+        double minDenom = denominator.minValue();
+        double maxDenom = denominator.maxValue();
+
+        // Most positive possible: |y|/2 where |y| is maximized
+        double largestMagnitude = Math.max(Math.abs(minDenom), Math.abs(maxDenom));
+
+        // Conservative: assume both error and mathematical maximum are possible
+        return Math.max(maxError, largestMagnitude / 2);
     }
 
     @Override

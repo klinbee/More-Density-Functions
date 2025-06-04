@@ -6,21 +6,26 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 import java.util.Optional;
 
-/*
-TODO: Make this function's minValue()/maxValue() functions more accurate...
- */
-public record Power(DensityFunction base, DensityFunction exponent, Optional<Double> maxOutput,
-                    Optional<Double> minOutput, Optional<DensityFunction> errorArg) implements DensityFunction {
+public record Power(DensityFunction base, DensityFunction exponent, Optional<Double> maxOutputHolder, double maxOutput,
+                    Optional<Double> minOutputHolder, double minOutput, Optional<DensityFunction> errorArgHolder,
+                    DensityFunction errorArg) implements DensityFunction {
     private static final MapCodec<Power> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("base").forGetter(Power::base),
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("exponent").forGetter(Power::exponent),
-            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Power::minOutput),
-            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Power::maxOutput),
-            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Power::errorArg)
-    ).apply(instance, (Power::new)));
+            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(Power::minOutputHolder),
+            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(Power::maxOutputHolder),
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Power::errorArgHolder)
+    ).apply(instance, (base, exponent, maxOutputHolder,
+                       minOutputHolder, errorArgHolder) ->
+            new Power(base, exponent,
+                    maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
+                    minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
+                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+    ));
     public static final KeyDispatchDataCodec<Power> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
@@ -38,24 +43,12 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
 
         double result = StrictMath.pow(baseValue, exponentValue);
 
-        // Ain't no way I doin' all those cases, Power is messed up.
+        // Ain't no way I'm doin' all those cases, Power is messed up.
         if (Double.isNaN(result)) {
-            if (errorArg().isPresent()) {
-                return errorArg.get().compute(pos);
-            }
-            return MoreDensityFunctionsConstants.DEFAULT_ERROR;
+            return errorArg.compute(pos);
         }
 
-
-        if (result > this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT)) {
-            return this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT);
-        }
-
-        if (result < this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT)) {
-            return this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT);
-        }
-
-        return result;
+        return Math.max(Math.min(result, maxOutput), minOutput);
     }
 
     @Override
@@ -65,7 +58,7 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Power(this.base, this.exponent, this.minOutput, this.maxOutput, this.errorArg));
+        return visitor.apply(new Power(this.base, this.exponent, this.minOutputHolder, this.minOutput, this.maxOutputHolder, this.maxOutput, this.errorArgHolder, this.errorArg));
     }
 
     public DensityFunction base() {
@@ -76,27 +69,27 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
         return exponent;
     }
 
-    @Override
-    public Optional<Double> minOutput() {
-        return minOutput;
+    public Optional<Double> minOutputHolder() {
+        return minOutputHolder;
     }
 
-    @Override
-    public Optional<Double> maxOutput() {
-        return maxOutput;
+    public Optional<Double> maxOutputHolder() {
+        return maxOutputHolder;
     }
 
-    public Optional<DensityFunction> errorArg() {
-        return errorArg;
+    public Optional<DensityFunction> errorArgHolder() {
+        return errorArgHolder;
     }
 
     @Override
     public double minValue() {
+        // This is not happening.
         return Double.NEGATIVE_INFINITY;
     }
 
     @Override
     public double maxValue() {
+        // This is not happening.
         return Double.POSITIVE_INFINITY;
     }
 

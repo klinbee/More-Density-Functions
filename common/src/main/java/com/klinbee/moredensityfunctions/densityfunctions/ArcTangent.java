@@ -5,9 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-/*
-TODO: IMPROPER LIMITS/MIN/MAX
- */
 public record ArcTangent(DensityFunction arg) implements DensityFunction {
     private static final MapCodec<ArcTangent> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(ArcTangent::arg)

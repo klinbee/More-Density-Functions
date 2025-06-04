@@ -8,19 +8,29 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 import java.util.Optional;
 
 
-public record FloorDivide(DensityFunction numerator, DensityFunction denominator, Optional<Double> maxOutput,
-                          Optional<Double> minOutput, Optional<DensityFunction> errorArg) implements DensityFunction {
+public record FloorDivide(DensityFunction numerator, DensityFunction denominator,
+                          Optional<Double> maxOutputHolder, double maxOutput,
+                          Optional<Double> minOutputHolder, double minOutput,
+                          Optional<DensityFunction> errorArgHolder, DensityFunction errorArg
+) implements DensityFunction {
     private static final MapCodec<FloorDivide> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(FloorDivide::numerator),
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorDivide::denominator),
-            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(FloorDivide::minOutput),
-            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(FloorDivide::maxOutput),
-            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(FloorDivide::errorArg)
-    ).apply(instance, (FloorDivide::new)));
+            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(FloorDivide::minOutputHolder),
+            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(FloorDivide::maxOutputHolder),
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(FloorDivide::errorArgHolder)
+    ).apply(instance, (numerator, denominator, maxOutputHolder,
+                       minOutputHolder, errorArgHolder) ->
+            new FloorDivide(numerator, denominator,
+                    maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
+                    minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
+                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+    ));
     public static final KeyDispatchDataCodec<FloorDivide> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
@@ -29,24 +39,12 @@ public record FloorDivide(DensityFunction numerator, DensityFunction denominator
         int denominatorValue = Mth.floor(this.denominator.compute(pos));
 
         if (denominatorValue == 0) {
-            if (errorArg.isPresent()) {
-                return this.errorArg.get().compute(pos);
-            }
-            return MoreDensityFunctionsConstants.DEFAULT_ERROR;
+            return errorArg.compute(pos);
         }
 
         double result = StrictMath.floorDiv(numeratorValue, denominatorValue);
 
-
-        if (result > this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT)) {
-            return this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT);
-        }
-
-        if (result < this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT)) {
-            return this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT);
-        }
-
-        return result;
+        return Math.max(Math.min(result, maxOutput), minOutput);
     }
 
     @Override
@@ -56,7 +54,7 @@ public record FloorDivide(DensityFunction numerator, DensityFunction denominator
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new FloorDivide(this.numerator, this.denominator, this.minOutput, this.maxOutput, this.errorArg));
+        return visitor.apply(new FloorDivide(this.numerator, this.denominator, this.minOutputHolder, this.minOutput, this.maxOutputHolder, this.maxOutput, this.errorArgHolder, this.errorArg));
     }
 
     public DensityFunction numerator() {
@@ -68,33 +66,27 @@ public record FloorDivide(DensityFunction numerator, DensityFunction denominator
     }
 
     @Override
-    public Optional<Double> minOutput() {
-        return minOutput;
+    public Optional<Double> minOutputHolder() {
+        return minOutputHolder;
     }
 
     @Override
-    public Optional<Double> maxOutput() {
-        return maxOutput;
+    public Optional<Double> maxOutputHolder() {
+        return maxOutputHolder;
     }
 
-    public Optional<DensityFunction> errorArg() {
-        return errorArg;
+    public Optional<DensityFunction> errorArgHolder() {
+        return errorArgHolder;
     }
 
     @Override
     public double minValue() {
-        if (errorArg.isPresent()) {
-            return Math.min(this.errorArg.get().minValue(), this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT));
-        }
-        return Math.min(MoreDensityFunctionsConstants.DEFAULT_ERROR, this.minOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT));
+        return Math.min(this.errorArg.minValue(), this.minOutput);
     }
 
     @Override
     public double maxValue() {
-        if (errorArg.isPresent()) {
-            return Math.max(this.errorArg.get().maxValue(), this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT));
-        }
-        return Math.max(MoreDensityFunctionsConstants.DEFAULT_ERROR, this.maxOutput.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT));
+        return Math.max(this.errorArg.maxValue(), this.maxOutput);
     }
 
     @Override

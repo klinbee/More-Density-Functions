@@ -6,18 +6,27 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 import java.util.Optional;
 
 
-public record SquareRoot(DensityFunction arg, Optional<Double> maxOutput, Optional<Double> minOutput,
-                         Optional<DensityFunction> errorArg) implements DensityFunction {
+public record SquareRoot(DensityFunction arg, Optional<Double> maxOutputHolder, double maxOutput,
+                         Optional<Double> minOutputHolder, double minOutput,
+                         Optional<DensityFunction> errorArgHolder,
+                         DensityFunction errorArg) implements DensityFunction {
     private static final MapCodec<SquareRoot> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(SquareRoot::arg),
-            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(SquareRoot::minOutput),
-            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(SquareRoot::maxOutput),
-            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(SquareRoot::errorArg)
-    ).apply(instance, (SquareRoot::new)));
+            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(SquareRoot::minOutputHolder),
+            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(SquareRoot::maxOutputHolder),
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(SquareRoot::errorArgHolder)
+    ).apply(instance, (arg, maxOutputHolder,
+                       minOutputHolder, errorArgHolder) ->
+            new SquareRoot(arg,
+                    maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
+                    minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
+                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+    ));
     public static final KeyDispatchDataCodec<SquareRoot> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {
@@ -29,10 +38,7 @@ public record SquareRoot(DensityFunction arg, Optional<Double> maxOutput, Option
         double discriminantValue = this.arg.compute(pos);
 
         if (discriminantValue < 0) {
-            if (errorArg.isPresent()) {
-                return this.errorArg.get().compute(pos);
-            }
-            return MoreDensityFunctionsConstants.DEFAULT_ERROR;
+            return errorArg.compute(pos);
         }
 
         return this.eval(discriminantValue);
@@ -45,34 +51,29 @@ public record SquareRoot(DensityFunction arg, Optional<Double> maxOutput, Option
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new SquareRoot(this.arg, this.minOutput, this.maxOutput, this.errorArg));
+        return visitor.apply(new SquareRoot(this.arg, this.minOutputHolder, this.minOutput, this.maxOutputHolder, this.maxOutput, this.errorArgHolder, this.errorArg));
     }
 
     public DensityFunction arg() {
         return arg;
     }
 
-    @Override
-    public Optional<Double> minOutput() {
-        return minOutput;
+    public Optional<Double> minOutputHolder() {
+        return minOutputHolder;
     }
 
-    @Override
-    public Optional<Double> maxOutput() {
-        return maxOutput;
+    public Optional<Double> maxOutputHolder() {
+        return maxOutputHolder;
     }
 
-    public Optional<DensityFunction> errorArg() {
-        return errorArg;
+    public Optional<DensityFunction> errorArgHolder() {
+        return errorArgHolder;
     }
 
     @Override
     public double minValue() {
         if (this.arg.minValue() < 0) {
-            if (errorArg.isPresent()) {
-                return errorArg.get().minValue();
-            }
-            return MoreDensityFunctionsConstants.DEFAULT_ERROR;
+            return errorArg.minValue();
         }
         return this.eval(this.arg.minValue());
     }
@@ -80,10 +81,7 @@ public record SquareRoot(DensityFunction arg, Optional<Double> maxOutput, Option
     @Override
     public double maxValue() {
         if (this.arg.maxValue() < 0) {
-            if (errorArg.isPresent()) {
-                return errorArg.get().maxValue();
-            }
-            return MoreDensityFunctionsConstants.DEFAULT_ERROR;
+            return errorArg.maxValue();
         }
         return this.eval(this.arg.maxValue());
     }

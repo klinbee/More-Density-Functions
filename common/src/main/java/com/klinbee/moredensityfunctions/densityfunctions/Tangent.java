@@ -4,17 +4,21 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 import java.util.Optional;
 
 /*
 TODO: IMPROPER LIMITS/MIN/MAX
  */
-public record Tangent(DensityFunction arg, Optional<DensityFunction> errorArg) implements DensityFunction {
+public record Tangent(DensityFunction arg, Optional<DensityFunction> errorArgHolder,
+                      DensityFunction errorArg) implements DensityFunction {
     private static final MapCodec<Tangent> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Tangent::arg),
-            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Tangent::errorArg)
-    ).apply(instance, (Tangent::new)));
+            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Tangent::errorArgHolder)
+    ).apply(instance, (argument, errorArgHolder) ->
+            new Tangent(argument, errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+    ));
     public static final KeyDispatchDataCodec<Tangent> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {
@@ -33,7 +37,7 @@ public record Tangent(DensityFunction arg, Optional<DensityFunction> errorArg) i
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Tangent(this.arg, this.errorArg));
+        return visitor.apply(new Tangent(this.arg, this.errorArgHolder, this.errorArg));
     }
 
     public DensityFunction arg() {

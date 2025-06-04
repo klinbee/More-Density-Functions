@@ -8,8 +8,8 @@ import net.minecraft.util.KeyDispatchDataCodec;
 
 public record UniformDistribution(double min, double max) implements RandomDistribution {
     private static final MapCodec<UniformDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            Codec.doubleRange(-Double.MAX_VALUE,Double.MAX_VALUE).fieldOf("min").forGetter(UniformDistribution::min),
-            Codec.doubleRange(-Double.MAX_VALUE,Double.MAX_VALUE).fieldOf("max").forGetter(UniformDistribution::max)
+            Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min").forGetter(UniformDistribution::min),
+            Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max").forGetter(UniformDistribution::max)
     ).apply(instance, (UniformDistribution::new)));
     public static final KeyDispatchDataCodec<UniformDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

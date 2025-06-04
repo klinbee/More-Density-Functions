@@ -14,7 +14,7 @@ public record GammaDistribution(double shape, double scale) implements RandomDis
     public static final KeyDispatchDataCodec<GammaDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double getRandom(long hashedSeed) {
-        return scale*MDFUtil.getGamma(shape, hashedSeed);
+        return scale * MDFUtil.getGamma(shape, hashedSeed);
     }
 
     @Override

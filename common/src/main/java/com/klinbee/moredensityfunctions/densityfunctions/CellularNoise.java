@@ -22,19 +22,11 @@ public record CellularNoise(RandomDistribution distribution,
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_y").forGetter(CellularNoise::sizeY),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_z").forGetter(CellularNoise::sizeZ),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.optionalFieldOf("saltHolder").forGetter(CellularNoise::saltHolder)
-    ).apply(instance, (distribution, sizeX, sizeY, sizeZ, saltHolder) -> new CellularNoise(distribution, sizeX, sizeY, sizeZ, saltHolder, saltHolder.orElse(0))));
+    ).apply(instance, (distribution, sizeX, sizeY, sizeZ, saltHolder) ->
+            new CellularNoise(distribution, sizeX, sizeY, sizeZ, saltHolder, saltHolder.orElse(0))));
     public static final KeyDispatchDataCodec<CellularNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
     private static long worldSeed;
     private static boolean worldSeedInitialized;
-
-    public CellularNoise(RandomDistribution distribution, int sizeX, int sizeY, int sizeZ, Optional<Integer> saltHolder, int salt) {
-        this.distribution = distribution;
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-        this.sizeZ = sizeZ;
-        this.saltHolder = saltHolder;
-        this.salt = salt;
-    }
 
     @Override
     public double compute(FunctionContext context) {
@@ -46,7 +38,7 @@ public record CellularNoise(RandomDistribution distribution,
                 throw new RuntimeException(e);
             }
         }
-        
+
         int x = MDFUtil.safeFloorDiv(context.blockX(), sizeX);
         int y = MDFUtil.safeFloorDiv(context.blockY(), sizeY);
         int z = MDFUtil.safeFloorDiv(context.blockZ(), sizeZ);

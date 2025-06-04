@@ -275,12 +275,31 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
 
     @Override
     public double minValue() {
-        return this.distribution.minValue();
+
+        double minimum = this.distribution.minValue();
+        double amplitudeSum = 0.0D;
+
+        if (amplitudes != null) {
+            for (double amplitude : amplitudes) {
+                amplitudeSum += amplitude;
+            }
+            minimum += amplitudeSum * minimum;
+        }
+        return minimum;
     }
 
     @Override
     public double maxValue() {
-        return this.distribution.maxValue();
+        double maximum = this.distribution.minValue();
+        double amplitudeSum = 0.0D;
+
+        if (amplitudes != null) {
+            for (double amplitude : amplitudes) {
+                amplitudeSum += amplitude;
+            }
+            maximum += amplitudeSum * maximum;
+        }
+        return maximum;
     }
 
     @Override
