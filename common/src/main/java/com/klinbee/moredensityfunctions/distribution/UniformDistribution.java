@@ -10,7 +10,12 @@ public record UniformDistribution(double min, double max) implements RandomDistr
     private static final MapCodec<UniformDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min").forGetter(UniformDistribution::min),
             Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max").forGetter(UniformDistribution::max)
-    ).apply(instance, (UniformDistribution::new)));
+    ).apply(instance, (min, max) -> {
+        if (min > max) {
+            throw new IllegalArgumentException("Min must be less than max!");
+        }
+        return new UniformDistribution(min, max);
+    }));
     public static final KeyDispatchDataCodec<UniformDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double getRandom(long hashedSeed) {
@@ -28,11 +33,11 @@ public record UniformDistribution(double min, double max) implements RandomDistr
     }
 
     public double minValue() {
-        return 1.0D;
+        return min;
     }
 
     public double maxValue() {
-        return Double.MAX_VALUE;
+        return max;
     }
 
     @Override
