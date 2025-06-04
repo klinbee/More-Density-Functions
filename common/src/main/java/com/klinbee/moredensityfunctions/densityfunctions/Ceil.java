@@ -1,8 +1,10 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.util.MDFUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 
@@ -13,7 +15,7 @@ public record Ceil(DensityFunction arg) implements DensityFunction {
     public static final KeyDispatchDataCodec<Ceil> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {
-        return StrictMath.ceil(density);
+        return Mth.ceil(density);
     }
 
     @Override

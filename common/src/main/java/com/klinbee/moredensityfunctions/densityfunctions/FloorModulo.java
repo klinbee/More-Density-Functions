@@ -1,9 +1,11 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.util.MDFUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Optional;
@@ -20,8 +22,8 @@ public record FloorModulo(DensityFunction numerator, DensityFunction denominator
 
     @Override
     public double compute(FunctionContext pos) {
-        int numeratorValue = (int) StrictMath.floor(this.numerator.compute(pos));
-        int denominatorValue = (int) StrictMath.floor(this.denominator.compute(pos));
+        int numeratorValue = Mth.floor(this.numerator.compute(pos));
+        int denominatorValue = Mth.floor(this.denominator.compute(pos));
 
         if (denominatorValue == 0) {
             if (errorArg.isPresent()) {

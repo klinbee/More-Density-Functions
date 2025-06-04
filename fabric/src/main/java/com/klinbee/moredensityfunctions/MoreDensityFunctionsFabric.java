@@ -23,6 +23,7 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
 
         DynamicRegistries.register(MoreDensityFunctionsConstants.RANDOM_DISTRIBUTION, RandomDistribution.CODEC);
 
+        ///  Random Distributions ///
         registerRandomDistribution("beta", BetaDistribution.CODEC.codec());
         registerRandomDistribution("binomial", BinomialDistribution.CODEC.codec());
         registerRandomDistribution("exponential", ExponentialDistribution.CODEC.codec());
