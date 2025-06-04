@@ -1,6 +1,5 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.klinbee.moredensityfunctions.distribution.UniformDistribution;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

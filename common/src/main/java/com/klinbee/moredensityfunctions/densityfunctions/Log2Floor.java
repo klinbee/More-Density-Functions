@@ -44,7 +44,7 @@ public record Log2Floor(DensityFunction arg, Optional<Double> maxOutputHolder, d
 
     public double eval(double density) {
         long bits = Double.doubleToLongBits(density);
-        return (int)((bits >>> 52) & 0x7FF) - 1023; // Exponent
+        return (int) ((bits >>> 52) & 0x7FF) - 1023; // Exponent
     }
 
     @Override
