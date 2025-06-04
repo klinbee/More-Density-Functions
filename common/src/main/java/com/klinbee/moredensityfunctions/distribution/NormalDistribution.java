@@ -28,11 +28,11 @@ public record NormalDistribution(double mean, double stdDev) implements RandomDi
     }
 
     public double minValue() {
-        return 0.0D;
+        return -Double.MAX_VALUE;
     }
 
     public double maxValue() {
-        return 1.0D;
+        return Double.MAX_VALUE;
     }
 
     @Override
