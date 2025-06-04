@@ -2,6 +2,8 @@ package com.klinbee.moredensityfunctions.util;
 
 public class MDFUtil {
 
+    private static final long GOLDEN_RATIO = 0x9E3779B97F4A7C15L;
+    private static final long MAGIC_PRIME = 0xBF58476D1CE4E5B9L;
 
     public static int getBinomial(int n, double p, long seed) {
         int successes = 0;
@@ -106,23 +108,18 @@ public class MDFUtil {
 
     public static double getBeta(double alpha, double beta, long seed) {
         double x = MDFUtil.getGamma(alpha, seed);
-        double y = MDFUtil.getGamma(beta, mix(seed+1));
+        double y = MDFUtil.getGamma(beta, mix(seed + 1));
         return x / (x + y);
     }
 
 
+    /**
+     * Wicked Optimized Hash Function
+     * If you find any issues with this, lmk. But I've tested it a decent bit.
+     */
     public static long hashPosition(long worldSeed, int x, int y, int z, int salt) {
-        long GOLDEN_RATIO = 0x9E3779B97F4A7C15L;
-        long hash = worldSeed ^
-                ((long)x * GOLDEN_RATIO) ^
-                ((long)y * (GOLDEN_RATIO << 1)) ^
-                ((long)z * (GOLDEN_RATIO << 2)) ^
-                ((long)salt * (GOLDEN_RATIO << 3));
-
+        long hash = MAGIC_PRIME * (worldSeed + x + ((long) y << 16) + ((long) z << 32) + ((long) salt << 48));
         hash ^= hash >>> 32;
-        hash *= GOLDEN_RATIO;
-        hash ^= hash >>> 32;
-
         return hash;
     }
 
@@ -132,7 +129,7 @@ public class MDFUtil {
 
     /**
      * Get an integer in range [0, bound) without modulo bias
-     * Uses Lemire's nearly-divisionless method - fastest approach
+     * Uses Lemire's nearly-divisionless method
      */
     public static int getInt(long seed, int bound) {
         if (bound <= 0) throw new IllegalArgumentException("bound must be positive");
@@ -152,7 +149,7 @@ public class MDFUtil {
             }
         }
 
-        return (int)(m >>> 32);
+        return (int) (m >>> 32);
     }
 
     /**
@@ -172,11 +169,12 @@ public class MDFUtil {
     }
 
     /**
-     * Mix function to generate additional randomness when needed
+     * Simple Mixing Function
+     * Okay because Positional Hash is good.
      */
     private static long mix(long seed) {
-        seed = (seed ^ (seed >>> 33)) * 0xFF51AFD7ED558CCDL;
-        seed = (seed ^ (seed >>> 33)) * 0xC4CEB9FE1A85EC53L;
-        return seed ^ (seed >>> 33);
+        seed *= GOLDEN_RATIO;
+        seed ^= seed >>> 32;
+        return seed;
     }
 }
