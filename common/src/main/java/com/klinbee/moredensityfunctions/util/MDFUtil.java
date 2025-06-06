@@ -5,7 +5,6 @@ public class MDFUtil {
     ///  Hash Function Constant Longs ///
 
     private static final long GOLDEN_RATIO = 0x9E3779B97F4A7C15L;
-    private static final long MAGIC_PRIME = 0xBF58476D1CE4E5B9L;
 
     /// Hashing RNG ///
 
@@ -18,10 +17,13 @@ public class MDFUtil {
      * Where n and m have very little correlation, and are spread among the long range
      * <p>
      * This hash was found by optimizing and testing ~10 other candidate hash functions
-     * Resulted in an ~47% avalanching with very fast operation time compared to similar hashes
-     * Range tested was the 60mil x 60mil x 60mil MC coord range, along with the full seed/salt range (long/int range).
+     * The main optimization is packing xy and zsalt together into two 64-bit numbers
+     * The prime constants are all also binary concatenated primes
+     * E.g. The top and bottom 32-bits are prime, and so is the full 64-bit number
      * <p>
-     * PLEASE let me know if this results in issues, lol thanks ~Klinbee
+     * PLEASE let me know if this results in issues
+     * I had a lot of trouble researching this and finding good candidates...
+     * lol thanks ~Klinbee
      *
      * @param worldSeed The literal /seed, seed.
      * @param x         The x cell value input
@@ -31,8 +33,17 @@ public class MDFUtil {
      * @return The long seed value for the input position
      */
     public static long hashPosition(long worldSeed, int x, int y, int z, int salt) {
-        long hash = MAGIC_PRIME * (worldSeed + x + ((long) y << 16) + ((long) z << 32) + ((long) salt << 48));
-        hash ^= hash >>> 32;
+        // high 32-bits x, low 32-bits = y
+        long xy = ((long)x << 32) | (y & 0xFFFFFFFFL);
+        // high 32-bits = z, low 32-bits = salt
+        long zsalt = ((long)z << 32) | (salt & 0xFFFFFFFFL);
+
+        long hash = worldSeed;
+        hash ^= xy * 5490034563487805519L;
+        hash ^= zsalt * 8951897656766556691L;
+        hash *= 6019079666967813221L;
+        hash ^= hash << 19;
+
         return hash;
     }
 
