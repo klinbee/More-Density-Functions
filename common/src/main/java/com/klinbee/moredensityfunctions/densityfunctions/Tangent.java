@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
