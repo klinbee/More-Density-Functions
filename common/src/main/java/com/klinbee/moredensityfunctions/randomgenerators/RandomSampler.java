@@ -2,6 +2,21 @@ package com.klinbee.moredensityfunctions.randomgenerators;
 
 public interface RandomSampler {
 
+    /// World Seed Storage
+
+    /**
+     * <p>Holds the WorldSeed
+     * <p>Its kind of safe? I did test, and the {@code ChunkMapMixin} goes off everytime
+     * a world is joined, so the {@code worldSeed} <i>should</i> always be set to the world you join.
+     */
+    class WorldSeedHolder {
+        static volatile long worldSeed;
+
+        public static void setWorldSeed(long seed) {
+            worldSeed = seed;
+        }
+    }
+
     ///  Sampler Builders
 
     static BetaSampler buildBeta(double alpha, double beta) {
@@ -66,20 +81,20 @@ public interface RandomSampler {
      * <p>The prime constants are binary concatenated primes. E.g. The top and bottom 32-bits and the {@code long} value itself are all primes.
      * <p>PLEASE let me know if this results in issues. I am not a number theory expert, just a nerd that likes programming and math.
      * Thank you!
-     * @param worldSeed The literal /seed, seed.
+     *
      * @param x         The x cell value input
      * @param y         The y cell value input
      * @param z         The z cell value input
      * @param salt      Randomization factor for different noises, defined by YOU, the user
      * @return The long seed value for the input position
      */
-    static long hashPosition(long worldSeed, int x, int y, int z, int salt) {
+    static long hashPosition(int x, int y, int z, int salt) {
         // high 32-bits x, low 32-bits = y
         long xy = ((long) x << 32) | (y & 0xFFFFFFFFL);
         // high 32-bits = z, low 32-bits = salt
         long zsalt = ((long) z << 32) | (salt & 0xFFFFFFFFL);
 
-        long seed = worldSeed;
+        long seed = WorldSeedHolder.worldSeed;
         seed ^= xy * 5490034563487805519L;
         seed ^= zsalt * 8951897656766556691L;
         seed *= 6019079666967813221L;
@@ -98,7 +113,7 @@ public interface RandomSampler {
      */
     static long mix(long seed) {
         seed = seed * 6364136223846793005L + 1442695040888963407L; // PCG Constants
-        long finalSeed = ((seed >>> (int)(seed >>> 59) + 5) ^ seed) * -4132994306676758123L;
+        long finalSeed = ((seed >>> (int) (seed >>> 59) + 5) ^ seed) * -4132994306676758123L;
         return finalSeed >>> 43 ^ finalSeed;
     }
 
@@ -107,6 +122,7 @@ public interface RandomSampler {
     /**
      * <p>Returns a {@code double} purely by converting a long value into a double on the range [0, 1)
      * <p>Please read {@code hashPosition(...)} for more details on RNG implementation.
+     *
      * @param seed current rng seed
      * @return double on the range [0,1)
      */

@@ -11,18 +11,14 @@ public class MoreDensityFunctionsCommon {
     // code that gets invoked by the entry point of the loader specific projects.
 
     // For capturing seed unfortunately...
-    private static long worldSeed = 0;
-    private static boolean worldSeedInitialized = false;
+    private static volatile long worldSeed;
 
     public static void setWorldSeed(long seed) {
         worldSeed = seed;
-        worldSeedInitialized = true;
     }
 
-    public static long getWorldSeed() throws IllegalAccessException {
-        if (!worldSeedInitialized) {
-            throw new IllegalAccessException("MoreDensityFunctions: World Seed not yet Initialized.");
-        }
+    // UNSAFE
+    public static long getWorldSeed() {
         return worldSeed;
     }
 

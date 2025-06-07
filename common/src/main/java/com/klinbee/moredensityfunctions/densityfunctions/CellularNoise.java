@@ -26,24 +26,14 @@ public record CellularNoise(RandomDistribution distribution,
     ).apply(instance, (distribution, sizeX, sizeY, sizeZ, saltHolder) ->
             new CellularNoise(distribution, sizeX, sizeY, sizeZ, saltHolder, saltHolder.orElse(0))));
     public static final KeyDispatchDataCodec<CellularNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-    private static long worldSeed;
-    private static boolean worldSeedInitialized;
 
     @Override
     public double compute(FunctionContext context) {
-        if (!worldSeedInitialized) {
-            try {
-                worldSeed = MoreDensityFunctionsCommon.getWorldSeed();
-                worldSeedInitialized = true;
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
 
         int x = MDFUtil.safeFloorDiv(context.blockX(), sizeX);
         int y = MDFUtil.safeFloorDiv(context.blockY(), sizeY);
         int z = MDFUtil.safeFloorDiv(context.blockZ(), sizeZ);
-        long hash = RandomSampler.hashPosition(worldSeed, x, y, z, salt);
+        long hash = RandomSampler.hashPosition(x, y, z, salt);
 
         return distribution.getRandom(hash);
     }

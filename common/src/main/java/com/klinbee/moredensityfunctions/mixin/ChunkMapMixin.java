@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.mixin;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsCommon;
+import com.klinbee.moredensityfunctions.randomgenerators.RandomSampler;
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
@@ -22,7 +23,8 @@ import java.util.function.Supplier;
 @Mixin(ChunkMap.class)
 public class ChunkMapMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void MoreDensityFunctions_ChunkMap_captureWorldSeed(ServerLevel $$0, LevelStorageSource.LevelStorageAccess $$1, DataFixer $$2, StructureTemplateManager $$3, Executor $$4, BlockableEventLoop $$5, LightChunkGetter $$6, ChunkGenerator $$7, ChunkProgressListener $$8, ChunkStatusUpdateListener $$9, Supplier $$10, int $$11, boolean $$12, CallbackInfo ci) {
-        MoreDensityFunctionsCommon.setWorldSeed($$0.getSeed());
+    private void MoreDensityFunctions_ChunkMap_captureWorldSeed(ServerLevel level, LevelStorageSource.LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager structureTemplateManager, Executor executor, BlockableEventLoop blockableEventLoop, LightChunkGetter $$6, ChunkGenerator $$7, ChunkProgressListener $$8, ChunkStatusUpdateListener $$9, Supplier $$10, int $$11, boolean $$12, CallbackInfo ci) {
+        RandomSampler.WorldSeedHolder.setWorldSeed(level.getSeed());
+        // DEBUG: System.out.println("MoreDensityFunctions, WorldSeed set!: " + level.getSeed());
     }
 }

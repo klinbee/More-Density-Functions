@@ -45,8 +45,6 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
                 persistence, amplitudes, useSmoothstep, saltHolder, salt);
     }));
     public static final KeyDispatchDataCodec<ValueNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-    private static long worldSeed;
-    private static boolean worldSeedInitialized;
 
     public static double[] computeNoiseRatios(int octaves, double ratio) {
         double[] ratios = new double[octaves];
@@ -60,14 +58,6 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
 
     @Override
     public double compute(FunctionContext context) {
-        if (!worldSeedInitialized) {
-            try {
-                worldSeed = MoreDensityFunctionsCommon.getWorldSeed();
-                worldSeedInitialized = true;
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
 
         int coordX, coordY, coordZ;
         coordX = context.blockX();
@@ -75,13 +65,12 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         coordZ = context.blockZ();
 
         if (useSmoothstep) {
-            double noiseResult = evalSmoothValueNoise(worldSeed, salt, coordX, coordY, coordZ, sizeX, sizeY, sizeZ);
+            double noiseResult = evalSmoothValueNoise(salt, coordX, coordY, coordZ, sizeX, sizeY, sizeZ);
             if (phases == null) {
                 return noiseResult;
             }
             for (int i = 0; i < phases.length; i++) {
-                noiseResult += amplitudes[i] * evalSmoothValueNoise(
-                        worldSeed, salt, coordX, coordY, coordZ,
+                noiseResult += amplitudes[i] * evalSmoothValueNoise(salt, coordX, coordY, coordZ,
                         Mth.floor(sizeX * phases[i]),
                         Mth.floor(sizeY * phases[i]),
                         Mth.floor(sizeZ * phases[i]));
@@ -89,13 +78,12 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
 
             return noiseResult;
         }
-        double noiseResult = evalLerpValueNoise(worldSeed, salt, coordX, coordY, coordZ, sizeX, sizeY, sizeZ);
+        double noiseResult = evalLerpValueNoise(salt, coordX, coordY, coordZ, sizeX, sizeY, sizeZ);
         if (phases == null) {
             return noiseResult;
         }
         for (int i = 0; i < phases.length; i++) {
-            noiseResult += amplitudes[i] * evalLerpValueNoise(
-                    worldSeed, salt, coordX, coordY, coordZ,
+            noiseResult += amplitudes[i] * evalLerpValueNoise(salt, coordX, coordY, coordZ,
                     Mth.floor(sizeX * phases[i]),
                     Mth.floor(sizeY * phases[i]),
                     Mth.floor(sizeZ * phases[i]));
@@ -104,7 +92,7 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         return noiseResult;
     }
 
-    public double evalLerpValueNoise(long worldSeed, int funcSalt, int coordX, int coordY, int coordZ, int sizeX, int sizeY, int sizeZ) {
+    public double evalLerpValueNoise(int funcSalt, int coordX, int coordY, int coordZ, int sizeX, int sizeY, int sizeZ) {
         int gridX0, gridY0, gridZ0, gridX1, gridY1, gridZ1;
         gridX0 = MDFUtil.safeFloorDiv(coordX, sizeX);
         gridY0 = MDFUtil.safeFloorDiv(coordY, sizeY);
@@ -119,14 +107,14 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         cellZ = cellCoord(coordZ, sizeZ);
 
         long hash0, hash1, hash2, hash3, hash4, hash5, hash6, hash7;
-        hash0 = RandomSampler.hashPosition(worldSeed, gridX0, gridY0, gridZ0, funcSalt);
-        hash1 = RandomSampler.hashPosition(worldSeed, gridX1, gridY0, gridZ0, funcSalt);
-        hash2 = RandomSampler.hashPosition(worldSeed, gridX0, gridY1, gridZ0, funcSalt);
-        hash3 = RandomSampler.hashPosition(worldSeed, gridX1, gridY1, gridZ0, funcSalt);
-        hash4 = RandomSampler.hashPosition(worldSeed, gridX0, gridY0, gridZ1, funcSalt);
-        hash5 = RandomSampler.hashPosition(worldSeed, gridX1, gridY0, gridZ1, funcSalt);
-        hash6 = RandomSampler.hashPosition(worldSeed, gridX0, gridY1, gridZ1, funcSalt);
-        hash7 = RandomSampler.hashPosition(worldSeed, gridX1, gridY1, gridZ1, funcSalt);
+        hash0 = RandomSampler.hashPosition(gridX0, gridY0, gridZ0, funcSalt);
+        hash1 = RandomSampler.hashPosition(gridX1, gridY0, gridZ0, funcSalt);
+        hash2 = RandomSampler.hashPosition(gridX0, gridY1, gridZ0, funcSalt);
+        hash3 = RandomSampler.hashPosition(gridX1, gridY1, gridZ0, funcSalt);
+        hash4 = RandomSampler.hashPosition(gridX0, gridY0, gridZ1, funcSalt);
+        hash5 = RandomSampler.hashPosition(gridX1, gridY0, gridZ1, funcSalt);
+        hash6 = RandomSampler.hashPosition(gridX0, gridY1, gridZ1, funcSalt);
+        hash7 = RandomSampler.hashPosition(gridX1, gridY1, gridZ1, funcSalt);
 
         double gridVal0, gridVal1, gridVal2, gridVal3, gridVal4, gridVal5, gridVal6, gridVal7;
         gridVal0 = distribution.getRandom(hash0);
@@ -151,7 +139,7 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         return y0 * (1 - cellZ) + y1 * cellZ;
     }
 
-    public double evalSmoothValueNoise(long worldSeed, int funcSalt, int coordX, int coordY, int coordZ, int sizeX, int sizeY, int sizeZ) {
+    public double evalSmoothValueNoise(int funcSalt, int coordX, int coordY, int coordZ, int sizeX, int sizeY, int sizeZ) {
         int gridX0, gridY0, gridZ0, gridX1, gridY1, gridZ1;
         gridX0 = MDFUtil.safeFloorDiv(coordX, sizeX);
         gridY0 = MDFUtil.safeFloorDiv(coordY, sizeY);
@@ -172,14 +160,14 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
 
         long hash0, hash1, hash2, hash3, hash4, hash5, hash6, hash7;
 
-        hash0 = RandomSampler.hashPosition(worldSeed, gridX0, gridY0, gridZ0, funcSalt);
-        hash1 = RandomSampler.hashPosition(worldSeed, gridX1, gridY0, gridZ0, funcSalt);
-        hash2 = RandomSampler.hashPosition(worldSeed, gridX0, gridY1, gridZ0, funcSalt);
-        hash3 = RandomSampler.hashPosition(worldSeed, gridX1, gridY1, gridZ0, funcSalt);
-        hash4 = RandomSampler.hashPosition(worldSeed, gridX0, gridY0, gridZ1, funcSalt);
-        hash5 = RandomSampler.hashPosition(worldSeed, gridX1, gridY0, gridZ1, funcSalt);
-        hash6 = RandomSampler.hashPosition(worldSeed, gridX0, gridY1, gridZ1, funcSalt);
-        hash7 = RandomSampler.hashPosition(worldSeed, gridX1, gridY1, gridZ1, funcSalt);
+        hash0 = RandomSampler.hashPosition(gridX0, gridY0, gridZ0, funcSalt);
+        hash1 = RandomSampler.hashPosition(gridX1, gridY0, gridZ0, funcSalt);
+        hash2 = RandomSampler.hashPosition(gridX0, gridY1, gridZ0, funcSalt);
+        hash3 = RandomSampler.hashPosition(gridX1, gridY1, gridZ0, funcSalt);
+        hash4 = RandomSampler.hashPosition(gridX0, gridY0, gridZ1, funcSalt);
+        hash5 = RandomSampler.hashPosition(gridX1, gridY0, gridZ1, funcSalt);
+        hash6 = RandomSampler.hashPosition(gridX0, gridY1, gridZ1, funcSalt);
+        hash7 = RandomSampler.hashPosition(gridX1, gridY1, gridZ1, funcSalt);
 
         double gridVal0, gridVal1, gridVal2, gridVal3, gridVal4, gridVal5, gridVal6, gridVal7;
 
