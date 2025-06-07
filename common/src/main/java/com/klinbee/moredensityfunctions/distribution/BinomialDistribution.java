@@ -1,20 +1,23 @@
 package com.klinbee.moredensityfunctions.distribution;
 
-import com.klinbee.moredensityfunctions.util.MDFUtil;
+import com.klinbee.moredensityfunctions.randomgenerators.BinomialGenerator;
+import com.klinbee.moredensityfunctions.randomgenerators.RandomGenerator;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public record BinomialDistribution(int numIterations, double probability) implements RandomDistribution {
+public record BinomialDistribution(int numIterations, double probability,
+                                   BinomialGenerator rand) implements RandomDistribution {
     private static final MapCodec<BinomialDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Codec.intRange(0, 1_000_000).fieldOf("num_iterations").forGetter(BinomialDistribution::numIterations),
             Codec.doubleRange(0.0D, 1.0D).fieldOf("probability").forGetter(BinomialDistribution::probability)
-    ).apply(instance, (BinomialDistribution::new)));
+    ).apply(instance, (numTrials, probability) -> new BinomialDistribution(numTrials, probability, RandomGenerator.buildBinomial(numTrials, probability))));
     public static final KeyDispatchDataCodec<BinomialDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public double getRandom(long hashedSeed) {
-        return MDFUtil.getBinomial(numIterations, probability, hashedSeed);
+    @Override
+    public RandomGenerator getRand() {
+        return rand;
     }
 
     @Override

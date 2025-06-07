@@ -1,24 +1,27 @@
 package com.klinbee.moredensityfunctions.distribution;
 
-import com.klinbee.moredensityfunctions.util.MDFUtil;
+import com.klinbee.moredensityfunctions.randomgenerators.PoissonGenerator;
+import com.klinbee.moredensityfunctions.randomgenerators.RandomGenerator;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public record PoissonDistribution(double lambda) implements RandomDistribution {
+public record PoissonDistribution(double lambda, PoissonGenerator rand) implements RandomDistribution {
     private static final MapCodec<PoissonDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("lambda").forGetter(PoissonDistribution::lambda)
-    ).apply(instance, (PoissonDistribution::new)));
+    ).apply(instance, (lambda) -> new PoissonDistribution(lambda, RandomGenerator.buildPoisson(lambda))));
     public static final KeyDispatchDataCodec<PoissonDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public double getRandom(long hashedSeed) {
-        return MDFUtil.getPoisson(lambda, hashedSeed);
-    }
 
     @Override
     public double lambda() {
         return lambda;
+    }
+
+    @Override
+    public RandomGenerator getRand() {
+        return rand;
     }
 
     public double minValue() {

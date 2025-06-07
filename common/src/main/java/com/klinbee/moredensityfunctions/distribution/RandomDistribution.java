@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.distribution;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.randomgenerators.RandomGenerator;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,7 +19,11 @@ public interface RandomDistribution {
         return ((Registry<Codec<? extends RandomDistribution>>) randomDistributionRegistry).byNameCodec();
     }).dispatch(RandomDistribution::codec, Function.identity());
 
-    double getRandom(long hashedSeed);
+    default double getRandom(long hashedSeed) {
+        return getRand().getRandom(hashedSeed);
+    }
+
+    RandomGenerator getRand();
 
     double minValue();
 
