@@ -24,7 +24,7 @@ public record Log2(DensityFunction arg, Optional<Double> maxOutputHolder, double
             new Log2(arg,
                     maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
                     minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
-                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
     ));
     public static final KeyDispatchDataCodec<Log2> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

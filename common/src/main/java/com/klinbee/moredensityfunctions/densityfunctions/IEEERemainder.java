@@ -19,7 +19,7 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(IEEERemainder::denominator),
             DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(IEEERemainder::errorArgHolder)
     ).apply(instance, (numerator, denominator, errorArgHolder) ->
-            new IEEERemainder(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+            new IEEERemainder(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
     ));
     public static final KeyDispatchDataCodec<IEEERemainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

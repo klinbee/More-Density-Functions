@@ -25,7 +25,7 @@ public record Log2Floor(DensityFunction arg, Optional<Double> maxOutputHolder, d
             new Log2Floor(arg,
                     maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
                     minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
-                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
     ));
     public static final KeyDispatchDataCodec<Log2Floor> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

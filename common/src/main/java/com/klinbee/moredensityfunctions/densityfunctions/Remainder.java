@@ -17,7 +17,7 @@ public record Remainder(DensityFunction numerator, DensityFunction denominator,
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Remainder::denominator),
             DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Remainder::errorArgHolder)
     ).apply(instance, (numerator, denominator, errorArgHolder) ->
-            new Remainder(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+            new Remainder(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
     ));
     public static final KeyDispatchDataCodec<Remainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

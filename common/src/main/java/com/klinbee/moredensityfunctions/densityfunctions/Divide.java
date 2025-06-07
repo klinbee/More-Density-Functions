@@ -27,7 +27,7 @@ public record Divide(DensityFunction numerator, DensityFunction denominator,
             new Divide(numerator, denominator,
                     maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
                     minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
-                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
     ));
     public static final KeyDispatchDataCodec<Divide> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

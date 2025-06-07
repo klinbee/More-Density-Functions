@@ -25,7 +25,7 @@ public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput
             new Reciprocal(denominator,
                     maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
                     minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
-                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
     ));
     public static final KeyDispatchDataCodec<Reciprocal> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

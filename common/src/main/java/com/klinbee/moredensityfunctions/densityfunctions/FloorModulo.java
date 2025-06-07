@@ -20,7 +20,7 @@ public record FloorModulo(DensityFunction numerator, DensityFunction denominator
                     DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorModulo::denominator),
                     DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(FloorModulo::errorArgHolder)
             ).apply(instance, (numerator, denominator, errorArgHolder) ->
-                    new FloorModulo(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+                    new FloorModulo(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
             ));
     public static final KeyDispatchDataCodec<FloorModulo> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

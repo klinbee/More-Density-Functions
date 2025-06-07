@@ -17,7 +17,7 @@ public record Tangent(DensityFunction arg, Optional<DensityFunction> errorArgHol
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Tangent::arg),
             DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Tangent::errorArgHolder)
     ).apply(instance, (argument, errorArgHolder) ->
-            new Tangent(argument, errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+            new Tangent(argument, errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
     ));
     public static final KeyDispatchDataCodec<Tangent> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 

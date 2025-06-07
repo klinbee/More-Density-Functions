@@ -29,7 +29,7 @@ public record FloorDivide(DensityFunction numerator, DensityFunction denominator
             new FloorDivide(numerator, denominator,
                     maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
                     minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
-                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.zero()))
+                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
     ));
     public static final KeyDispatchDataCodec<FloorDivide> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
