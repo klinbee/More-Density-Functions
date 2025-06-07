@@ -3,6 +3,7 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsCommon;
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.klinbee.moredensityfunctions.distribution.RandomDistribution;
+import com.klinbee.moredensityfunctions.randomgenerators.RandomSampler;
 import com.klinbee.moredensityfunctions.util.MDFUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,7 +43,7 @@ public record CellularNoise(RandomDistribution distribution,
         int x = MDFUtil.safeFloorDiv(context.blockX(), sizeX);
         int y = MDFUtil.safeFloorDiv(context.blockY(), sizeY);
         int z = MDFUtil.safeFloorDiv(context.blockZ(), sizeZ);
-        long hash = MDFUtil.hashPosition(worldSeed, x, y, z, salt);
+        long hash = RandomSampler.hashPosition(worldSeed, x, y, z, salt);
 
         return distribution.getRandom(hash);
     }

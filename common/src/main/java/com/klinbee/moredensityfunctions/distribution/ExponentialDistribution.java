@@ -1,16 +1,16 @@
 package com.klinbee.moredensityfunctions.distribution;
 
-import com.klinbee.moredensityfunctions.randomgenerators.ExponentialGenerator;
-import com.klinbee.moredensityfunctions.randomgenerators.RandomGenerator;
+import com.klinbee.moredensityfunctions.randomgenerators.ExponentialSampler;
+import com.klinbee.moredensityfunctions.randomgenerators.RandomSampler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public record ExponentialDistribution(double lambda, ExponentialGenerator rand) implements RandomDistribution {
+public record ExponentialDistribution(double lambda, ExponentialSampler rand) implements RandomDistribution {
     private static final MapCodec<ExponentialDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("lambda").forGetter(ExponentialDistribution::lambda)
-    ).apply(instance, (lambda) -> new ExponentialDistribution(lambda, RandomGenerator.buildExponential(lambda))));
+    ).apply(instance, (lambda) -> new ExponentialDistribution(lambda, RandomSampler.buildExponential(lambda))));
     public static final KeyDispatchDataCodec<ExponentialDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
@@ -19,7 +19,7 @@ public record ExponentialDistribution(double lambda, ExponentialGenerator rand) 
     }
 
     @Override
-    public RandomGenerator getRand() {
+    public RandomSampler getRand() {
         return rand;
     }
 

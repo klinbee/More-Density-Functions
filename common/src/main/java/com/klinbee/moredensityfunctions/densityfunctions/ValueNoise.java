@@ -3,6 +3,7 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsCommon;
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.klinbee.moredensityfunctions.distribution.RandomDistribution;
+import com.klinbee.moredensityfunctions.randomgenerators.RandomSampler;
 import com.klinbee.moredensityfunctions.util.MDFUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -118,14 +119,14 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
         cellZ = cellCoord(coordZ, sizeZ);
 
         long hash0, hash1, hash2, hash3, hash4, hash5, hash6, hash7;
-        hash0 = MDFUtil.hashPosition(worldSeed, gridX0, gridY0, gridZ0, funcSalt);
-        hash1 = MDFUtil.hashPosition(worldSeed, gridX1, gridY0, gridZ0, funcSalt);
-        hash2 = MDFUtil.hashPosition(worldSeed, gridX0, gridY1, gridZ0, funcSalt);
-        hash3 = MDFUtil.hashPosition(worldSeed, gridX1, gridY1, gridZ0, funcSalt);
-        hash4 = MDFUtil.hashPosition(worldSeed, gridX0, gridY0, gridZ1, funcSalt);
-        hash5 = MDFUtil.hashPosition(worldSeed, gridX1, gridY0, gridZ1, funcSalt);
-        hash6 = MDFUtil.hashPosition(worldSeed, gridX0, gridY1, gridZ1, funcSalt);
-        hash7 = MDFUtil.hashPosition(worldSeed, gridX1, gridY1, gridZ1, funcSalt);
+        hash0 = RandomSampler.hashPosition(worldSeed, gridX0, gridY0, gridZ0, funcSalt);
+        hash1 = RandomSampler.hashPosition(worldSeed, gridX1, gridY0, gridZ0, funcSalt);
+        hash2 = RandomSampler.hashPosition(worldSeed, gridX0, gridY1, gridZ0, funcSalt);
+        hash3 = RandomSampler.hashPosition(worldSeed, gridX1, gridY1, gridZ0, funcSalt);
+        hash4 = RandomSampler.hashPosition(worldSeed, gridX0, gridY0, gridZ1, funcSalt);
+        hash5 = RandomSampler.hashPosition(worldSeed, gridX1, gridY0, gridZ1, funcSalt);
+        hash6 = RandomSampler.hashPosition(worldSeed, gridX0, gridY1, gridZ1, funcSalt);
+        hash7 = RandomSampler.hashPosition(worldSeed, gridX1, gridY1, gridZ1, funcSalt);
 
         double gridVal0, gridVal1, gridVal2, gridVal3, gridVal4, gridVal5, gridVal6, gridVal7;
         gridVal0 = distribution.getRandom(hash0);
@@ -171,14 +172,14 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
 
         long hash0, hash1, hash2, hash3, hash4, hash5, hash6, hash7;
 
-        hash0 = MDFUtil.hashPosition(worldSeed, gridX0, gridY0, gridZ0, funcSalt);
-        hash1 = MDFUtil.hashPosition(worldSeed, gridX1, gridY0, gridZ0, funcSalt);
-        hash2 = MDFUtil.hashPosition(worldSeed, gridX0, gridY1, gridZ0, funcSalt);
-        hash3 = MDFUtil.hashPosition(worldSeed, gridX1, gridY1, gridZ0, funcSalt);
-        hash4 = MDFUtil.hashPosition(worldSeed, gridX0, gridY0, gridZ1, funcSalt);
-        hash5 = MDFUtil.hashPosition(worldSeed, gridX1, gridY0, gridZ1, funcSalt);
-        hash6 = MDFUtil.hashPosition(worldSeed, gridX0, gridY1, gridZ1, funcSalt);
-        hash7 = MDFUtil.hashPosition(worldSeed, gridX1, gridY1, gridZ1, funcSalt);
+        hash0 = RandomSampler.hashPosition(worldSeed, gridX0, gridY0, gridZ0, funcSalt);
+        hash1 = RandomSampler.hashPosition(worldSeed, gridX1, gridY0, gridZ0, funcSalt);
+        hash2 = RandomSampler.hashPosition(worldSeed, gridX0, gridY1, gridZ0, funcSalt);
+        hash3 = RandomSampler.hashPosition(worldSeed, gridX1, gridY1, gridZ0, funcSalt);
+        hash4 = RandomSampler.hashPosition(worldSeed, gridX0, gridY0, gridZ1, funcSalt);
+        hash5 = RandomSampler.hashPosition(worldSeed, gridX1, gridY0, gridZ1, funcSalt);
+        hash6 = RandomSampler.hashPosition(worldSeed, gridX0, gridY1, gridZ1, funcSalt);
+        hash7 = RandomSampler.hashPosition(worldSeed, gridX1, gridY1, gridZ1, funcSalt);
 
         double gridVal0, gridVal1, gridVal2, gridVal3, gridVal4, gridVal5, gridVal6, gridVal7;
 
