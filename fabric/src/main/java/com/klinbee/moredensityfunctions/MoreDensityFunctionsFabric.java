@@ -39,12 +39,17 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerDensityFunction("atan", ArcTangent.CODEC.codec());
         registerDensityFunction("ceil", Ceil.CODEC.codec());
         registerDensityFunction("cellular_noise", CellularNoise.CODEC.codec());
+        registerDensityFunction("clamp", Clamp.CODEC.codec());
         registerDensityFunction("cos", Cosine.CODEC.codec());
         registerDensityFunction("div", Divide.CODEC.codec());
         registerDensityFunction("floor", Floor.CODEC.codec());
         registerDensityFunction("floor_div", FloorDivide.CODEC.codec());
         registerDensityFunction("floor_mod", FloorModulo.CODEC.codec());
         registerDensityFunction("ieee_rem", IEEERemainder.CODEC.codec());
+        registerDensityFunction("log", Log.CODEC.codec());
+        registerDensityFunction("log2", Log2.CODEC.codec());
+        registerDensityFunction("log2_floor", Log2Floor.CODEC.codec());
+        registerDensityFunction("ln", NaturalLog.CODEC.codec());
         registerDensityFunction("negate", Negate.CODEC.codec());
         registerDensityFunction("polar_coords", PolarCoords.CODEC.codec());
         registerDensityFunction("power", Power.CODEC.codec());
