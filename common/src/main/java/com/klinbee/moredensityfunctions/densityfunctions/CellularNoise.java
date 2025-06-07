@@ -59,30 +59,6 @@ public record CellularNoise(RandomDistribution distribution,
     }
 
     @Override
-    public int sizeX() {
-        return sizeX;
-    }
-
-    @Override
-    public int sizeY() {
-        return sizeY;
-    }
-
-    @Override
-    public int sizeZ() {
-        return sizeZ;
-    }
-
-    public Optional<Integer> saltHolder() {
-        return saltHolder;
-    }
-
-    @Override
-    public RandomDistribution distribution() {
-        return distribution;
-    }
-
-    @Override
     public double minValue() {
         return this.distribution.minValue();
     }

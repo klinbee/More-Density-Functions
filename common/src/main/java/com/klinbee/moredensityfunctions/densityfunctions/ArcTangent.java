@@ -30,10 +30,6 @@ public record ArcTangent(DensityFunction arg) implements DensityFunction {
         return visitor.apply(new ArcTangent(this.arg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
     @Override
     public double minValue() {
         return this.eval(arg.minValue());

@@ -43,18 +43,6 @@ public record Remainder(DensityFunction numerator, DensityFunction denominator,
         return visitor.apply(new Remainder(this.numerator, this.denominator, this.errorArgHolder, this.errorArg));
     }
 
-    public DensityFunction numerator() {
-        return numerator;
-    }
-
-    public DensityFunction denominator() {
-        return denominator;
-    }
-
-    public Optional<DensityFunction> errorArgHolder() {
-        return errorArgHolder;
-    }
-
     @Override
     public double minValue() {
         double minError = errorArg.minValue();

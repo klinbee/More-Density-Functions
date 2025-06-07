@@ -54,22 +54,6 @@ public record SquareRoot(DensityFunction arg, Optional<Double> maxOutputHolder, 
         return visitor.apply(new SquareRoot(this.arg, this.minOutputHolder, this.minOutput, this.maxOutputHolder, this.maxOutput, this.errorArgHolder, this.errorArg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
-    public Optional<Double> minOutputHolder() {
-        return minOutputHolder;
-    }
-
-    public Optional<Double> maxOutputHolder() {
-        return maxOutputHolder;
-    }
-
-    public Optional<DensityFunction> errorArgHolder() {
-        return errorArgHolder;
-    }
-
     @Override
     public double minValue() {
         if (this.arg.minValue() < 0) {

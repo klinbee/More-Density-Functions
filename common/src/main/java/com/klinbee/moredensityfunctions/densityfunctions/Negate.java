@@ -31,10 +31,6 @@ public record Negate(DensityFunction arg) implements DensityFunction {
         return visitor.apply(new Negate(this.arg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
     @Override
     public double minValue() {
         return this.eval(arg.maxValue());

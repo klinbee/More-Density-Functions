@@ -52,22 +52,6 @@ public record Reciprocal(DensityFunction denominator, Optional<Double> maxOutput
         return visitor.apply(new Reciprocal(this.denominator, this.minOutputHolder, this.minOutput, this.maxOutputHolder, this.maxOutput, this.errorArgHolder, this.errorArg));
     }
 
-    public DensityFunction denominator() {
-        return denominator;
-    }
-
-    public Optional<Double> minOutputHolder() {
-        return minOutputHolder;
-    }
-
-    public Optional<Double> maxOutputHolder() {
-        return maxOutputHolder;
-    }
-
-    public Optional<DensityFunction> errorArgHolder() {
-        return errorArgHolder;
-    }
-
     @Override
     public double minValue() {
         return Math.min(this.errorArg.minValue(), this.minOutput);

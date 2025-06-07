@@ -31,10 +31,6 @@ public record Cosine(DensityFunction arg) implements DensityFunction {
         return visitor.apply(new Cosine(this.arg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
     @Override
     public double minValue() {
         return -1;

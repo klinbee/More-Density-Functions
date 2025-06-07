@@ -31,10 +31,6 @@ public record Signum(DensityFunction arg) implements DensityFunction {
         return visitor.apply(new Signum(this.arg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
     @Override
     public double minValue() {
         return this.eval(arg.minValue());

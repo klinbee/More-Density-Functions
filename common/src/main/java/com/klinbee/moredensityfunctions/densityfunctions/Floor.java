@@ -33,10 +33,6 @@ public record Floor(DensityFunction arg) implements DensityFunction {
         return visitor.apply(new Floor(this.arg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
     @Override
     public double minValue() {
         return this.eval(arg.minValue());

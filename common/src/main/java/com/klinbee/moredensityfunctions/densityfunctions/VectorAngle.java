@@ -29,16 +29,6 @@ public record VectorAngle(DensityFunction arg1, DensityFunction arg2) implements
     }
 
     @Override
-    public DensityFunction arg1() {
-        return arg1;
-    }
-
-    @Override
-    public DensityFunction arg2() {
-        return arg2;
-    }
-
-    @Override
     public double minValue() {
         return -StrictMath.PI;
     }

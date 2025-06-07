@@ -224,42 +224,6 @@ public record ValueNoise(RandomDistribution distribution, int sizeX, int sizeY, 
     }
 
     @Override
-    public RandomDistribution distribution() {
-        return distribution;
-    }
-
-    @Override
-    public int sizeX() {
-        return sizeX;
-    }
-
-    @Override
-    public int sizeY() {
-        return sizeY;
-    }
-
-    @Override
-    public int sizeZ() {
-        return sizeZ;
-    }
-
-    public Optional<Integer> octaveHolder() {
-        return octaveHolder;
-    }
-
-    public Optional<Double> lacunarityHolder() {
-        return lacunarityHolder;
-    }
-
-    public Optional<Double> persistenceHolder() {
-        return persistenceHolder;
-    }
-
-    public Optional<Integer> saltHolder() {
-        return saltHolder;
-    }
-
-    @Override
     public double minValue() {
 
         double minimum = this.distribution.minValue();

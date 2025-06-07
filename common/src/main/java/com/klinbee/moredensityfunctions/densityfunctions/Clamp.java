@@ -1,5 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.distribution.UniformDistribution;
+import com.klinbee.moredensityfunctions.randomgenerators.RandomSampler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,7 +14,12 @@ public record Clamp(DensityFunction arg, double min, double max) implements Dens
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Clamp::arg),
             Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min").forGetter(Clamp::min),
             Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max").forGetter(Clamp::max)
-    ).apply(instance, (Clamp::new)));
+    ).apply(instance, (arg, min, max) -> {
+        if (min > max) {
+            throw new IllegalArgumentException("Min must be less than max!");
+        }
+        return new Clamp(arg, min, max);
+    }));
     public static final KeyDispatchDataCodec<Clamp> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public double eval(double density) {
@@ -32,10 +39,6 @@ public record Clamp(DensityFunction arg, double min, double max) implements Dens
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new Clamp(this.arg, this.min, this.max));
-    }
-
-    public DensityFunction arg() {
-        return arg;
     }
 
     @Override

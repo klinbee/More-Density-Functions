@@ -61,26 +61,6 @@ public record Power(DensityFunction base, DensityFunction exponent, Optional<Dou
         return visitor.apply(new Power(this.base, this.exponent, this.minOutputHolder, this.minOutput, this.maxOutputHolder, this.maxOutput, this.errorArgHolder, this.errorArg));
     }
 
-    public DensityFunction base() {
-        return base;
-    }
-
-    public DensityFunction exponent() {
-        return exponent;
-    }
-
-    public Optional<Double> minOutputHolder() {
-        return minOutputHolder;
-    }
-
-    public Optional<Double> maxOutputHolder() {
-        return maxOutputHolder;
-    }
-
-    public Optional<DensityFunction> errorArgHolder() {
-        return errorArgHolder;
-    }
-
     @Override
     public double minValue() {
         // This is not happening.

@@ -33,22 +33,6 @@ public record XClampedGradient(int fromX, int toX, double fromValue, double toVa
         return visitor.apply(new XClampedGradient(this.fromX, this.toX, this.fromValue, this.toValue));
     }
 
-    public int fromX() {
-        return fromX;
-    }
-
-    public int toX() {
-        return toX;
-    }
-
-    public double fromValue() {
-        return fromValue;
-    }
-
-    public double toValue() {
-        return toValue;
-    }
-
     @Override
     public double minValue() {
         return StrictMath.min(fromValue, toValue);

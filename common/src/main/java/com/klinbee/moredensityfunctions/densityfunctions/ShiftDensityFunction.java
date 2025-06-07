@@ -46,25 +46,6 @@ public record ShiftDensityFunction(DensityFunction arg, DensityFunction shiftX, 
         return visitor.apply(new ShiftDensityFunction(this.arg, this.shiftX, this.shiftY, this.shiftZ));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
-    @Override
-    public DensityFunction shiftX() {
-        return shiftX;
-    }
-
-    @Override
-    public DensityFunction shiftY() {
-        return shiftY;
-    }
-
-    @Override
-    public DensityFunction shiftZ() {
-        return shiftZ;
-    }
-
     @Override
     public double minValue() {
         return arg.minValue();

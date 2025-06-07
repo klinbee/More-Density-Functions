@@ -58,23 +58,6 @@ public record Log2Floor(DensityFunction arg, Optional<Double> maxOutputHolder, d
     }
 
     @Override
-    public DensityFunction arg() {
-        return arg;
-    }
-
-    public Optional<Double> minOutputHolder() {
-        return minOutputHolder;
-    }
-
-    public Optional<Double> maxOutputHolder() {
-        return maxOutputHolder;
-    }
-
-    public Optional<DensityFunction> errorArgHolder() {
-        return errorArgHolder;
-    }
-
-    @Override
     public double minValue() {
         return arg.minValue() <= 0 ? errorArg.minValue() : this.eval(arg.minValue());
     }

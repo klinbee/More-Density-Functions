@@ -57,28 +57,6 @@ public record FloorDivide(DensityFunction numerator, DensityFunction denominator
         return visitor.apply(new FloorDivide(this.numerator, this.denominator, this.minOutputHolder, this.minOutput, this.maxOutputHolder, this.maxOutput, this.errorArgHolder, this.errorArg));
     }
 
-    public DensityFunction numerator() {
-        return numerator;
-    }
-
-    public DensityFunction denominator() {
-        return denominator;
-    }
-
-    @Override
-    public Optional<Double> minOutputHolder() {
-        return minOutputHolder;
-    }
-
-    @Override
-    public Optional<Double> maxOutputHolder() {
-        return maxOutputHolder;
-    }
-
-    public Optional<DensityFunction> errorArgHolder() {
-        return errorArgHolder;
-    }
-
     @Override
     public double minValue() {
         return Math.min(this.errorArg.minValue(), this.minOutput);

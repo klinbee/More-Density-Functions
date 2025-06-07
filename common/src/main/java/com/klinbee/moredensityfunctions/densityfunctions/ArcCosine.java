@@ -30,10 +30,6 @@ public record ArcCosine(DensityFunction arg) implements DensityFunction {
         return visitor.apply(new ArcCosine(this.arg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
     @Override
     public double minValue() {
         return 0;

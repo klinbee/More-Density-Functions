@@ -33,22 +33,6 @@ public record ZClampedGradient(int fromZ, int toZ, double fromValue, double toVa
         return visitor.apply(new ZClampedGradient(this.fromZ, this.toZ, this.fromValue, this.toValue));
     }
 
-    public int fromZ() {
-        return fromZ;
-    }
-
-    public int toZ() {
-        return toZ;
-    }
-
-    public double fromValue() {
-        return fromValue;
-    }
-
-    public double toValue() {
-        return toValue;
-    }
-
     @Override
     public double minValue() {
         return StrictMath.min(fromValue, toValue);

@@ -40,10 +40,6 @@ public record Tangent(DensityFunction arg, Optional<DensityFunction> errorArgHol
         return visitor.apply(new Tangent(this.arg, this.errorArgHolder, this.errorArg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
     @Override
     public double minValue() {
         return Double.NEGATIVE_INFINITY;

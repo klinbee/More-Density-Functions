@@ -56,28 +56,6 @@ public record Log(DensityFunction arg, DensityFunction base, Optional<Double> ma
     }
 
     @Override
-    public DensityFunction arg() {
-        return arg;
-    }
-
-    @Override
-    public DensityFunction base() {
-        return base;
-    }
-
-    public Optional<Double> minOutputHolder() {
-        return minOutputHolder;
-    }
-
-    public Optional<Double> maxOutputHolder() {
-        return maxOutputHolder;
-    }
-
-    public Optional<DensityFunction> errorArgHolder() {
-        return errorArgHolder;
-    }
-
-    @Override
     public double minValue() {
         return -Double.MAX_VALUE;
     }

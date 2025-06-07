@@ -31,10 +31,6 @@ public record Sigmoid(DensityFunction arg) implements DensityFunction {
         return visitor.apply(new Sigmoid(this.arg));
     }
 
-    public DensityFunction arg() {
-        return arg;
-    }
-
     @Override
     public double minValue() {
         return this.eval(arg.minValue());
