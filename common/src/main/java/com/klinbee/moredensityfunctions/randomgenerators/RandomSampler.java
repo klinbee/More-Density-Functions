@@ -24,8 +24,8 @@ public interface RandomSampler {
         return GeometricSampler.create(probability);
     }
 
-    static NormalSampler buildNormal(double shape, double scale) {
-        return NormalSampler.create(shape, scale);
+    static NormalSampler buildNormal(double mean, double stdDev) {
+        return NormalSampler.create(mean, stdDev);
     }
 
     static PoissonSampler buildPoisson(double lambda) {
@@ -65,7 +65,7 @@ public interface RandomSampler {
      * converted to {@code long}s.
      * <p>The prime constants are binary concatenated primes. E.g. The top and bottom 32-bits and the {@code long} value itself are all primes.
      * <p>PLEASE let me know if this results in issues. I am not a number theory expert, just a nerd that likes programming and math.
-     * Thank you! ~Klinbee
+     * Thank you!
      * @param worldSeed The literal /seed, seed.
      * @param x         The x cell value input
      * @param y         The y cell value input
@@ -89,27 +89,26 @@ public interface RandomSampler {
     }
 
     /**
-     * <p>Simple Mixing Function
-     * <p>The {@code hashPosition(...)} function is great, so this can be kind of bad for efficiency.
-     * This is only called anytime the same position is queried for another random roll.
+     * <p>PCG-ish Mixing Function
+     * <p>This is only called anytime the same position is queried for another random roll.
      * E.g. using {@code BinomialSampler.sample(seed)}.
      *
      * @param seed Current RNG seed
      * @return The next long RNG seed value
      */
     static long mix(long seed) {
-        seed *= 0x9E3779B97F4A7C15L; // Golden Ratio
-        seed ^= seed >>> 32;
-        return seed;
+        seed = seed * 6364136223846793005L + 1442695040888963407L; // PCG Constants
+        long finalSeed = ((seed >>> (int)(seed >>> 59) + 5) ^ seed) * -4132994306676758123L;
+        return finalSeed >>> 43 ^ finalSeed;
     }
 
     /// RNG Functions
 
     /**
-     * <p>Returns a {@code double} purely by converting a long value into a double on the range (0, 1)
+     * <p>Returns a {@code double} purely by converting a long value into a double on the range [0, 1)
      * <p>Please read {@code hashPosition(...)} for more details on RNG implementation.
      * @param seed current rng seed
-     * @return double on the range (0,1)
+     * @return double on the range [0,1)
      */
     static double sampleDouble(long seed) {
         return (seed >>> 11) * 0x1.0p-53;
