@@ -1,7 +1,7 @@
 package com.klinbee.moredensityfunctions.distribution;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
-import com.klinbee.moredensityfunctions.randomgenerators.RandomSampler;
+import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

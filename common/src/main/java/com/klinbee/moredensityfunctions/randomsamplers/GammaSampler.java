@@ -1,4 +1,4 @@
-package com.klinbee.moredensityfunctions.randomgenerators;
+package com.klinbee.moredensityfunctions.randomsamplers;
 
 public sealed interface GammaSampler extends RandomSampler
         permits GammaSampler.AhrensDieter, GammaSampler.MarsagliaTsang {

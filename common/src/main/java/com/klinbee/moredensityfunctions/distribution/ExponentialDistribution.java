@@ -1,7 +1,7 @@
 package com.klinbee.moredensityfunctions.distribution;
 
-import com.klinbee.moredensityfunctions.randomgenerators.ExponentialSampler;
-import com.klinbee.moredensityfunctions.randomgenerators.RandomSampler;
+import com.klinbee.moredensityfunctions.randomsamplers.ExponentialSampler;
+import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

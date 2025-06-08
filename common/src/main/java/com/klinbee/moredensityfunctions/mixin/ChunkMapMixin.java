@@ -1,7 +1,6 @@
 package com.klinbee.moredensityfunctions.mixin;
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsCommon;
-import com.klinbee.moredensityfunctions.randomgenerators.RandomSampler;
+import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;

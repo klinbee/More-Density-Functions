@@ -1,4 +1,4 @@
-package com.klinbee.moredensityfunctions.randomgenerators;
+package com.klinbee.moredensityfunctions.randomsamplers;
 
 public interface RandomSampler {
 
