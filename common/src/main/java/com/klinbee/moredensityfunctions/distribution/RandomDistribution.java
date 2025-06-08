@@ -23,6 +23,10 @@ public interface RandomDistribution {
         return getSampler().sample(hashedSeed);
     }
 
+    double minValue();
+
+    double maxValue();
+
     RandomSampler getSampler();
 
     Codec<? extends RandomDistribution> codec();
