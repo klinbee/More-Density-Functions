@@ -7,20 +7,15 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public record GeometricDistribution(double probability, GeometricSampler rand) implements RandomDistribution {
+public record GeometricDistribution(double probability, GeometricSampler sampler) implements RandomDistribution {
     private static final MapCodec<GeometricDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Codec.doubleRange(Double.MIN_NORMAL, 1.0D).fieldOf("probability").forGetter(GeometricDistribution::probability)
     ).apply(instance, (probability) -> new GeometricDistribution(probability, RandomSampler.buildGeometric(probability))));
     public static final KeyDispatchDataCodec<GeometricDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public RandomSampler getRand() {
-        return rand;
-    }
-
-    @Override
-    public double probability() {
-        return probability;
+    public RandomSampler getSampler() {
+        return sampler;
     }
 
     public double minValue() {

@@ -7,7 +7,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public record BetaDistribution(double alpha, double beta, BetaSampler rand) implements RandomDistribution {
+public record BetaDistribution(double alpha, double beta, BetaSampler sampler) implements RandomDistribution {
     private static final MapCodec<BetaDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("alpha").forGetter(BetaDistribution::alpha),
             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("beta").forGetter(BetaDistribution::beta)
@@ -15,18 +15,8 @@ public record BetaDistribution(double alpha, double beta, BetaSampler rand) impl
     public static final KeyDispatchDataCodec<BetaDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public RandomSampler getRand() {
-        return rand;
-    }
-
-    @Override
-    public double alpha() {
-        return alpha;
-    }
-
-    @Override
-    public double beta() {
-        return beta;
+    public RandomSampler getSampler() {
+        return sampler;
     }
 
     public double minValue() {

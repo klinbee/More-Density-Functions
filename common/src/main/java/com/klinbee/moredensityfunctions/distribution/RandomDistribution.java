@@ -20,14 +20,10 @@ public interface RandomDistribution {
     }).dispatch(RandomDistribution::codec, Function.identity());
 
     default double getRandom(long hashedSeed) {
-        return getRand().sample(hashedSeed);
+        return getSampler().sample(hashedSeed);
     }
 
-    RandomSampler getRand();
-
-    double minValue();
-
-    double maxValue();
+    RandomSampler getSampler();
 
     Codec<? extends RandomDistribution> codec();
 }

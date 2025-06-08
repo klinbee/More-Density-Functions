@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
 public record BinomialDistribution(int numIterations, double probability,
-                                   BinomialSampler rand) implements RandomDistribution {
+                                   BinomialSampler sampler) implements RandomDistribution {
     private static final MapCodec<BinomialDistribution> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Codec.intRange(0, 1_000_000).fieldOf("num_iterations").forGetter(BinomialDistribution::numIterations),
             Codec.doubleRange(0.0D, 1.0D).fieldOf("probability").forGetter(BinomialDistribution::probability)
@@ -16,18 +16,8 @@ public record BinomialDistribution(int numIterations, double probability,
     public static final KeyDispatchDataCodec<BinomialDistribution> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
-    public RandomSampler getRand() {
-        return rand;
-    }
-
-    @Override
-    public int numIterations() {
-        return numIterations;
-    }
-
-    @Override
-    public double probability() {
-        return probability;
+    public RandomSampler getSampler() {
+        return sampler;
     }
 
     public double minValue() {
