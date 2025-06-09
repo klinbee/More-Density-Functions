@@ -1,7 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
-import com.klinbee.moredensityfunctions.util.MDFUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,7 +41,7 @@ public record Log2(DensityFunction arg, Optional<Double> maxOutputHolder, double
     }
 
     public double eval(double density) {
-        return StrictMath.log(density) * MDFUtil.LOG2_E;
+        return StrictMath.log(density) * 1.4426950408889634D; // 1/ln(2);
     }
 
     @Override
