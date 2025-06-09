@@ -38,7 +38,6 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerDensityFunction("acos", ArcCosine.CODEC.codec());
         registerDensityFunction("atan", ArcTangent.CODEC.codec());
         registerDensityFunction("ceil", Ceil.CODEC.codec());
-        registerDensityFunction("cellular_noise", CellularNoise.CODEC.codec());
         registerDensityFunction("clamp", Clamp.CODEC.codec());
         registerDensityFunction("cos", Cosine.CODEC.codec());
         registerDensityFunction("div", Divide.CODEC.codec());
