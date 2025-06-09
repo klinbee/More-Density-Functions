@@ -10,19 +10,6 @@ public class MoreDensityFunctionsCommon {
     // write the majority of your code here and load it from your loader specific projects. This example has some
     // code that gets invoked by the entry point of the loader specific projects.
 
-    // For capturing seed unfortunately...
-    private static volatile long worldSeed;
-
-    public static void setWorldSeed(long seed) {
-        worldSeed = seed;
-    }
-
-    // UNSAFE
-    public static long getWorldSeed() {
-        return worldSeed;
-    }
-
     public static void init() {
-
     }
 }
