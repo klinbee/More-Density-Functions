@@ -53,6 +53,7 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerDensityFunction("negate", Negate.CODEC.codec());
         registerDensityFunction("polar_coords", PolarCoords.CODEC.codec());
         registerDensityFunction("power", Power.CODEC.codec());
+        registerDensityFunction("profiler", Profiler.CODEC.codec());
         registerDensityFunction("reciprocal", Reciprocal.CODEC.codec());
         registerDensityFunction("rem", Remainder.CODEC.codec());
         registerDensityFunction("round", Round.CODEC.codec());
