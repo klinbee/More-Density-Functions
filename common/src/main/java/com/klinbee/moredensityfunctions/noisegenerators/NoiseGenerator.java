@@ -1,15 +1,13 @@
 package com.klinbee.moredensityfunctions.noisegenerators;
-
-import com.klinbee.moredensityfunctions.densityfunctions.ValueNoise;
-import com.klinbee.moredensityfunctions.distribution.RandomDistribution;
+import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.StringRepresentable;
 
 public interface NoiseGenerator {
 
-    static ValueNoiseGenerator buildValueNoise(RandomDistribution distribution, int sizeX, int sizeY, int sizeZ, int salt, InterpolationType interpType) {
-        return ValueNoiseGenerator.create(distribution, sizeX, sizeY, sizeZ, salt, interpType);
+    static ValueNoiseGenerator buildValueNoise(RandomSampler sampler, int sizeX, int sizeY, int sizeZ, int salt, InterpolationType interpType) {
+        return ValueNoiseGenerator.create(sampler, sizeX, sizeY, sizeZ, salt, interpType);
     }
 
     enum InterpolationType implements StringRepresentable {

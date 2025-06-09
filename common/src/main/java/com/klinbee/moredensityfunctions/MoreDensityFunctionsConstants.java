@@ -1,9 +1,8 @@
 package com.klinbee.moredensityfunctions;
 
-import com.klinbee.moredensityfunctions.distribution.RandomDistribution;
+import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
@@ -29,6 +28,6 @@ public class MoreDensityFunctionsConstants {
     public static final Codec<Integer> COORD_CODEC_INT = Codec.intRange(MoreDensityFunctionsConstants.MIN_COORD_INT, MoreDensityFunctionsConstants.MAX_COORD_INT);
     public static final Codec<Double> COORD_CODEC_DOUBLE = Codec.doubleRange(MoreDensityFunctionsConstants.MIN_COORD_DOUBLE, MoreDensityFunctionsConstants.MAX_COORD_DOUBLE);
 
-    public static final ResourceKey<Registry<RandomDistribution>> RANDOM_DISTRIBUTION = ResourceKey.createRegistryKey(new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, "random_distribution"));
-    public static final ResourceKey<Registry<Codec<? extends RandomDistribution>>> RANDOM_DISTRIBUTION_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, "random_distribution_type"));
+    public static final ResourceKey<Registry<RandomSampler>> RANDOM_SAMPLER = ResourceKey.createRegistryKey(new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, "random_sampler"));
+    public static final ResourceKey<Registry<Codec<? extends RandomSampler>>> RANDOM_SAMPLER_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, "random_sampler_type"));
 }

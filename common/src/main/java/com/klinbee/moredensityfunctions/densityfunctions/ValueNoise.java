@@ -1,9 +1,9 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
-import com.klinbee.moredensityfunctions.distribution.RandomDistribution;
 import com.klinbee.moredensityfunctions.noisegenerators.NoiseGenerator;
 import com.klinbee.moredensityfunctions.noisegenerators.ValueNoiseGenerator;
+import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -20,19 +20,19 @@ public record ValueNoise(ValueNoiseGenerator noiseGenerator, NoiseGenerator.Inte
                          double minValue, double maxValue
 ) implements DensityFunction {
     private static final MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            RandomDistribution.CODEC.fieldOf("distribution").forGetter(df -> df.noiseGenerator.distribution()),
+            RandomSampler.CODEC.fieldOf("sampler").forGetter(df -> df.noiseGenerator.randSampler()),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_x").forGetter(df -> df.noiseGenerator.sizeX()),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_y").forGetter(df -> df.noiseGenerator.sizeY()),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_z").forGetter(df -> df.noiseGenerator.sizeZ()),
             NoiseGenerator.InterpolationType.CODEC.fieldOf("interpolation").forGetter(ValueNoise::interpType),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.optionalFieldOf("salt").forGetter(ValueNoise::saltHolder),
             NoiseGenerator.ExtraOctaves.CODEC.optionalFieldOf("extra_octaves").forGetter(ValueNoise::extraOctavesHolder)
-    ).apply(instance, (distribution, sizeX, sizeY, sizeZ, interpType, saltHolder, extraOctavesHolder) -> {
+    ).apply(instance, (sampler, sizeX, sizeY, sizeZ, interpType, saltHolder, extraOctavesHolder) -> {
         int salt = saltHolder.orElse(0);
-        ValueNoiseGenerator valueNoiseGenerator = NoiseGenerator.buildValueNoise(distribution, sizeX, sizeY, sizeZ, salt, interpType);
+        ValueNoiseGenerator valueNoiseGenerator = NoiseGenerator.buildValueNoise(sampler, sizeX, sizeY, sizeZ, salt, interpType);
 
-        double minValue = valueNoiseGenerator.distribution().minValue();
-        double maxValue = valueNoiseGenerator.distribution().maxValue();
+        double minValue = valueNoiseGenerator.randSampler().minValue();
+        double maxValue = valueNoiseGenerator.randSampler().maxValue();
 
         NoiseGenerator.ExtraOctaves extraOctaves = extraOctavesHolder.orElse(null);
 

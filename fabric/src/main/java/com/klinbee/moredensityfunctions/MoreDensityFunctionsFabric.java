@@ -1,8 +1,8 @@
 package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.densityfunctions.*;
-import com.klinbee.moredensityfunctions.distribution.*;
 
+import com.klinbee.moredensityfunctions.randomsamplers.*;
 import com.mojang.serialization.Codec;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
@@ -16,22 +16,22 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 public class MoreDensityFunctionsFabric implements ModInitializer {
 
-    public static final WritableRegistry<Codec<? extends RandomDistribution>> RANDOM_DISTRIBUTION_TYPE = FabricRegistryBuilder.createSimple(MoreDensityFunctionsConstants.RANDOM_DISTRIBUTION_TYPE).buildAndRegister();
+    public static final WritableRegistry<Codec<? extends RandomSampler>> RANDOM_SAMPLER_TYPE = FabricRegistryBuilder.createSimple(MoreDensityFunctionsConstants.RANDOM_SAMPLER_TYPE).buildAndRegister();
 
     @Override
     public void onInitialize() {
 
-        DynamicRegistries.register(MoreDensityFunctionsConstants.RANDOM_DISTRIBUTION, RandomDistribution.CODEC);
+        DynamicRegistries.register(MoreDensityFunctionsConstants.RANDOM_SAMPLER, RandomSampler.CODEC);
 
         ///  Random Distributions ///
-        registerRandomDistribution("beta", BetaDistribution.CODEC.codec());
-        registerRandomDistribution("binomial", BinomialDistribution.CODEC.codec());
-        registerRandomDistribution("exponential", ExponentialDistribution.CODEC.codec());
-        registerRandomDistribution("gamma", GammaDistribution.CODEC.codec());
-        registerRandomDistribution("geometric", GeometricDistribution.CODEC.codec());
-        registerRandomDistribution("normal", NormalDistribution.CODEC.codec());
-        registerRandomDistribution("poisson", PoissonDistribution.CODEC.codec());
-        registerRandomDistribution("uniform", UniformDistribution.CODEC.codec());
+        registerRandomSampler("beta", BetaSampler.CODEC.codec());
+        registerRandomSampler("binomial", BinomialSampler.CODEC.codec());
+        registerRandomSampler("exponential", ExponentialSampler.CODEC.codec());
+        registerRandomSampler("gamma", GammaSampler.CODEC.codec());
+        registerRandomSampler("geometric", GeometricSampler.CODEC.codec());
+        registerRandomSampler("normal", NormalSampler.CODEC.codec());
+        registerRandomSampler("poisson", PoissonSampler.CODEC.codec());
+        registerRandomSampler("uniform", UniformSampler.CODEC.codec());
 
         /// Density Functions ///
         registerDensityFunction("asin",ArcSine.CODEC.codec());
@@ -89,17 +89,17 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
     }
 
     /**
-     * Registers RandomDistribution types
+     * Registers RandomSampler types
      * Method for ease of reading
      * Not generic, because Java hates that (makes it really annoying)
      *
-     * @param name: name of the RandomDistribution type used for JSON
-     * @param codec: the codec from the KeyDispatchDataCodec of the RandomDistribution class
+     * @param name: name of the RandomSampler type used for JSON
+     * @param codec: the codec from the KeyDispatchDataCodec of the RandomSampler class
      */
-    public void registerRandomDistribution(String name, Codec<? extends RandomDistribution> codec) {
+    public void registerRandomSampler(String name, Codec<? extends RandomSampler> codec) {
         ResourceLocation resourceLocation = new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, name);
-        ResourceKey<Codec<? extends RandomDistribution>> resourceKey = ResourceKey.create(RANDOM_DISTRIBUTION_TYPE.key(), resourceLocation);
-        Registry.register(RANDOM_DISTRIBUTION_TYPE,resourceKey,codec);
+        ResourceKey<Codec<? extends RandomSampler>> resourceKey = ResourceKey.create(RANDOM_SAMPLER_TYPE.key(), resourceLocation);
+        Registry.register(RANDOM_SAMPLER_TYPE,resourceKey,codec);
     }
 
 }

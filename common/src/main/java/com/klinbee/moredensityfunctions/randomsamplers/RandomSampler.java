@@ -1,6 +1,24 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.mojang.serialization.Codec;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.ExtraCodecs;
+
+import java.util.function.Function;
+
 public interface RandomSampler {
+
+    @SuppressWarnings("unchecked")
+    Codec<RandomSampler> CODEC = ExtraCodecs.lazyInitializedCodec(() -> {
+        var randomSamplerRegistry = BuiltInRegistries.REGISTRY.get(MoreDensityFunctionsConstants.RANDOM_SAMPLER_TYPE.location());
+        if (randomSamplerRegistry == null)
+            throw new NullPointerException("Worldgen modifier registry does not exist yet!");
+        return ((Registry<Codec<? extends RandomSampler>>) randomSamplerRegistry).byNameCodec();
+    }).dispatch(RandomSampler::codec, Function.identity());
+
+    Codec<? extends RandomSampler> codec();
 
     /// World Seed Storage
 
@@ -31,8 +49,8 @@ public interface RandomSampler {
         return ExponentialSampler.create(lambda);
     }
 
-    static GammaSampler buildGamma(double shape) {
-        return GammaSampler.create(shape);
+    static GammaSampler buildGamma(double shape, double scale) {
+        return GammaSampler.create(shape, scale);
     }
 
     static GeometricSampler buildGeometric(double probability) {
@@ -60,6 +78,10 @@ public interface RandomSampler {
      * @return The double value sampled from the distribution.
      */
     double sample(long hashedSeed);
+
+    double minValue();
+
+    double maxValue();
 
     /// Seed Randomization
 
