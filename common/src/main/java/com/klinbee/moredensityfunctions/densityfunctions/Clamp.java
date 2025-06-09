@@ -14,7 +14,7 @@ public record Clamp(DensityFunction arg, double min, double max) implements Dens
             Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max").forGetter(Clamp::max)
     ).apply(instance, (arg, min, max) -> {
         if (min > max) {
-            throw new IllegalArgumentException("Min must be less than max!");
+            throw new IllegalArgumentException("Min must be less than max! min: " + min + " max: " + max);
         }
         return new Clamp(arg, min, max);
     }));
