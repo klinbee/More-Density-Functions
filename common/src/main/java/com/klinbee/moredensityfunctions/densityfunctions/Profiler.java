@@ -49,7 +49,7 @@ public record Profiler(DensityFunction arg, int iterations, int warmup, int tria
         double avgWarmup = warmupTimes.stream().mapToLong(Long::longValue).average().orElse(0.0);
         double avgIteration = iterationTimes.stream().mapToLong(Long::longValue).average().orElse(0.0);
 
-        System.out.printf("Profile of %d Trials Complete: \nAvg. Warm-up Time: %.3fms\nAvg. Profile Time: %.3fms\nSum: %.3f\n",
+        System.out.printf("Profile of %d Trials Complete: \nAvg. Warm-up Time: %.3fms\nAvg. Profile Time: %.3fms\n",
                 trials,
                 avgWarmup / 1_000_000.0D,
                 avgIteration / 1_000_000.0D
