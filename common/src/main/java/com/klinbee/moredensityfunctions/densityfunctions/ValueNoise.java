@@ -35,10 +35,10 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
     }
 
     /// Getter Contracts (Fulfilled by record) ///
-    /// double minValue();
-    /// double maxValue();
+    // double minValue();
+    // double maxValue();
 
-    /// Interpolator Creator ///
+    /// Interpolator Types ///
     sealed interface Interpolator
             permits Interpolator.None2D, Interpolator.None3D,
             Interpolator.Lerp2D, Interpolator.Lerp3D {
@@ -75,7 +75,7 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
             }
         }
 
-        /// Factory Builder ///
+        /// Interpolation Builder ///
         static Interpolator create(Interpolator.Type interpolation, boolean is2D,
                                    int sizeX, int sizeY, int sizeZ,
                                    RandomSampler randomSampler, int salt) {
@@ -119,10 +119,10 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
         double interpolate(int x, int y, int z);
 
         /// Interpolator Implementations ///
+        // 2D Raw Value Cells
         record None2D(Interpolator.Type interpolation,
                       int sizeX, int sizeY, int sizeZ,
                       RandomSampler randomSampler, int salt) implements Interpolator {
-            // 2D Raw Value Cells
             @Override
             public double interpolate(int x, int y, int z) {
                 int gridX0 = NoiseDensityFunction.safeFloorDiv(x, sizeX);
@@ -132,10 +132,10 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
             }
         }
 
+        // 3D Raw Value Cells
         record None3D(Interpolator.Type interpolation,
                       int sizeX, int sizeY, int sizeZ,
                       RandomSampler randomSampler, int salt) implements Interpolator {
-            // 3D Raw Value Cells
             @Override
             public double interpolate(int x, int y, int z) {
                 int gridX0 = NoiseDensityFunction.safeFloorDiv(x, sizeX);
@@ -146,13 +146,14 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
             }
         }
 
+        // Bilinear Interpolation of Value Cells
+        // Smoothstep optionally done through CellCalculator
         record Lerp2D(Interpolator.Type interpolation, CellCalculator cellCalculator,
                       int sizeX, int sizeY, int sizeZ,
                       RandomSampler randomSampler, int salt) implements Interpolator {
-            // Bilinear Interpolation of Value Cells
-            // Smoothstep optionally done through CellCalculator
             @Override
             public double interpolate(int x, int y, int z) {
+                // Default or Smoothstep
                 double cellX = cellCalculator.calculate(x, sizeX);
                 double cellZ = cellCalculator.calculate(z, sizeZ);
 
@@ -178,13 +179,14 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
             }
         }
 
+        // Trilinear Interpolation of Value Cells
+        // Smoothstep optionally done through CellCalculator
         record Lerp3D(Interpolator.Type interpolation, CellCalculator cellCalculator,
                       int sizeX, int sizeY, int sizeZ,
                       RandomSampler randomSampler, int salt) implements Interpolator {
-            // Trilinear Interpolation of Value Cells
-            // Smoothstep optionally done through CellCalculator
             @Override
             public double interpolate(int x, int y, int z) {
+                // Default or Smoothstep
                 double cellX = cellCalculator.calculate(x, sizeX);
                 double cellY = cellCalculator.calculate(y, sizeY);
                 double cellZ = cellCalculator.calculate(z, sizeZ);
@@ -227,6 +229,7 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
         }
     }
 
+    /// ValueNoise Builder ///
     static ValueNoise create(RandomSampler randomSampler, int sizeX, int sizeY, int sizeZ,
                              Interpolator.Type interpolation, Optional<Integer> saltHolder, Optional<ExtraOctaves> extraOctavesHolder) {
 
@@ -265,6 +268,7 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
                 minValue, maxValue);
     }
 
+    /// DensityFunction Method Contracts ///
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(new ValueNoise(interpolator, saltHolder, extraOctavesHolder, singleOctave, frequencies, amplitudes, minValue, maxValue));
