@@ -61,6 +61,7 @@ public interface NoiseDensityFunction extends DensityFunction {
     }
 
     /// Noise Utility Methods ///
+    // To compute grid cell coordinates from regular coordinates
     static int safeFloorDiv(int numerator, int denominator) {
         if (denominator == 0) {
             return 0;
@@ -68,6 +69,7 @@ public interface NoiseDensityFunction extends DensityFunction {
         return StrictMath.floorDiv(numerator, denominator);
     }
 
+    // To pre-compute amplitudes/frequencies based on extra octave count
     static double[] computeNoiseRatios(int octaves, double ratio) {
         double[] ratios = new double[octaves];
         double baseRatio = ratio;

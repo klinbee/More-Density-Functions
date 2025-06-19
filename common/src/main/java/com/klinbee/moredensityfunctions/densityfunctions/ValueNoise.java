@@ -18,7 +18,7 @@ public record ValueNoise(Interpolator interpolator, Optional<Integer> saltHolder
                          double minValue, double maxValue
 ) implements NoiseDensityFunction {
 
-    private static MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+    private static final MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             RandomSampler.CODEC.fieldOf("sampler").forGetter(df -> df.interpolator().randomSampler()),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_x").forGetter(df -> df.interpolator().sizeX()),
             MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_y").forGetter(df -> df.interpolator().sizeY()),
