@@ -17,7 +17,7 @@ public record ArcCosine(DensityFunction arg) implements DensityFunction {
 
     @Override
     public double compute(FunctionContext pos) {
-        return this.eval(arg.compute(pos));
+        return eval(arg.compute(pos));
     }
 
     @Override
