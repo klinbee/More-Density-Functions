@@ -20,19 +20,27 @@ import net.minecraftforge.registries.RegistryObject;
 public class MoreDensityFunctionsForge {
 
     private static final DeferredRegister<Codec<? extends DensityFunction>> DENSITY_FUNCTIONS = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, MoreDensityFunctionsConstants.MOD_NAMESPACE);
-    public static final RegistryObject<Codec<? extends DensityFunction>> ASIN = DENSITY_FUNCTIONS.register("asin", ArcSine.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> ACOS = DENSITY_FUNCTIONS.register("acos", ArcCosine.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> ASIN = DENSITY_FUNCTIONS.register("asin", ArcSine.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> ATAN = DENSITY_FUNCTIONS.register("atan", ArcTangent.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> CEIL = DENSITY_FUNCTIONS.register("ceil", Ceil.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> CLAMP = DENSITY_FUNCTIONS.register("clamp", Clamp.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> COS = DENSITY_FUNCTIONS.register("cos", Cosine.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> DERIVATIVE = DENSITY_FUNCTIONS.register("derivative", DirectionalDerivative.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> DIV = DENSITY_FUNCTIONS.register("div", Divide.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> FLOOR = DENSITY_FUNCTIONS.register("floor", Floor.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> FLOOR_DIV = DENSITY_FUNCTIONS.register("floor_div", FloorDivide.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> FLOOR_MOD = DENSITY_FUNCTIONS.register("floor_mod", FloorModulo.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> GRADIENT_MAGNITUDE = DENSITY_FUNCTIONS.register("gradient_magnitude", GradientMagnitude.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> IEEE_REM = DENSITY_FUNCTIONS.register("ieee_rem", IEEERemainder.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> LOG = DENSITY_FUNCTIONS.register("log", Log.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> LOG_2 = DENSITY_FUNCTIONS.register("log_2", Log2.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> LOG_2FLOOR = DENSITY_FUNCTIONS.register("log2_floor", Log2Floor.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> NATURAL_LOG = DENSITY_FUNCTIONS.register("ln", NaturalLog.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> NEGATE = DENSITY_FUNCTIONS.register("negate", Negate.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> POLAR_COORDS = DENSITY_FUNCTIONS.register("polar_coords", PolarCoords.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> POWER = DENSITY_FUNCTIONS.register("power", Power.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> PROFILER = DENSITY_FUNCTIONS.register("profiler", Profiler.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> RECIPROCAL = DENSITY_FUNCTIONS.register("reciprocal", Reciprocal.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> REM = DENSITY_FUNCTIONS.register("rem", Remainder.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> ROUND = DENSITY_FUNCTIONS.register("round", Round.CODEC::codec);
@@ -43,6 +51,7 @@ public class MoreDensityFunctionsForge {
     public static final RegistryObject<Codec<? extends DensityFunction>> SQRT = DENSITY_FUNCTIONS.register("sqrt", SquareRoot.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> SUBTRACT = DENSITY_FUNCTIONS.register("subtract", Subtract.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> TAN = DENSITY_FUNCTIONS.register("tan", Tangent.CODEC::codec);
+    public static final RegistryObject<Codec<? extends DensityFunction>> VALUE_NOISE = DENSITY_FUNCTIONS.register("value_noise", ValueNoise.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> VEC_ANGLE = DENSITY_FUNCTIONS.register("vector_angle", VectorAngle.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> XGRAD = DENSITY_FUNCTIONS.register("x_clamped_gradient", XClampedGradient.CODEC::codec);
     public static final RegistryObject<Codec<? extends DensityFunction>> X_POS = DENSITY_FUNCTIONS.register("x", XPos.CODEC::codec);
@@ -51,21 +60,14 @@ public class MoreDensityFunctionsForge {
     public static final RegistryObject<Codec<? extends DensityFunction>> Z_POS = DENSITY_FUNCTIONS.register("z", ZPos.CODEC::codec);
 
     public MoreDensityFunctionsForge() {
-
-        // This method is invoked by the Forge mod loader when it is ready
-        // to load your mod. You can access Forge and Common code in this
-        // project.
-
-        // Use Forge to bootstrap the Common mod.
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
 
         DENSITY_FUNCTIONS.register(modEventBus);
+        MoreDensityFunctionsConstants.LOG.info("Registered {} density functions", DENSITY_FUNCTIONS.getEntries().size());
 
-        // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        MoreDensityFunctionsConstants.LOG.info("Hello Forge world!");
         MoreDensityFunctionsCommon.init();
 
     }
@@ -73,12 +75,10 @@ public class MoreDensityFunctionsForge {
     private void commonSetup(final FMLCommonSetupEvent event) {
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MoreDensityFunctionsConstants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent

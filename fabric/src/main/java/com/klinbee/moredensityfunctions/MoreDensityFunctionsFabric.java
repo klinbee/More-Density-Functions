@@ -34,16 +34,18 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerRandomSampler("uniform", UniformSampler.CODEC.codec());
 
         /// Density Functions ///
-        registerDensityFunction("asin",ArcSine.CODEC.codec());
         registerDensityFunction("acos", ArcCosine.CODEC.codec());
+        registerDensityFunction("asin",ArcSine.CODEC.codec());
         registerDensityFunction("atan", ArcTangent.CODEC.codec());
         registerDensityFunction("ceil", Ceil.CODEC.codec());
         registerDensityFunction("clamp", Clamp.CODEC.codec());
         registerDensityFunction("cos", Cosine.CODEC.codec());
+        registerDensityFunction("derivative", DirectionalDerivative.CODEC.codec());
         registerDensityFunction("div", Divide.CODEC.codec());
         registerDensityFunction("floor", Floor.CODEC.codec());
         registerDensityFunction("floor_div", FloorDivide.CODEC.codec());
         registerDensityFunction("floor_mod", FloorModulo.CODEC.codec());
+        registerDensityFunction("gradient_magnitude", GradientMagnitude.CODEC.codec());
         registerDensityFunction("ieee_rem", IEEERemainder.CODEC.codec());
         registerDensityFunction("log", Log.CODEC.codec());
         registerDensityFunction("log2", Log2.CODEC.codec());
@@ -71,6 +73,7 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerDensityFunction("z_clamped_gradient", ZClampedGradient.CODEC.codec());
         registerDensityFunction("z", ZPos.CODEC.codec());
 
+        /// Unused
         MoreDensityFunctionsCommon.init();
     }
 
