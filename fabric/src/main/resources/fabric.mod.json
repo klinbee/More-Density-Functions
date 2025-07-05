@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "${group}.ExampleModFabric"
+      "${group}.MoreDensityFunctionsFabric"
     ]
   },
   "mixins": [
