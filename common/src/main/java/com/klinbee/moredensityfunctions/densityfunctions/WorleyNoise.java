@@ -29,24 +29,77 @@ public record WorleyNoise(Interpolator interpolator, Optional<Integer> saltHolde
     ).apply(instance, WorleyNoise::create));
 
     /// Evaluates the noise based on the ValueNoise.Interpolator instance ///
-    @Override
-    public double evaluate(int x, int y, int z) {
+    public double evaluate3DWorley(int x, int y, int z) {
         // divide into grid cells
         int gridX = NoiseDensityFunction.safeFloorDiv(x, sizeX);
         int gridY = NoiseDensityFunction.safeFloorDiv(y, sizeY);
         int gridZ = NoiseDensityFunction.safeFloorDiv(z, sizeZ);
-        // randomize sub-cell point based on jitter
-        // offset from gridxyz by jitter, modulo?
-        long hashCell = RandomSampler.hashPosition(gridX, gridY, gridZ, salt);
-        int pointX = gridX + (randomSamplerX.sample(hashCell) % sizeX);
-        int pointY = gridY + (randomSamplerY.sample(hashCell) % sizeY);
-        int pointZ = gridZ + (randomSamplerZ.sample(hashCell) % sizeZ);
-        // optionally: add values to points based on voronoi_sampler
-        // use distance_metric to calculate values for position
-        // e.g. compute nearby cells first, then find closest point in cell...
-        // optionally: more steps based on edge/F2/etc.
+        double minDistance = Double.MAX_VALUE;
+        int closestCellX, closestCellY, closestCellZ;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    int sampleGridX = gridX + dx;
+                    int sampleGridY = gridY + dy;
+                    int sampleGridZ = gridZ + dz;
 
-        return 0.0D;
+                    long sampleHash = RandomSampler.hashPosition(sampleGridX, sampleGridY, sampleGridZ, salt);
+                    int samplePointX = sampleGridX * sizeX + (randomSamplerX.sample(sampleHash) % sizeX);
+                    int samplePointY = sampleGridY * sizeY + (randomSamplerY.sample(sampleHash) % sizeY);
+                    int samplePointZ = sampleGridZ * sizeZ + (randomSamplerZ.sample(sampleHash) % sizeZ);
+
+                    double currDistance = distance3D(x, y, z, samplePointX, samplePointY, samplePointZ);
+                    if (currDistance < minDistance) {
+                        minDistance = currDistance;
+                        closestCellX = sampleGridX;
+                        closestCellY = sampleGridY;
+                        closestCellZ = sampleGridZ;
+                    }
+                }
+            }
+        }
+        return minDistance;
+    }
+
+    public double evaluate3DVoronoi(int x, int y, int z) {
+        // divide into grid cells
+        int gridX = NoiseDensityFunction.safeFloorDiv(x, sizeX);
+        int gridY = NoiseDensityFunction.safeFloorDiv(y, sizeY);
+        int gridZ = NoiseDensityFunction.safeFloorDiv(z, sizeZ);
+        double minDistance = Double.MAX_VALUE;
+        int closestCellX, closestCellY, closestCellZ;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    int sampleGridX = gridX + dx;
+                    int sampleGridY = gridY + dy;
+                    int sampleGridZ = gridZ + dz;
+
+                    long sampleHash = RandomSampler.hashPosition(sampleGridX, sampleGridY, sampleGridZ, salt);
+                    int samplePointX = sampleGridX * sizeX + (randomSamplerX.sample(sampleHash) % sizeX);
+                    int samplePointY = sampleGridY * sizeY + (randomSamplerY.sample(sampleHash) % sizeY);
+                    int samplePointZ = sampleGridZ * sizeZ + (randomSamplerZ.sample(sampleHash) % sizeZ);
+
+                    double currDistance = distance3D(x, y, z, samplePointX, samplePointY, samplePointZ);
+                    if (currDistance < minDistance) {
+                        minDistance = currDistance;
+                        closestCellX = sampleGridX;
+                        closestCellY = sampleGridY;
+                        closestCellZ = sampleGridZ;
+                    }
+                }
+            }
+        }
+        long valueSampleHash = RandomSampler.hashPosition(closestCellX, closestCellY, closestCellZ, salt);
+        return voronoiSampler.sample(valueSampleHash);
+    }
+
+    private static double distance3D(int x1, int y1, int z1, int x2, int y2, int z2) {
+        return StrictMath.sqrt((x2-x1) * (x2-x1) + (y2-y1) * (y2-y1) + (z2-z1) * (z2-z1));
+    }
+
+    private static double distance2D(int x1, int y1, int x2, int y2) {
+        return StrictMath.sqrt((x2-x1) * (x2-x1) + (y2-y1) * (y2-y1));
     }
 
     /// Getter Contracts (Fulfilled by record) ///
