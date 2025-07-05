@@ -1,10 +1,10 @@
-package com.example.examplemod;
+package com.klinbee.examplemod;
 
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
-@Mod(Constants.MOD_ID)
+@Mod(ExampleModConstants.MOD_ID)
 public class ExampleMod {
 
     public ExampleMod(IEventBus eventBus) {
@@ -14,8 +14,8 @@ public class ExampleMod {
         // project.
 
         // Use NeoForge to bootstrap the Common mod.
-        Constants.LOG.info("Hello NeoForge world!");
-        CommonClass.init();
+        ExampleModConstants.LOG.info("Hello NeoForge world!");
+        ExampleModCommon.init();
 
     }
 }

@@ -1,6 +1,6 @@
-package com.example.examplemod;
+package com.klinbee.examplemod;
 
-import com.example.examplemod.platform.Services;
+import com.klinbee.examplemod.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Items;
 

@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.klinbee.examplemod;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -12,7 +12,7 @@ public class ExampleMod implements ModInitializer {
         // project.
 
         // Use Fabric to bootstrap the Common mod.
-        Constants.LOG.info("Hello Fabric world!");
-        CommonClass.init();
+        ExampleModConstants.LOG.info("Hello Fabric world!");
+        ExampleModCommon.init();
     }
 }
