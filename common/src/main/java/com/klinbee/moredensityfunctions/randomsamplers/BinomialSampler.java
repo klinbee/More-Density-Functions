@@ -5,9 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public sealed interface BinomialSampler extends RandomSampler
-        permits BinomialSampler.Direct, BinomialSampler.Poisson,
-        BinomialSampler.Normal, BinomialSampler.Exponential {
+public sealed interface BinomialSampler extends RandomSampler {
 
     MapCodec<BinomialSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
             instance.group(

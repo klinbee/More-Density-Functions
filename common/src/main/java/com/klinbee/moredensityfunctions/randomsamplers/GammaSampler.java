@@ -5,8 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public sealed interface GammaSampler extends RandomSampler
-        permits GammaSampler.AhrensDieter, GammaSampler.MarsagliaTsang {
+public sealed interface GammaSampler extends RandomSampler {
 
     MapCodec<GammaSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
             instance.group(
