@@ -5,9 +5,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
 @Mod(ExampleModConstants.MOD_ID)
-public class ExampleMod {
+public class ExampleModNeoForge {
 
-    public ExampleMod(IEventBus eventBus) {
+    public ExampleModNeoForge(IEventBus eventBus) {
 
         // This method is invoked by the NeoForge mod loader when it is ready
         // to load your mod. You can access NeoForge and Common code in this
