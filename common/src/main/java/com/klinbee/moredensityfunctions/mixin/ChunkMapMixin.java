@@ -24,6 +24,5 @@ public class ChunkMapMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void MoreDensityFunctions_ChunkMap_captureWorldSeed(ServerLevel level, LevelStorageSource.LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager structureTemplateManager, Executor executor, BlockableEventLoop blockableEventLoop, LightChunkGetter $$6, ChunkGenerator $$7, ChunkProgressListener $$8, ChunkStatusUpdateListener $$9, Supplier $$10, int $$11, boolean $$12, CallbackInfo ci) {
         RandomSampler.WorldSeedHolder.setWorldSeed(level.getSeed());
-        // DEBUG: System.out.println("MoreDensityFunctions, WorldSeed set!: " + level.getSeed());
     }
 }
