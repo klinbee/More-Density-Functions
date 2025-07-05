@@ -1,4 +1,4 @@
-package com.klinbee.examplemod;
+package com.klinbee.moredensityfunctions;
 
 
 import net.neoforged.bus.api.IEventBus;

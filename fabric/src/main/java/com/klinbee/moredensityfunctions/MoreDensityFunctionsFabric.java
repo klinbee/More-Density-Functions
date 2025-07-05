@@ -1,8 +1,8 @@
-package com.klinbee.examplemod;
+package com.klinbee.moredensityfunctions;
 
 import net.fabricmc.api.ModInitializer;
 
-public class ExampleModFabric implements ModInitializer {
+public class MoreDensityFunctionsFabric implements ModInitializer {
     
     @Override
     public void onInitialize() {
@@ -12,7 +12,7 @@ public class ExampleModFabric implements ModInitializer {
         // project.
 
         // Use Fabric to bootstrap the Common mod.
-        ExampleModConstants.LOG.info("Hello Fabric world!");
-        ExampleModCommon.init();
+        MoreDensityFunctionsConstants.LOG.info("Hello Fabric world!");
+        MoreDensityFunctionsCommon.init();
     }
 }

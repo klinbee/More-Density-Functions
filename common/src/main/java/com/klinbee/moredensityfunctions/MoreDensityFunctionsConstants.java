@@ -1,9 +1,9 @@
-package com.klinbee.examplemod;
+package com.klinbee.moredensityfunctions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExampleModConstants {
+public class MoreDensityFunctionsConstants {
 
 	public static final String MOD_ID = "examplemod";
 	public static final String MOD_NAME = "ExampleMod";
