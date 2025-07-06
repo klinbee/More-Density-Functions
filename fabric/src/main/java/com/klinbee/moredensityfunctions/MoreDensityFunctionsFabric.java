@@ -21,9 +21,10 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
     @Override
     public void onInitialize() {
 
+        /// Register the RandomSampler Registry
         DynamicRegistries.register(MoreDensityFunctionsConstants.RANDOM_SAMPLER, RandomSampler.CODEC);
 
-        ///  Random Distributions ///
+        ///  Random Samplers
         registerRandomSampler("beta", BetaSampler.CODEC.codec());
         registerRandomSampler("binomial", BinomialSampler.CODEC.codec());
         registerRandomSampler("exponential", ExponentialSampler.CODEC.codec());
@@ -33,7 +34,7 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerRandomSampler("poisson", PoissonSampler.CODEC.codec());
         registerRandomSampler("uniform", UniformSampler.CODEC.codec());
 
-        /// Density Functions ///
+        /// Density Functions
         registerDensityFunction("acos", ArcCosine.CODEC.codec());
         registerDensityFunction("asin",ArcSine.CODEC.codec());
         registerDensityFunction("atan", ArcTangent.CODEC.codec());
@@ -104,5 +105,4 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         ResourceKey<MapCodec<? extends RandomSampler>> resourceKey = ResourceKey.create(RANDOM_SAMPLER_TYPE.key(), resourceLocation);
         Registry.register(RANDOM_SAMPLER_TYPE,resourceKey,codec);
     }
-
 }
