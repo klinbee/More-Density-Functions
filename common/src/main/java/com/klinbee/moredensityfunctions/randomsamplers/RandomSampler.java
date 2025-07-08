@@ -12,9 +12,9 @@ public interface RandomSampler {
 
     @SuppressWarnings("unchecked")
     Codec<RandomSampler> CODEC = Codec.lazyInitialized(() -> {
-        var randomSamplerRegistry = BuiltInRegistries.REGISTRY.get(MoreDensityFunctionsConstants.RANDOM_SAMPLER_TYPE.location());
-        if (randomSamplerRegistry == null) throw new NullPointerException("Random sampler registry does not exist yet!");
-        return ((Registry<MapCodec<? extends RandomSampler>>) randomSamplerRegistry).byNameCodec();
+        var optionalRandomSamplerRegistry = BuiltInRegistries.REGISTRY.get(MoreDensityFunctionsConstants.RANDOM_SAMPLER_TYPE.location());
+        if (optionalRandomSamplerRegistry.isEmpty()) throw new IllegalStateException("Random sampler registry does not exist yet!");
+        return ((Registry<MapCodec<? extends RandomSampler>>) optionalRandomSamplerRegistry.get().value()).byNameCodec();
     }).dispatch(RandomSampler::codec, Function.identity());
 
     MapCodec<? extends RandomSampler> codec();
