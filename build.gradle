@@ -73,6 +73,7 @@ subprojects {
                 "mod_id": mod_id,
                 "license": license,
                 "description": project.description,
+                "icon": icon,
                 "github_page": github_page,
                 "issue_page": issue_page,
                 "namespace": namespace,
