@@ -8,11 +8,10 @@
     "${mod_author}"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
     "sources": "${github_page}"
   },
   "license": "${license}",
-  "icon": "assets/${namespace}/${mod_id}.png",
+  "icon": "${icon}",
   "environment": "*",
   "entrypoints": {
     "main": [
