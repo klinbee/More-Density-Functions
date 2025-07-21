@@ -26,8 +26,9 @@ public class MoreDensityFunctionsNeoForge {
             MoreDensityFunctionsConstants.MOD_NAMESPACE
     );
 
-
     public MoreDensityFunctionsNeoForge(IEventBus eventBus) {
+        /// Initialize the DeferredRegister into a Registry
+        RANDOM_SAMPLERS.makeRegistry(builder -> builder.sync(false));
 
         /// Register the Random Sampler Registry
         eventBus.addListener((DataPackRegistryEvent.NewRegistry event) -> {
@@ -84,6 +85,7 @@ public class MoreDensityFunctionsNeoForge {
         DENSITY_FUNCTIONS.register("z_clamped_gradient", ZClampedGradient.CODEC::codec);
         DENSITY_FUNCTIONS.register("z", ZPos.CODEC::codec);
 
+        /// Add registrations to eventBus
         DENSITY_FUNCTIONS.register(eventBus);
         RANDOM_SAMPLERS.register(eventBus);
 
