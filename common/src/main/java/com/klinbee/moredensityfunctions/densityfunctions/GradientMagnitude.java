@@ -17,14 +17,14 @@ public interface GradientMagnitude extends DensityFunction {
             Codec.intRange(1, 30_000_000).optionalFieldOf("step_z").forGetter(GradientMagnitude::stepHolderZ)
     ).apply(instance, GradientMagnitude::create));
     KeyDispatchDataCodec<GradientMagnitude> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-    
+
     DensityFunction arg();
     Optional<Integer> stepHolderX();
     Optional<Integer> stepHolderY();
     Optional<Integer> stepHolderZ();
 
     record BlockContext(int blockX, int blockY, int blockZ) implements FunctionContext { }
-    
+
     static GradientMagnitude create(DensityFunction arg,
                                     Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ) {
         boolean xPresent, yPresent, zPresent;
@@ -73,12 +73,12 @@ public interface GradientMagnitude extends DensityFunction {
                     stepHolderZ.get()
             );
         }
-        throw new IllegalArgumentException("Directional Derivative must contain at least one directional component!");
+        throw new IllegalArgumentException("Gradient Magntitude must contain at least one valid step component!");
     }
 
     record GradientX(DensityFunction arg,
-                       Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                       int stepX
+                     Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
+                     int stepX
     ) implements GradientMagnitude {
         @Override
         public double compute(FunctionContext pos) {
@@ -99,8 +99,8 @@ public interface GradientMagnitude extends DensityFunction {
     }
 
     record GradientY(DensityFunction arg,
-                       Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                       int stepY
+                     Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
+                     int stepY
     ) implements GradientMagnitude {
         @Override
         public double compute(FunctionContext pos) {
@@ -121,8 +121,8 @@ public interface GradientMagnitude extends DensityFunction {
     }
 
     record GradientZ(DensityFunction arg,
-                       Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                       int stepZ
+                     Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
+                     int stepZ
     ) implements GradientMagnitude {
         @Override
         public double compute(FunctionContext pos) {
@@ -143,17 +143,17 @@ public interface GradientMagnitude extends DensityFunction {
     }
 
     record GradientXY(DensityFunction arg,
-                        Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                        int stepX, int stepY
+                      Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
+                      int stepX, int stepY
     ) implements GradientMagnitude {
         @Override
         public double compute(FunctionContext pos) {
             int x, y, z;
-            
+
             x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
-            
+
             BlockContext forwardStepX, backwardStepX, forwardStepY, backwardStepY;
-            
+
             forwardStepX = new BlockContext(x+stepX,y,z);
             backwardStepX = new BlockContext(x-stepX,y,z);
             forwardStepY = new BlockContext(x,y+stepY,z);
@@ -175,8 +175,8 @@ public interface GradientMagnitude extends DensityFunction {
     }
 
     record GradientXZ(DensityFunction arg,
-                        Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                        int stepX, int stepZ
+                      Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
+                      int stepX, int stepZ
     ) implements GradientMagnitude {
         @Override
         public double compute(FunctionContext pos) {
@@ -207,8 +207,8 @@ public interface GradientMagnitude extends DensityFunction {
     }
 
     record GradientYZ(DensityFunction arg,
-                        Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                        int stepY, int stepZ
+                      Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
+                      int stepY, int stepZ
     ) implements GradientMagnitude {
         @Override
         public double compute(FunctionContext pos) {
@@ -239,8 +239,8 @@ public interface GradientMagnitude extends DensityFunction {
     }
 
     record GradientXYZ(DensityFunction arg,
-                         Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                         int stepX, int stepY, int stepZ
+                       Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
+                       int stepX, int stepY, int stepZ
     ) implements GradientMagnitude {
         @Override
         public double compute(FunctionContext pos) {
@@ -258,7 +258,7 @@ public interface GradientMagnitude extends DensityFunction {
             backwardStepZ = new BlockContext(x,y,z-stepZ);
 
             double derivativeX, derivativeY, derivativeZ;
-            
+
             derivativeX = (arg.compute(forwardStepX) - arg.compute(backwardStepX)) / (2*stepX);
             derivativeY = (arg.compute(forwardStepY) - arg.compute(backwardStepY)) / (2*stepY);
             derivativeZ = (arg.compute(forwardStepZ) - arg.compute(backwardStepZ)) / (2*stepZ);
