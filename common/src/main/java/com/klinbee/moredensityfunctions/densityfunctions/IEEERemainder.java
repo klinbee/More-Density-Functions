@@ -15,8 +15,8 @@ public record IEEERemainder(DensityFunction numerator, DensityFunction denominat
                             Optional<DensityFunction> errorArgHolder,
                             DensityFunction errorArg) implements DensityFunction {
     private static final MapCodec<IEEERemainder> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(IEEERemainder::numerator),
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("arg").forGetter(IEEERemainder::denominator),
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(IEEERemainder::numerator),
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(IEEERemainder::denominator),
             DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(IEEERemainder::errorArgHolder)
     ).apply(instance, (numerator, denominator, errorArgHolder) ->
             new IEEERemainder(numerator, denominator, errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
