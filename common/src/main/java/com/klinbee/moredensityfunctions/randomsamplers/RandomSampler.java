@@ -14,7 +14,7 @@ public interface RandomSampler {
     Codec<RandomSampler> CODEC = ExtraCodecs.lazyInitializedCodec(() -> {
         var randomSamplerRegistry = BuiltInRegistries.REGISTRY.get(MoreDensityFunctionsConstants.RANDOM_SAMPLER_TYPE.location());
         if (randomSamplerRegistry == null)
-            throw new NullPointerException("Worldgen modifier registry does not exist yet!");
+            throw new NullPointerException("RandomSampler registry does not exist yet!");
         return ((Registry<Codec<? extends RandomSampler>>) randomSamplerRegistry).byNameCodec();
     }).dispatch(RandomSampler::codec, Function.identity());
 
