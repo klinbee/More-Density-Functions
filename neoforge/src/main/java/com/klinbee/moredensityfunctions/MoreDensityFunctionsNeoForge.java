@@ -28,6 +28,8 @@ public class MoreDensityFunctionsNeoForge {
 
 
     public MoreDensityFunctionsNeoForge(IEventBus eventBus) {
+        /// Initialize the DeferredRegister into a Registry
+        RANDOM_SAMPLERS.makeRegistry(builder -> builder.sync(false));
 
         /// Register the Random Sampler Registry
         eventBus.addListener((DataPackRegistryEvent.NewRegistry event) -> {
