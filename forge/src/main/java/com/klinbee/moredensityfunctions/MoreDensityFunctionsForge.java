@@ -74,7 +74,7 @@ public class MoreDensityFunctionsForge {
         DENSITY_FUNCTIONS.register("gradient_magnitude", GradientMagnitude.CODEC::codec);
         DENSITY_FUNCTIONS.register("ieee_rem", IEEERemainder.CODEC::codec);
         DENSITY_FUNCTIONS.register("log", Log.CODEC::codec);
-        DENSITY_FUNCTIONS.register("log_2", Log2.CODEC::codec);
+        DENSITY_FUNCTIONS.register("log2", Log2.CODEC::codec);
         DENSITY_FUNCTIONS.register("log2_floor", Log2Floor.CODEC::codec);
         DENSITY_FUNCTIONS.register("ln", NaturalLog.CODEC::codec);
         DENSITY_FUNCTIONS.register("negate", Negate.CODEC::codec);
