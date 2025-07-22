@@ -27,14 +27,14 @@ public interface DirectionalDerivative extends DensityFunction {
                 ).apply(instance, DerivativeComponent::new)
         );
     }
-    
+
     DensityFunction arg();
     Optional<DerivativeComponent> componentHolderX();
     Optional<DerivativeComponent> componentHolderY();
     Optional<DerivativeComponent> componentHolderZ();
 
-    record BlockContext(int blockX, int blockY, int blockZ) implements FunctionContext { }
-    
+    record BlockContext(int blockX, int blockY, int blockZ) implements DensityFunction.FunctionContext { }
+
     static DirectionalDerivative create(DensityFunction arg,
                                         Optional<DerivativeComponent> componentHolderX, Optional<DerivativeComponent> componentHolderY, Optional<DerivativeComponent> componentHolderZ) {
         boolean xPresent, yPresent, zPresent;
@@ -83,7 +83,7 @@ public interface DirectionalDerivative extends DensityFunction {
                     componentHolderZ.get()
             );
         }
-        throw new IllegalArgumentException("Directional Derivative must contain at least one directional component!");
+        throw new IllegalArgumentException("Derivative must contain at least one valid directional component!");
     }
 
     record DerivativeX(DensityFunction arg,
@@ -110,7 +110,7 @@ public interface DirectionalDerivative extends DensityFunction {
 
         @Override
         public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new DerivativeX(arg, componentHolderX, componentHolderY, componentHolderZ, componentX));
+            return visitor.apply(new DirectionalDerivative.DerivativeX(arg, componentHolderX, componentHolderY, componentHolderZ, componentX));
         }
     }
 
@@ -138,7 +138,7 @@ public interface DirectionalDerivative extends DensityFunction {
 
         @Override
         public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new DerivativeY(arg, componentHolderX, componentHolderY, componentHolderZ, componentY));
+            return visitor.apply(new DirectionalDerivative.DerivativeY(arg, componentHolderX, componentHolderY, componentHolderZ, componentY));
         }
     }
 
@@ -166,7 +166,7 @@ public interface DirectionalDerivative extends DensityFunction {
 
         @Override
         public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new DerivativeZ(arg, componentHolderX, componentHolderY, componentHolderZ, componentZ));
+            return visitor.apply(new DirectionalDerivative.DerivativeZ(arg, componentHolderX, componentHolderY, componentHolderZ, componentZ));
         }
     }
 
@@ -178,20 +178,20 @@ public interface DirectionalDerivative extends DensityFunction {
         public double compute(FunctionContext pos) {
             int x, y, z;
             int stepX, stepY;
-            
+
             x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
             stepX = componentX.step; stepY = componentY.step;
-            
+
             BlockContext forwardStepX, backwardStepX, forwardStepY, backwardStepY;
-            
+
             forwardStepX = new BlockContext(x+stepX,y,z);
             backwardStepX = new BlockContext(x-stepX,y,z);
             forwardStepY = new BlockContext(x,y+stepY,z);
             backwardStepY = new BlockContext(x,y-stepY,z);
-            
+
             double directionMagnitude, directionVecX, directionVecY;
             double directionVecNormX, directionVecNormY, derivativeX, derivativeY;
-            
+
             directionVecX = componentX.direction.compute(pos);
             directionVecY = componentY.direction.compute(pos);
 
@@ -210,7 +210,7 @@ public interface DirectionalDerivative extends DensityFunction {
 
         @Override
         public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new DerivativeXY(arg, componentHolderX, componentHolderY, componentHolderZ, componentX, componentY));
+            return visitor.apply(new DirectionalDerivative.DerivativeXY(arg, componentHolderX, componentHolderY, componentHolderZ, componentX, componentY));
         }
     }
 
@@ -255,7 +255,7 @@ public interface DirectionalDerivative extends DensityFunction {
 
         @Override
         public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new DerivativeXZ(arg, componentHolderX, componentHolderY, componentHolderZ, componentX, componentZ));
+            return visitor.apply(new DirectionalDerivative.DerivativeXZ(arg, componentHolderX, componentHolderY, componentHolderZ, componentX, componentZ));
         }
     }
 
@@ -299,7 +299,7 @@ public interface DirectionalDerivative extends DensityFunction {
 
         @Override
         public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new DerivativeYZ(arg, componentHolderX, componentHolderY, componentHolderZ, componentY, componentZ));
+            return visitor.apply(new DirectionalDerivative.DerivativeYZ(arg, componentHolderX, componentHolderY, componentHolderZ, componentY, componentZ));
         }
     }
 
@@ -330,15 +330,15 @@ public interface DirectionalDerivative extends DensityFunction {
             directionVecX = componentX.direction.compute(pos);
             directionVecY = componentY.direction.compute(pos);
             directionVecZ = componentZ.direction.compute(pos);
-            
+
             directionMagnitude = StrictMath.sqrt(directionVecX * directionVecX
                     + directionVecY * directionVecY
                     + directionVecZ * directionVecZ);
-            
+
             directionVecNormX = directionVecX / directionMagnitude;
             directionVecNormY = directionVecY / directionMagnitude;
             directionVecNormZ = directionVecZ / directionMagnitude;
-            
+
             derivativeX = (arg.compute(forwardStepX) - arg.compute(backwardStepX)) / (2*stepX);
             derivativeY = (arg.compute(forwardStepY) - arg.compute(backwardStepY)) / (2*stepY);
             derivativeZ = (arg.compute(forwardStepZ) - arg.compute(backwardStepZ)) / (2*stepZ);
@@ -350,7 +350,7 @@ public interface DirectionalDerivative extends DensityFunction {
 
         @Override
         public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new DerivativeXYZ(arg, componentHolderX, componentHolderY, componentHolderZ, componentX, componentY, componentZ));
+            return visitor.apply(new DirectionalDerivative.DerivativeXYZ(arg, componentHolderX, componentHolderY, componentHolderZ, componentX, componentY, componentZ));
         }
     }
 
