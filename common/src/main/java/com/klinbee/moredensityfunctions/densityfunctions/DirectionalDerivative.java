@@ -83,7 +83,7 @@ public interface DirectionalDerivative extends DensityFunction {
                     componentHolderZ.get()
             );
         }
-        throw new IllegalArgumentException("Directional Derivative must contain at least one directional component!");
+        throw new IllegalArgumentException("Derivative must contain at least one valid directional component!");
     }
 
     record DerivativeX(DensityFunction arg,

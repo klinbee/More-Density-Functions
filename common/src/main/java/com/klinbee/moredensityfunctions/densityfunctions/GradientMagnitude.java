@@ -73,7 +73,7 @@ public interface GradientMagnitude extends DensityFunction {
                     stepHolderZ.get()
             );
         }
-        throw new IllegalArgumentException("Directional Derivative must contain at least one directional component!");
+        throw new IllegalArgumentException("Gradient Magntitude must contain at least one valid step component!");
     }
 
     record GradientX(DensityFunction arg,
