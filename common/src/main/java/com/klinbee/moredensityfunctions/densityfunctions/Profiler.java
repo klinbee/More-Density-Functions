@@ -48,9 +48,9 @@ public record Profiler(DensityFunction arg, int iterations, int warmup) implemen
         double avgIterationTime = Arrays.stream(iterationTimes).average().orElse(0.0);
 
         System.out.printf("Profile of %,d iterations:" +
-                        "\nAvg. Time per Compute (warm-up stage): %.3fns" +
-                        "\nAvg. Time per Compute (profile stage): %.3fns" +
-                        "\nProfile Time: %.3fs" +
+                        "\nAvg. Time per Compute (warm-up stage): %,.3fns" +
+                        "\nAvg. Time per Compute (profile stage): %,.3fns" +
+                        "\nProfile Time: %,.3fs" +
                         "\n",
                 iterations,
                 avgWarmUpTime,
