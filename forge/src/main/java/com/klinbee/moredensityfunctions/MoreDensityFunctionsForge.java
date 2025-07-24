@@ -104,6 +104,5 @@ public class MoreDensityFunctionsForge {
         RANDOM_SAMPLERS.register(eventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
-        MoreDensityFunctionsCommon.init();
     }
 }

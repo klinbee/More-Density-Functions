@@ -10,24 +10,24 @@ import org.slf4j.LoggerFactory;
 
 public class MoreDensityFunctionsConstants {
 
+    /// Mod Info
     public static final String MOD_ID = "moredensityfunctions";
     public static final String MOD_NAME = "MoreDensityFunctions";
     public static final String MOD_NAMESPACE = "moredfs";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
-    // Density Function Defaults
-    public static final double DEFAULT_ERROR = 0.0D;
-    public static final double DEFAULT_MAX_OUTPUT = 1.0D;
-    public static final double DEFAULT_MIN_OUTPUT = -1.0D;
-
+    /// Constant Values
     public static final double MAX_COORD_DOUBLE = 30_000_000D;
     public static final double MIN_COORD_DOUBLE = -MAX_COORD_DOUBLE;
     public static final int MAX_COORD_INT = 30_000_000;
     public static final int MIN_COORD_INT = -MAX_COORD_INT;
 
-    public static final Codec<Integer> COORD_CODEC_INT = Codec.intRange(MoreDensityFunctionsConstants.MIN_COORD_INT, MoreDensityFunctionsConstants.MAX_COORD_INT);
-    public static final Codec<Double> COORD_CODEC_DOUBLE = Codec.doubleRange(MoreDensityFunctionsConstants.MIN_COORD_DOUBLE, MoreDensityFunctionsConstants.MAX_COORD_DOUBLE);
+    /// Useful Codecs
+    public static final Codec<Integer> COORD_CODEC_INT = Codec.intRange(MIN_COORD_INT, MAX_COORD_INT);
+    public static final Codec<Integer> NON_NEGATIVE_INT = Codec.intRange(0, Integer.MAX_VALUE);
+    public static final Codec<Integer> POSITIVE_INT = Codec.intRange(1, Integer.MAX_VALUE);
 
-    public static final ResourceKey<Registry<RandomSampler>> RANDOM_SAMPLER = ResourceKey.createRegistryKey(new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, "random_sampler"));
-    public static final ResourceKey<Registry<Codec<? extends RandomSampler>>> RANDOM_SAMPLER_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, "random_sampler_type"));
+    /// ResourceKeys
+    public static final ResourceKey<Registry<RandomSampler>> RANDOM_SAMPLER = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "random_sampler"));
+    public static final ResourceKey<Registry<Codec<? extends RandomSampler>>> RANDOM_SAMPLER_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "random_sampler_type"));
 }
