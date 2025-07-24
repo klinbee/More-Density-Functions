@@ -5,35 +5,31 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public sealed interface PoissonSampler extends RandomSampler {
+public sealed interface PoissonSampler
+        extends RandomSampler {
 
-    MapCodec<PoissonSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
-            instance.group(
-                    Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("lambda").forGetter(PoissonSampler::lambda)
-            ).apply(instance, PoissonSampler::create)
-    );
+    MapCodec<PoissonSampler> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("lambda").forGetter(PoissonSampler::lambda)
+                    ).apply(instance, PoissonSampler::create)
+            );
 
-    double lambda();
-
-    @Override
-    default double minValue() {
-        return 0.0D;
-    }
-
-    @Override
-    default double maxValue() {
-        return Double.MAX_VALUE;
-    }
+    KeyDispatchDataCodec<PoissonSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     static PoissonSampler create(double lambda) {
         if (lambda < 30.0D) {
             double expNegativeLambda = StrictMath.exp(-lambda);
             return new Knuth(lambda, expNegativeLambda);
         }
-        return new Normal(lambda, RandomSampler.buildNormal(lambda, StrictMath.sqrt(lambda)));
+        return new Normal(lambda, NormalSampler.create(lambda, StrictMath.sqrt(lambda)));
     }
 
-    record Knuth(double lambda, double expNegativeLambda) implements PoissonSampler {
+    double lambda();
+
+    record Knuth(double lambda,
+                 double expNegativeLambda)
+            implements PoissonSampler {
         @Override
         public double sample(long hashedSeed) {
             double p = 1.0D;
@@ -49,17 +45,23 @@ public sealed interface PoissonSampler extends RandomSampler {
         }
     }
 
-    record Normal(double lambda, NormalSampler normalSampler) implements PoissonSampler {
+    record Normal(double lambda,
+                  NormalSampler normalSampler)
+            implements PoissonSampler {
         @Override
         public double sample(long hashedSeed) {
             return StrictMath.max(0.0D, StrictMath.round(normalSampler.sample(hashedSeed)));
         }
     }
 
-    KeyDispatchDataCodec<PoissonSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    @Override
+    default double minValue() {
+        return 0.0D;
+    }
 
-    static MapCodec<PoissonSampler> getMapCodec() {
-        return MAP_CODEC;
+    @Override
+    default double maxValue() {
+        return Double.MAX_VALUE;
     }
 
     default MapCodec<? extends RandomSampler> codec() {

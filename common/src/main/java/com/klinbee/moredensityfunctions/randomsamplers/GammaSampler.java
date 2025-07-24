@@ -5,27 +5,22 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public sealed interface GammaSampler extends RandomSampler {
+public sealed interface GammaSampler
+        extends RandomSampler {
 
-    MapCodec<GammaSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
-            instance.group(
-                    Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("shape").forGetter(GammaSampler::shape),
-                    Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("scale").forGetter(GammaSampler::scale)
-            ).apply(instance, GammaSampler::create)
-    );
+    MapCodec<GammaSampler> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("shape").forGetter(GammaSampler::shape),
+                            Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("scale").forGetter(GammaSampler::scale)
+                    ).apply(instance, GammaSampler::create)
+            );
+
+    KeyDispatchDataCodec<GammaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     double shape();
+
     double scale();
-
-    @Override
-    default double minValue() {
-        return 0.0D;
-    }
-
-    @Override
-    default double maxValue() {
-        return Double.MAX_VALUE;
-    }
 
     static GammaSampler create(double shape, double scale) {
         if (shape < 1.0D) {
@@ -37,7 +32,10 @@ public sealed interface GammaSampler extends RandomSampler {
         return new MarsagliaTsang(shape, scale, shapeMinusOneThird, inverseSqrtShape);
     }
 
-    record AhrensDieter(double shape, double scale, double inverseShape) implements GammaSampler {
+    record AhrensDieter(double shape,
+                        double scale,
+                        double inverseShape)
+            implements GammaSampler {
         @Override
         public double sample(long hashedSeed) {
             double u, v, w, x, y, z;
@@ -65,7 +63,11 @@ public sealed interface GammaSampler extends RandomSampler {
         }
     }
 
-    record MarsagliaTsang(double shape, double scale, double shapeMinusOneThird, double inverseSqrtShape) implements GammaSampler {
+    record MarsagliaTsang(double shape,
+                          double scale,
+                          double shapeMinusOneThird,
+                          double inverseSqrtShape)
+            implements GammaSampler {
         @Override
         public double sample(long hashedSeed) {
             while (true) {
@@ -91,10 +93,14 @@ public sealed interface GammaSampler extends RandomSampler {
         }
     }
 
-    KeyDispatchDataCodec<GammaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    @Override
+    default double minValue() {
+        return 0.0D;
+    }
 
-    static MapCodec<GammaSampler> getMapCodec() {
-        return MAP_CODEC;
+    @Override
+    default double maxValue() {
+        return Double.MAX_VALUE;
     }
 
     default MapCodec<? extends RandomSampler> codec() {

@@ -5,28 +5,24 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public record BetaSampler(double alpha, double beta,
-                          GammaSampler alphaGen, GammaSampler betaGen
-) implements RandomSampler {
+public record BetaSampler(double alpha,
+                          double beta,
+                          GammaSampler alphaGen,
+                          GammaSampler betaGen)
+        implements RandomSampler {
 
-    public static final MapCodec<BetaSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
-            instance.group(
-                    Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("alpha").forGetter(BetaSampler::alpha),
-                    Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("beta").forGetter(BetaSampler::beta)
-            ).apply(instance, BetaSampler::create)
-    );
+    private static final MapCodec<BetaSampler> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("alpha").forGetter(BetaSampler::alpha),
+                            Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("beta").forGetter(BetaSampler::beta)
+                    ).apply(instance, BetaSampler::create)
+            );
 
+    public static KeyDispatchDataCodec<BetaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    static BetaSampler create(double alpha, double beta) {
-        return new BetaSampler(alpha, beta, RandomSampler.buildGamma(alpha, 1.0D), RandomSampler.buildGamma(beta, 1.0D));
-    }
-
-    public double minValue() {
-        return 0.0D;
-    }
-
-    public double maxValue() {
-        return 1.0D;
+    public static BetaSampler create(double alpha, double beta) {
+        return new BetaSampler(alpha, beta, GammaSampler.create(alpha, 1.0D), GammaSampler.create(beta, 1.0D));
     }
 
     @Override
@@ -36,10 +32,12 @@ public record BetaSampler(double alpha, double beta,
         return x / (x + y);
     }
 
-    public static KeyDispatchDataCodec<BetaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public double minValue() {
+        return 0.0D;
+    }
 
-    static MapCodec<BetaSampler> getMapCodec() {
-        return MAP_CODEC;
+    public double maxValue() {
+        return 1.0D;
     }
 
     public MapCodec<? extends RandomSampler> codec() {
