@@ -59,7 +59,7 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerDensityFunction("reciprocal", Reciprocal.CODEC.codec());
         registerDensityFunction("rem", Remainder.CODEC.codec());
         registerDensityFunction("round", Round.CODEC.codec());
-        registerDensityFunction("shift_df", ShiftDensityFunction.CODEC.codec());
+        registerDensityFunction("shift", ShiftDensityFunction.CODEC.codec());
         registerDensityFunction("sigmoid", Sigmoid.CODEC.codec());
         registerDensityFunction("signum", Signum.CODEC.codec());
         registerDensityFunction("sine", Sine.CODEC.codec());
