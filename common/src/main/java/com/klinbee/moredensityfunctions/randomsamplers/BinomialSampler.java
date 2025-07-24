@@ -5,27 +5,18 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-public sealed interface BinomialSampler extends RandomSampler {
+public sealed interface BinomialSampler
+        extends RandomSampler {
 
-    MapCodec<BinomialSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
-            instance.group(
-                    Codec.intRange(0, 1_000_000).fieldOf("trials").forGetter(BinomialSampler::trials),
-                    Codec.doubleRange(0.0D, 1.0D).fieldOf("probability").forGetter(BinomialSampler::probability)
-            ).apply(instance, BinomialSampler::create)
-    );
+    MapCodec<BinomialSampler> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            Codec.intRange(0, 1_000_000).fieldOf("trials").forGetter(BinomialSampler::trials),
+                            Codec.doubleRange(0.0D, 1.0D).fieldOf("probability").forGetter(BinomialSampler::probability)
+                    ).apply(instance, BinomialSampler::create)
+            );
 
-    int trials();
-    double probability();
-
-    @Override
-    default double minValue() {
-        return 0.0D;
-    }
-
-    @Override
-    default double maxValue() {
-        return Double.MAX_VALUE;
-    }
+    KeyDispatchDataCodec<BinomialSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     static BinomialSampler create(int trials, double probability) {
 
@@ -35,7 +26,7 @@ public sealed interface BinomialSampler extends RandomSampler {
         double mean = trials * probability;
 
         if (mean < 10.0D) {
-            PoissonSampler randPoisson = RandomSampler.buildPoisson(mean);
+            PoissonSampler randPoisson = PoissonSampler.create(mean);
             return new BinomialSampler.Poisson(trials, probability, randPoisson);
         }
 
@@ -50,7 +41,13 @@ public sealed interface BinomialSampler extends RandomSampler {
         return new BinomialSampler.Exponential(trials, probability, exponentialSampler);
     }
 
-    record Direct(int trials, double probability) implements BinomialSampler {
+    int trials();
+
+    double probability();
+
+    record Direct(int trials,
+                  double probability)
+            implements BinomialSampler {
         @Override
         public double sample(long hashedSeed) {
             int successes = 0;
@@ -64,22 +61,30 @@ public sealed interface BinomialSampler extends RandomSampler {
         }
     }
 
-    record Poisson(int trials, double probability, PoissonSampler randPoisson) implements BinomialSampler {
+    record Poisson(int trials,
+                   double probability,
+                   PoissonSampler randPoisson)
+            implements BinomialSampler {
         @Override
         public double sample(long hashedSeed) {
             return randPoisson.sample(hashedSeed);
         }
     }
 
-    record Normal(int trials, double probability, NormalSampler normalSampler) implements BinomialSampler {
+    record Normal(int trials,
+                  double probability,
+                  NormalSampler normalSampler)
+            implements BinomialSampler {
         @Override
         public double sample(long hashedSeed) {
             return StrictMath.max(0.0D, StrictMath.min(trials, StrictMath.round(normalSampler.sample(hashedSeed))));
         }
     }
 
-    record Exponential(int trials, double probability,
-                       ExponentialSampler exponentialSampler) implements BinomialSampler {
+    record Exponential(int trials,
+                       double probability,
+                       ExponentialSampler exponentialSampler)
+            implements BinomialSampler {
         @Override
         public double sample(long hashedSeed) {
             int x = 0;
@@ -93,10 +98,14 @@ public sealed interface BinomialSampler extends RandomSampler {
         }
     }
 
-    KeyDispatchDataCodec<BinomialSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    @Override
+    default double minValue() {
+        return 0.0D;
+    }
 
-    static MapCodec<BinomialSampler> getMapCodec() {
-        return MAP_CODEC;
+    @Override
+    default double maxValue() {
+        return trials();
     }
 
     default Codec<? extends RandomSampler> codec() {
