@@ -5,9 +5,11 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
+public record ZPos()
+        implements DensityFunction {
 
-public record ZPos() implements DensityFunction {
     private static final MapCodec<ZPos> MAP_CODEC = MapCodec.unit(new ZPos());
+
     public static final KeyDispatchDataCodec<ZPos> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
@@ -22,7 +24,9 @@ public record ZPos() implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new ZPos());
+        return visitor.apply(
+                new ZPos()
+        );
     }
 
     @Override

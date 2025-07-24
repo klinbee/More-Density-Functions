@@ -8,19 +8,27 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
+public record XClampedGradient(int fromX,
+                               int toX,
+                               double fromValue,
+                               double toValue)
+        implements DensityFunction {
 
-public record XClampedGradient(int fromX, int toX, double fromValue, double toValue) implements DensityFunction {
-    private static final MapCodec<XClampedGradient> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("from_x").forGetter(XClampedGradient::fromX),
-            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("to_x").forGetter(XClampedGradient::toX),
-            Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("from_value").forGetter(XClampedGradient::fromValue),
-            Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("to_value").forGetter(XClampedGradient::toValue)
-    ).apply(instance, (XClampedGradient::new)));
+    private static final MapCodec<XClampedGradient> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("from_x").forGetter(XClampedGradient::fromX),
+                            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("to_x").forGetter(XClampedGradient::toX),
+                            Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("from_value").forGetter(XClampedGradient::fromValue),
+                            Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("to_value").forGetter(XClampedGradient::toValue)
+                    ).apply(instance, XClampedGradient::new)
+            );
+
     public static final KeyDispatchDataCodec<XClampedGradient> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
     public double compute(FunctionContext pos) {
-        return Mth.clampedMap(pos.blockX(), this.fromX, this.toX, this.fromValue, this.toValue);
+        return Mth.clampedMap(pos.blockX(), fromX, toX, fromValue, toValue);
     }
 
     @Override
@@ -30,7 +38,14 @@ public record XClampedGradient(int fromX, int toX, double fromValue, double toVa
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new XClampedGradient(this.fromX, this.toX, this.fromValue, this.toValue));
+        return visitor.apply(
+                new XClampedGradient(
+                        fromX,
+                        toX,
+                        fromValue,
+                        toValue
+                )
+        );
     }
 
     @Override

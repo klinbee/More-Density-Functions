@@ -8,19 +8,27 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
+public record ZClampedGradient(int fromZ,
+                               int toZ,
+                               double fromValue,
+                               double toValue)
+        implements DensityFunction {
 
-public record ZClampedGradient(int fromZ, int toZ, double fromValue, double toValue) implements DensityFunction {
-    private static final MapCodec<ZClampedGradient> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("from_z").forGetter(ZClampedGradient::fromZ),
-            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("to_z").forGetter(ZClampedGradient::toZ),
-            Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("from_value").forGetter(ZClampedGradient::fromValue),
-            Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("to_value").forGetter(ZClampedGradient::toValue)
-    ).apply(instance, (ZClampedGradient::new)));
+    private static final MapCodec<ZClampedGradient> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("from_z").forGetter(ZClampedGradient::fromZ),
+                            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("to_z").forGetter(ZClampedGradient::toZ),
+                            Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("from_value").forGetter(ZClampedGradient::fromValue),
+                            Codec.doubleRange(-1000000.0D, 1000000.0D).fieldOf("to_value").forGetter(ZClampedGradient::toValue)
+                    ).apply(instance, ZClampedGradient::new)
+            );
+
     public static final KeyDispatchDataCodec<ZClampedGradient> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
     public double compute(FunctionContext pos) {
-        return Mth.clampedMap(pos.blockZ(), this.fromZ, this.toZ, this.fromValue, this.toValue);
+        return Mth.clampedMap(pos.blockZ(), fromZ, toZ, fromValue, toValue);
     }
 
     @Override
@@ -30,7 +38,14 @@ public record ZClampedGradient(int fromZ, int toZ, double fromValue, double toVa
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new ZClampedGradient(this.fromZ, this.toZ, this.fromValue, this.toValue));
+        return visitor.apply(
+                new ZClampedGradient(
+                        fromZ,
+                        toZ,
+                        fromValue,
+                        toValue
+                )
+        );
     }
 
     @Override

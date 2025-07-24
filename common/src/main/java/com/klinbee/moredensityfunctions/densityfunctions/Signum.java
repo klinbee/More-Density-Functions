@@ -5,20 +5,25 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
+public record Signum(DensityFunction arg)
+        implements DensityFunction {
 
-public record Signum(DensityFunction arg) implements DensityFunction {
-    private static final MapCodec<Signum> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Signum::arg)
-    ).apply(instance, (Signum::new)));
+    private static final MapCodec<Signum> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Signum::arg)
+                    ).apply(instance, Signum::new)
+            );
+
     public static final KeyDispatchDataCodec<Signum> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public double eval(double density) {
+    private static double eval(double density) {
         return StrictMath.signum(density);
     }
 
     @Override
     public double compute(FunctionContext pos) {
-        return this.eval(arg.compute(pos));
+        return eval(arg.compute(pos));
     }
 
     @Override
@@ -28,17 +33,19 @@ public record Signum(DensityFunction arg) implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Signum(this.arg));
+        return visitor.apply(
+                new Signum(arg)
+        );
     }
 
     @Override
     public double minValue() {
-        return this.eval(arg.minValue());
+        return eval(arg.minValue());
     }
 
     @Override
     public double maxValue() {
-        return this.eval(arg.maxValue());
+        return eval(arg.maxValue());
     }
 
     @Override

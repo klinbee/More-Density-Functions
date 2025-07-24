@@ -5,13 +5,19 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record ArcCosine(DensityFunction arg) implements DensityFunction {
-    private static final MapCodec<ArcCosine> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(ArcCosine::arg)
-    ).apply(instance, (ArcCosine::new)));
+public record ArcCosine(DensityFunction arg)
+        implements DensityFunction {
+
+    private static final MapCodec<ArcCosine> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(ArcCosine::arg)
+                    ).apply(instance, ArcCosine::new)
+            );
+
     public static final KeyDispatchDataCodec<ArcCosine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public double eval(double density) {
+    private static double eval(double density) {
         return StrictMath.acos(density);
     }
 
@@ -27,12 +33,14 @@ public record ArcCosine(DensityFunction arg) implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new ArcCosine(this.arg));
+        return visitor.apply(
+                new ArcCosine(arg)
+        );
     }
 
     @Override
     public double minValue() {
-        return 0;
+        return 0.0D;
     }
 
     @Override

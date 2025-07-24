@@ -4,9 +4,11 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
+public record PolarCoords()
+        implements DensityFunction {
 
-public record PolarCoords() implements DensityFunction {
     private static final MapCodec<PolarCoords> MAP_CODEC = MapCodec.unit(new PolarCoords());
+
     public static final KeyDispatchDataCodec<PolarCoords> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
@@ -21,7 +23,9 @@ public record PolarCoords() implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new PolarCoords());
+        return visitor.apply(
+                new PolarCoords()
+        );
     }
 
     @Override

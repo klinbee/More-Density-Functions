@@ -1,6 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.mojang.serialization.Codec;
+import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -8,289 +8,104 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Optional;
 
+public record GradientMagnitude(DensityFunction arg,
+                                Optional<Integer> stepHolderX,
+                                Optional<Integer> stepHolderY,
+                                Optional<Integer> stepHolderZ)
+        implements DensityFunction {
 
-public interface GradientMagnitude extends DensityFunction {
-    MapCodec<GradientMagnitude> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(GradientMagnitude::arg),
-            Codec.intRange(1, 30_000_000).optionalFieldOf("step_x").forGetter(GradientMagnitude::stepHolderX),
-            Codec.intRange(1, 30_000_000).optionalFieldOf("step_y").forGetter(GradientMagnitude::stepHolderY),
-            Codec.intRange(1, 30_000_000).optionalFieldOf("step_z").forGetter(GradientMagnitude::stepHolderZ)
-    ).apply(instance, GradientMagnitude::create));
-    KeyDispatchDataCodec<GradientMagnitude> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public static final MapCodec<GradientMagnitude> MAP_CODEC =
+            RecordCodecBuilder.mapCodec(instance ->
+                    instance.group(
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(GradientMagnitude::arg),
+                            MoreDensityFunctionsConstants.POSITIVE_INT.optionalFieldOf("step_x").forGetter(GradientMagnitude::stepHolderX),
+                            MoreDensityFunctionsConstants.POSITIVE_INT.optionalFieldOf("step_y").forGetter(GradientMagnitude::stepHolderY),
+                            MoreDensityFunctionsConstants.POSITIVE_INT.optionalFieldOf("step_z").forGetter(GradientMagnitude::stepHolderZ)
+                    ).apply(instance, GradientMagnitude::create)
+            );
 
-    DensityFunction arg();
-    Optional<Integer> stepHolderX();
-    Optional<Integer> stepHolderY();
-    Optional<Integer> stepHolderZ();
+    public static final KeyDispatchDataCodec<GradientMagnitude> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    record BlockContext(int blockX, int blockY, int blockZ) implements FunctionContext { }
-
-    static GradientMagnitude create(DensityFunction arg,
-                                    Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ) {
-        boolean xPresent, yPresent, zPresent;
-        xPresent = stepHolderX.isPresent();
-        yPresent = stepHolderY.isPresent();
-        zPresent = stepHolderZ.isPresent();
-        if (xPresent && yPresent && zPresent) {
-            return new GradientXYZ(arg,
-                    stepHolderX, stepHolderY, stepHolderZ,
-                    stepHolderX.get(), stepHolderY.get(), stepHolderZ.get()
-            );
+    private static GradientMagnitude create(DensityFunction arg,
+                                            Optional<Integer> stepHolderX,
+                                            Optional<Integer> stepHolderY,
+                                            Optional<Integer> stepHolderZ) {
+        if (stepHolderX.isEmpty() && stepHolderY.isEmpty() && stepHolderZ.isEmpty()) {
+            throw new IllegalArgumentException("Gradient Magnitude must contain at least one valid step component!");
         }
-        if (xPresent && yPresent) {
-            return new GradientXY(arg,
-                    stepHolderX, stepHolderY, stepHolderZ,
-                    stepHolderX.get(), stepHolderY.get()
-            );
-        }
-        if (xPresent && zPresent) {
-            return new GradientXZ(arg,
-                    stepHolderX, stepHolderY, stepHolderZ,
-                    stepHolderX.get(), stepHolderZ.get()
-            );
-        }
-        if (yPresent && zPresent) {
-            return new GradientYZ(arg,
-                    stepHolderX, stepHolderY, stepHolderZ,
-                    stepHolderY.get(), stepHolderZ.get()
-            );
-        }
-        if (xPresent) {
-            return new GradientX(arg,
-                    stepHolderX, stepHolderY, stepHolderZ,
-                    stepHolderX.get()
-            );
-        }
-        if (yPresent) {
-            return new GradientY(arg,
-                    stepHolderX, stepHolderY, stepHolderZ,
-                    stepHolderY.get()
-            );
-        }
-        if (zPresent) {
-            return new GradientZ(arg,
-                    stepHolderX, stepHolderY, stepHolderZ,
-                    stepHolderZ.get()
-            );
-        }
-        throw new IllegalArgumentException("Gradient Magntitude must contain at least one valid step component!");
+        return new GradientMagnitude(arg, stepHolderX, stepHolderY, stepHolderZ);
     }
 
-    record GradientX(DensityFunction arg,
-                     Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                     int stepX
-    ) implements GradientMagnitude {
-        @Override
-        public double compute(FunctionContext pos) {
-            int x, y, z;
-
-            x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
-
-            BlockContext forwardStepZ = new BlockContext(x+stepX,y,z);
-            BlockContext backwardStepZ = new BlockContext(x-stepX,y,z);
-
-            return (arg.compute(forwardStepZ) - arg.compute(backwardStepZ)) / (2*stepX);
-        }
-
-        @Override
-        public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new GradientX(arg, stepHolderX, stepHolderY, stepHolderZ, stepX));
-        }
-    }
-
-    record GradientY(DensityFunction arg,
-                     Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                     int stepY
-    ) implements GradientMagnitude {
-        @Override
-        public double compute(FunctionContext pos) {
-            int x, y, z;
-
-            x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
-
-            BlockContext forwardStepY = new BlockContext(x,y+stepY,z);
-            BlockContext backwardStepY = new BlockContext(x,y-stepY,z);
-
-            return (arg.compute(forwardStepY) - arg.compute(backwardStepY)) / (2*stepY);
-        }
-
-        @Override
-        public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new GradientY(arg, stepHolderX, stepHolderY, stepHolderZ, stepY));
-        }
-    }
-
-    record GradientZ(DensityFunction arg,
-                     Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                     int stepZ
-    ) implements GradientMagnitude {
-        @Override
-        public double compute(FunctionContext pos) {
-            int x, y, z;
-
-            x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
-
-            BlockContext forwardStepZ = new BlockContext(x,y,z+stepZ);
-            BlockContext backwardStepZ = new BlockContext(x,y,z-stepZ);
-
-            return (arg.compute(forwardStepZ) - arg.compute(backwardStepZ)) / (2*stepZ);
-        }
-
-        @Override
-        public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new GradientZ(arg, stepHolderX, stepHolderY, stepHolderZ, stepZ));
-        }
-    }
-
-    record GradientXY(DensityFunction arg,
-                      Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                      int stepX, int stepY
-    ) implements GradientMagnitude {
-        @Override
-        public double compute(FunctionContext pos) {
-            int x, y, z;
-
-            x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
-
-            BlockContext forwardStepX, backwardStepX, forwardStepY, backwardStepY;
-
-            forwardStepX = new BlockContext(x+stepX,y,z);
-            backwardStepX = new BlockContext(x-stepX,y,z);
-            forwardStepY = new BlockContext(x,y+stepY,z);
-            backwardStepY = new BlockContext(x,y-stepY,z);
-
-            double derivativeX, derivativeY;
-
-            derivativeX = (arg.compute(forwardStepX) - arg.compute(backwardStepX)) / (2*stepX);
-            derivativeY = (arg.compute(forwardStepY) - arg.compute(backwardStepY)) / (2*stepY);
-
-            return StrictMath.sqrt(derivativeX * derivativeX
-                    + derivativeY * derivativeY);
-        }
-
-        @Override
-        public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new GradientXY(arg, stepHolderX, stepHolderY, stepHolderZ, stepX, stepY));
-        }
-    }
-
-    record GradientXZ(DensityFunction arg,
-                      Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                      int stepX, int stepZ
-    ) implements GradientMagnitude {
-        @Override
-        public double compute(FunctionContext pos) {
-            int x, y, z;
-
-            x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
-
-            BlockContext forwardStepX, backwardStepX, forwardStepZ, backwardStepZ;
-
-            forwardStepX = new BlockContext(x+stepX,y,z);
-            backwardStepX = new BlockContext(x-stepX,y,z);
-            forwardStepZ = new BlockContext(x,y,z+stepZ);
-            backwardStepZ = new BlockContext(x,y,z-stepZ);
-
-            double derivativeX, derivativeZ;
-
-            derivativeX = (arg.compute(forwardStepX) - arg.compute(backwardStepX)) / (2*stepX);
-            derivativeZ = (arg.compute(forwardStepZ) - arg.compute(backwardStepZ)) / (2*stepZ);
-
-            return StrictMath.sqrt(derivativeX * derivativeX
-                    + derivativeZ * derivativeZ);
-        }
-
-        @Override
-        public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new GradientXZ(arg, stepHolderX, stepHolderY, stepHolderZ, stepX, stepZ));
-        }
-    }
-
-    record GradientYZ(DensityFunction arg,
-                      Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                      int stepY, int stepZ
-    ) implements GradientMagnitude {
-        @Override
-        public double compute(FunctionContext pos) {
-            int x, y, z;
-
-            x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
-
-            BlockContext forwardStepY, backwardStepY, forwardStepZ, backwardStepZ;
-
-            forwardStepY = new BlockContext(x,y+stepY,z);
-            backwardStepY = new BlockContext(x,y-stepY,z);
-            forwardStepZ = new BlockContext(x,y,z+stepZ);
-            backwardStepZ = new BlockContext(x,y,z-stepZ);
-
-            double derivativeY, derivativeZ;
-
-            derivativeY = (arg.compute(forwardStepY) - arg.compute(backwardStepY)) / (2*stepY);
-            derivativeZ = (arg.compute(forwardStepZ) - arg.compute(backwardStepZ)) / (2*stepZ);
-
-            return StrictMath.sqrt(derivativeY * derivativeY
-                    + derivativeZ * derivativeZ);
-        }
-
-        @Override
-        public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new GradientYZ(arg, stepHolderX, stepHolderY, stepHolderZ, stepY, stepZ));
-        }
-    }
-
-    record GradientXYZ(DensityFunction arg,
-                       Optional<Integer> stepHolderX, Optional<Integer> stepHolderY, Optional<Integer> stepHolderZ,
-                       int stepX, int stepY, int stepZ
-    ) implements GradientMagnitude {
-        @Override
-        public double compute(FunctionContext pos) {
-            int x, y, z;
-
-            x = pos.blockX(); y= pos.blockY(); z = pos.blockZ();
-
-            BlockContext forwardStepX, backwardStepX, forwardStepY, backwardStepY, forwardStepZ, backwardStepZ;
-
-            forwardStepX = new BlockContext(x+stepX,y,z);
-            backwardStepX = new BlockContext(x-stepX,y,z);
-            forwardStepY = new BlockContext(x,y+stepY,z);
-            backwardStepY = new BlockContext(x,y-stepY,z);
-            forwardStepZ = new BlockContext(x,y,z+stepZ);
-            backwardStepZ = new BlockContext(x,y,z-stepZ);
-
-            double derivativeX, derivativeY, derivativeZ;
-
-            derivativeX = (arg.compute(forwardStepX) - arg.compute(backwardStepX)) / (2*stepX);
-            derivativeY = (arg.compute(forwardStepY) - arg.compute(backwardStepY)) / (2*stepY);
-            derivativeZ = (arg.compute(forwardStepZ) - arg.compute(backwardStepZ)) / (2*stepZ);
-
-            return StrictMath.sqrt(derivativeX * derivativeX
-                    + derivativeY * derivativeY
-                    + derivativeZ * derivativeZ);
-        }
-
-        @Override
-        public DensityFunction mapAll(Visitor visitor) {
-            return visitor.apply(new GradientXYZ(arg, stepHolderX, stepHolderY, stepHolderZ, stepX, stepY, stepZ));
-        }
+    private record BlockContext(int blockX, int blockY, int blockZ) implements FunctionContext {
     }
 
     @Override
-    default void fillArray(double[] densities, ContextProvider applier) {
+    public double compute(FunctionContext pos) {
+        int x = pos.blockX(), y = pos.blockY(), z = pos.blockZ();
+
+        double gradX = 0.0D, gradY = 0.0D, gradZ = 0.0D;
+
+        if (stepHolderX.isPresent()) {
+            int stepX = stepHolderX.get();
+            gradX = (arg.compute(new BlockContext(x + stepX, y, z)) -
+                    arg.compute(new BlockContext(x - stepX, y, z))) / (2.0D * stepX);
+        }
+
+        if (stepHolderY.isPresent()) {
+            int stepY = stepHolderY.get();
+            gradY = (arg.compute(new BlockContext(x, y + stepY, z)) -
+                    arg.compute(new BlockContext(x, y - stepY, z))) / (2.0D * stepY);
+        }
+
+        if (stepHolderZ.isPresent()) {
+            int stepZ = stepHolderZ.get();
+            gradZ = (arg.compute(new BlockContext(x, y, z + stepZ)) -
+                    arg.compute(new BlockContext(x, y, z - stepZ))) / (2.0D * stepZ);
+        }
+
+        // Single step case short-circuits
+        if (stepHolderY.isEmpty() && stepHolderZ.isEmpty()) {
+            return StrictMath.abs(gradX);
+        }
+        if (stepHolderX.isEmpty() && stepHolderZ.isEmpty()) {
+            return StrictMath.abs(gradY);
+        }
+        if (stepHolderX.isEmpty() && stepHolderY.isEmpty()) {
+            return StrictMath.abs(gradZ);
+        }
+
+        return StrictMath.sqrt(gradX * gradX + gradY * gradY + gradZ * gradZ);
+    }
+
+    @Override
+    public DensityFunction mapAll(Visitor visitor) {
+        return visitor.apply(
+                new GradientMagnitude(
+                        arg,
+                        stepHolderX,
+                        stepHolderY,
+                        stepHolderZ
+                )
+        );
+    }
+
+    @Override
+    public void fillArray(double[] densities, ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    default double minValue() {
-        return -Double.MAX_VALUE;
+    public double minValue() {
+        return 0.0D;
     }
 
     @Override
-    default double maxValue() {
+    public double maxValue() {
         return Double.MAX_VALUE;
     }
 
     @Override
-    default KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }
