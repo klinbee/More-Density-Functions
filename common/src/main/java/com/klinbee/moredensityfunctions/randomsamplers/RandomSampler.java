@@ -13,7 +13,9 @@ public interface RandomSampler {
     @SuppressWarnings("unchecked")
     Codec<RandomSampler> CODEC = Codec.lazyInitialized(() -> {
         var randomSamplerRegistry = BuiltInRegistries.REGISTRY.get(MoreDensityFunctionsConstants.RANDOM_SAMPLER_TYPE.location());
-        if (randomSamplerRegistry == null) throw new NullPointerException("Random sampler registry does not exist yet!");
+        if (randomSamplerRegistry == null) {
+            throw new NullPointerException("RandomSampler registry does not exist yet!");
+        }
         return ((Registry<MapCodec<? extends RandomSampler>>) randomSamplerRegistry).byNameCodec();
     }).dispatch(RandomSampler::codec, Function.identity());
 
@@ -34,41 +36,7 @@ public interface RandomSampler {
         }
     }
 
-    ///  Sampler Builders
-
-    static BetaSampler buildBeta(double alpha, double beta) {
-        return BetaSampler.create(alpha, beta);
-    }
-
-    static BinomialSampler buildBinomial(int numTrials, double probability) {
-        return BinomialSampler.create(numTrials, probability);
-    }
-
-    static ExponentialSampler buildExponential(double lambda) {
-        return ExponentialSampler.create(lambda);
-    }
-
-    static GammaSampler buildGamma(double shape, double scale) {
-        return GammaSampler.create(shape, scale);
-    }
-
-    static GeometricSampler buildGeometric(double probability) {
-        return GeometricSampler.create(probability);
-    }
-
-    static NormalSampler buildNormal(double mean, double stdDev) {
-        return NormalSampler.create(mean, stdDev);
-    }
-
-    static PoissonSampler buildPoisson(double lambda) {
-        return PoissonSampler.create(lambda);
-    }
-
-    static UniformSampler buildUniform(double min, double max) {
-        return UniformSampler.create(min, max);
-    }
-
-    /// Core Method
+    /// Core Methods
 
     /**
      * Samples a value from the Sampler's distribution using the given already hashedSeed.
