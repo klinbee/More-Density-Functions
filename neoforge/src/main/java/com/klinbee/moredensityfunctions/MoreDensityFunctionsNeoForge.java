@@ -88,7 +88,5 @@ public class MoreDensityFunctionsNeoForge {
         /// Add registrations to eventBus
         DENSITY_FUNCTIONS.register(eventBus);
         RANDOM_SAMPLERS.register(eventBus);
-
-        MoreDensityFunctionsCommon.init();
     }
 }
