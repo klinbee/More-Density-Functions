@@ -73,9 +73,6 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerDensityFunction("y", YPos.CODEC.codec());
         registerDensityFunction("z_clamped_gradient", ZClampedGradient.CODEC.codec());
         registerDensityFunction("z", ZPos.CODEC.codec());
-
-        /// Unused
-        MoreDensityFunctionsCommon.init();
     }
 
     /**
