@@ -84,7 +84,7 @@ public class MoreDensityFunctionsForge {
         DENSITY_FUNCTIONS.register("reciprocal", Reciprocal.CODEC::codec);
         DENSITY_FUNCTIONS.register("rem", Remainder.CODEC::codec);
         DENSITY_FUNCTIONS.register("round", Round.CODEC::codec);
-        DENSITY_FUNCTIONS.register("shift_df", ShiftDensityFunction.CODEC::codec);
+        DENSITY_FUNCTIONS.register("shift", ShiftDensityFunction.CODEC::codec);
         DENSITY_FUNCTIONS.register("sigmoid", Sigmoid.CODEC::codec);
         DENSITY_FUNCTIONS.register("signum", Signum.CODEC::codec);
         DENSITY_FUNCTIONS.register("sine", Sine.CODEC::codec);
