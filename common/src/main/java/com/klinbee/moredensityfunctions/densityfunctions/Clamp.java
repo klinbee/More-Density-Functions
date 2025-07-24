@@ -7,26 +7,32 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record Clamp(DensityFunction arg, double min, double max) implements DensityFunction {
-    private static final MapCodec<Clamp> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Clamp::arg),
-            Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min").forGetter(Clamp::min),
-            Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max").forGetter(Clamp::max)
-    ).apply(instance, (arg, min, max) -> {
+public record Clamp(DensityFunction arg,
+                    double min,
+                    double max)
+        implements DensityFunction {
+
+    private static final MapCodec<Clamp> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Clamp::arg),
+                            Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min").forGetter(Clamp::min),
+                            Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max").forGetter(Clamp::max)
+                    ).apply(instance, Clamp::create)
+            );
+
+    public static final KeyDispatchDataCodec<Clamp> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+
+    private static Clamp create(DensityFunction arg, double min, double max) {
         if (min > max) {
             throw new IllegalArgumentException("Min must be less than max! min: " + min + " max: " + max);
         }
         return new Clamp(arg, min, max);
-    }));
-    public static final KeyDispatchDataCodec<Clamp> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public double eval(double density) {
-        return Mth.clamp(density, min, max);
     }
 
     @Override
     public double compute(FunctionContext pos) {
-        return this.eval(arg.compute(pos));
+        return Mth.clamp(arg.compute(pos), min, max);
     }
 
     @Override
@@ -36,7 +42,13 @@ public record Clamp(DensityFunction arg, double min, double max) implements Dens
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Clamp(this.arg, this.min, this.max));
+        return visitor.apply(
+                new Clamp(
+                        arg,
+                        min,
+                        max
+                )
+        );
     }
 
     @Override

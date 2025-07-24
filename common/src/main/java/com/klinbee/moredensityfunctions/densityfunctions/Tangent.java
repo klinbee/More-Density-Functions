@@ -1,34 +1,32 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.DensityFunctions;
 
-import java.util.Optional;
+public record Tangent(DensityFunction arg,
+                      DensityFunction errorArg)
+        implements DensityFunction {
 
-/*
-TODO: IMPROPER LIMITS/MIN/MAX
- */
-public record Tangent(DensityFunction arg, Optional<DensityFunction> errorArgHolder,
-                      DensityFunction errorArg) implements DensityFunction {
     private static final MapCodec<Tangent> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Tangent::arg),
-            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(Tangent::errorArgHolder)
-    ).apply(instance, (argument, errorArgHolder) ->
-            new Tangent(argument, errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
-    ));
-    public static final KeyDispatchDataCodec<Tangent> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+                    DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Tangent::arg),
+                    DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(Tangent::errorArg)
+            ).apply(instance, Tangent::new)
+    );
 
-    public double eval(double density) {
-        return StrictMath.tan(density);
-    }
+    public static final KeyDispatchDataCodec<Tangent> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
     public double compute(FunctionContext pos) {
-        return this.eval(arg.compute(pos));
+        double argValue = arg.compute(pos);
+        double result = StrictMath.tan(argValue);
+
+        if (!Double.isFinite(result)) {
+            return errorArg.compute(pos);
+        }
+
+        return result;
     }
 
     @Override
@@ -38,17 +36,22 @@ public record Tangent(DensityFunction arg, Optional<DensityFunction> errorArgHol
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Tangent(this.arg, this.errorArgHolder, this.errorArg));
+        return visitor.apply(
+                new Tangent(
+                        arg,
+                        errorArg
+                )
+        );
     }
 
     @Override
     public double minValue() {
-        return Double.NEGATIVE_INFINITY;
+        return -Double.MAX_VALUE;
     }
 
     @Override
     public double maxValue() {
-        return Double.POSITIVE_INFINITY;
+        return Double.MAX_VALUE;
     }
 
     @Override

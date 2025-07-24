@@ -1,47 +1,41 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.DensityFunctions;
 
-import java.util.Optional;
+public record SquareRoot(DensityFunction arg,
+                         double minOutput,
+                         double maxOutput,
+                         DensityFunction errorArg)
+        implements DensityFunction {
 
-
-public record SquareRoot(DensityFunction arg, Optional<Double> maxOutputHolder, double maxOutput,
-                         Optional<Double> minOutputHolder, double minOutput,
-                         Optional<DensityFunction> errorArgHolder,
-                         DensityFunction errorArg) implements DensityFunction {
-    private static final MapCodec<SquareRoot> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(SquareRoot::arg),
-            Codec.DOUBLE.optionalFieldOf("min_output").forGetter(SquareRoot::minOutputHolder),
-            Codec.DOUBLE.optionalFieldOf("max_output").forGetter(SquareRoot::maxOutputHolder),
-            DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("error_argument").forGetter(SquareRoot::errorArgHolder)
-    ).apply(instance, (arg, maxOutputHolder,
-                       minOutputHolder, errorArgHolder) ->
-            new SquareRoot(arg,
-                    maxOutputHolder, maxOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MAX_OUTPUT),
-                    minOutputHolder, minOutputHolder.orElse(MoreDensityFunctionsConstants.DEFAULT_MIN_OUTPUT),
-                    errorArgHolder, errorArgHolder.orElse(DensityFunctions.constant(MoreDensityFunctionsConstants.DEFAULT_ERROR)))
-    ));
+    private static final MapCodec<SquareRoot> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(SquareRoot::arg),
+                            Codec.DOUBLE.fieldOf("min_output").forGetter(SquareRoot::minOutput),
+                            Codec.DOUBLE.fieldOf("max_output").forGetter(SquareRoot::maxOutput),
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(SquareRoot::errorArg)
+                    ).apply(instance, SquareRoot::new)
+            );
     public static final KeyDispatchDataCodec<SquareRoot> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public double eval(double density) {
+    private static double eval(double density) {
         return StrictMath.sqrt(density);
     }
 
     @Override
     public double compute(FunctionContext pos) {
-        double discriminantValue = this.arg.compute(pos);
+        double discriminantValue = arg.compute(pos);
 
         if (discriminantValue < 0) {
             return errorArg.compute(pos);
         }
 
-        return this.eval(discriminantValue);
+        return eval(discriminantValue);
     }
 
     @Override
@@ -51,23 +45,30 @@ public record SquareRoot(DensityFunction arg, Optional<Double> maxOutputHolder, 
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new SquareRoot(this.arg, this.minOutputHolder, this.minOutput, this.maxOutputHolder, this.maxOutput, this.errorArgHolder, this.errorArg));
+        return visitor.apply(
+                new SquareRoot(
+                        arg,
+                        minOutput,
+                        maxOutput,
+                        errorArg
+                )
+        );
     }
 
     @Override
     public double minValue() {
-        if (this.arg.minValue() < 0) {
+        if (arg.minValue() < 0) {
             return errorArg.minValue();
         }
-        return this.eval(this.arg.minValue());
+        return eval(arg.minValue());
     }
 
     @Override
     public double maxValue() {
-        if (this.arg.maxValue() < 0) {
+        if (arg.maxValue() < 0) {
             return errorArg.maxValue();
         }
-        return this.eval(this.arg.maxValue());
+        return eval(arg.maxValue());
     }
 
     @Override

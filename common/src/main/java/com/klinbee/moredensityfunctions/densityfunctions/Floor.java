@@ -6,20 +6,25 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
+public record Floor(DensityFunction arg)
+        implements DensityFunction {
 
-public record Floor(DensityFunction arg) implements DensityFunction {
-    private static final MapCodec<Floor> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Floor::arg)
-    ).apply(instance, (Floor::new)));
+    private static final MapCodec<Floor> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Floor::arg)
+                    ).apply(instance, Floor::new)
+            );
+
     public static final KeyDispatchDataCodec<Floor> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public double eval(double density) {
+    private static double eval(double density) {
         return Mth.floor(density);
     }
 
     @Override
     public double compute(FunctionContext pos) {
-        return this.eval(arg.compute(pos));
+        return eval(arg.compute(pos));
     }
 
     @Override
@@ -29,17 +34,17 @@ public record Floor(DensityFunction arg) implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Floor(this.arg));
+        return visitor.apply(new Floor(arg));
     }
 
     @Override
     public double minValue() {
-        return this.eval(arg.minValue());
+        return eval(arg.minValue());
     }
 
     @Override
     public double maxValue() {
-        return this.eval(arg.maxValue());
+        return eval(arg.maxValue());
     }
 
     @Override

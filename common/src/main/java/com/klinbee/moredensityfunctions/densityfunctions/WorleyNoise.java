@@ -29,7 +29,7 @@ package com.klinbee.moredensityfunctions.densityfunctions;//package com.klinbee.
 //    ).apply(instance, WorleyNoise::create));
 //
 //    /// Evaluates the noise based on the ValueNoise.Interpolator instance ///
-//    public double evaluate3DWorley(int x, int y, int z) {
+//    private static double evaluate3DWorley(int x, int y, int z) {
 //        // divide into grid cells
 //        int gridX = NoiseDensityFunction.safeFloorDiv(x, sizeX);
 //        int gridY = NoiseDensityFunction.safeFloorDiv(y, sizeY);
@@ -61,7 +61,7 @@ package com.klinbee.moredensityfunctions.densityfunctions;//package com.klinbee.
 //        return minDistance;
 //    }
 //
-//    public double evaluate3DVoronoi(int x, int y, int z) {
+//    private static double evaluate3DVoronoi(int x, int y, int z) {
 //        // divide into grid cells
 //        int gridX = NoiseDensityFunction.safeFloorDiv(x, sizeX);
 //        int gridY = NoiseDensityFunction.safeFloorDiv(y, sizeY);

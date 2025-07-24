@@ -5,20 +5,25 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
+public record Sine(DensityFunction arg)
+        implements DensityFunction {
 
-public record Sine(DensityFunction arg) implements DensityFunction {
-    private static final MapCodec<Sine> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Sine::arg)
-    ).apply(instance, (Sine::new)));
+    private static final MapCodec<Sine> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Sine::arg)
+                    ).apply(instance, Sine::new)
+            );
+
     public static final KeyDispatchDataCodec<Sine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public double eval(double density) {
+    private static double eval(double density) {
         return StrictMath.sin(density);
     }
 
     @Override
     public double compute(FunctionContext pos) {
-        return this.eval(arg.compute(pos));
+        return eval(arg.compute(pos));
     }
 
     @Override
@@ -28,7 +33,9 @@ public record Sine(DensityFunction arg) implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Sine(this.arg));
+        return visitor.apply(
+                new Sine(arg)
+        );
     }
 
     @Override
