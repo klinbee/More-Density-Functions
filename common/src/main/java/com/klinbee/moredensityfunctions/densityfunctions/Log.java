@@ -52,11 +52,11 @@ public record Log(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Log(
-                        arg,
-                        base,
+                        arg.mapAll(visitor),
+                        base.mapAll(visitor),
                         minOutput,
                         maxOutput,
-                        errorArg
+                        errorArg.mapAll(visitor)
                 )
         );
     }

@@ -43,9 +43,9 @@ public record FloorModulo(DensityFunction numerator,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new FloorModulo(
-                        numerator,
-                        denominator,
-                        errorArg
+                        numerator.mapAll(visitor),
+                        denominator.mapAll(visitor),
+                        errorArg.mapAll(visitor)
                 )
         );
     }

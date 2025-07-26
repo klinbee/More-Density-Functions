@@ -34,7 +34,7 @@ public record Negate(DensityFunction arg)
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new Negate(arg)
+                new Negate(arg.mapAll(visitor))
         );
     }
 

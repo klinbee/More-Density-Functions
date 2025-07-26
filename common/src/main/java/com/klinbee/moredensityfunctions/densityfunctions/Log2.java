@@ -49,10 +49,10 @@ public record Log2(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Log2(
-                        arg,
+                        arg.mapAll(visitor),
                         minOutput,
                         maxOutput,
-                        errorArg
+                        errorArg.mapAll(visitor)
                 )
         );
     }

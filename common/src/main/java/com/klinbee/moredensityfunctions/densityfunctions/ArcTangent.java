@@ -34,7 +34,7 @@ public record ArcTangent(DensityFunction arg)
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new ArcTangent(arg)
+                new ArcTangent(arg.mapAll(visitor))
         );
     }
 

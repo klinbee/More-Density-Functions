@@ -34,7 +34,7 @@ public record Signum(DensityFunction arg)
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new Signum(arg)
+                new Signum(arg.mapAll(visitor))
         );
     }
 

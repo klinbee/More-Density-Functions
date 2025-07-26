@@ -46,10 +46,10 @@ public record Reciprocal(DensityFunction denominator,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Reciprocal(
-                        denominator,
+                        denominator.mapAll(visitor),
                         minOutput,
                         maxOutput,
-                        errorArg
+                        errorArg.mapAll(visitor)
                 )
         );
     }

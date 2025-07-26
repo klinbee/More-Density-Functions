@@ -38,8 +38,8 @@ public record Tangent(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Tangent(
-                        arg,
-                        errorArg
+                        arg.mapAll(visitor),
+                        errorArg.mapAll(visitor)
                 )
         );
     }

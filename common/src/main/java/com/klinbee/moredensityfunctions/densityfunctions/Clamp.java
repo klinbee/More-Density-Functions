@@ -44,7 +44,7 @@ public record Clamp(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Clamp(
-                        arg,
+                        arg.mapAll(visitor),
                         min,
                         max
                 )

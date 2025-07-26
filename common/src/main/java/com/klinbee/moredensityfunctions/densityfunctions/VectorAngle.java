@@ -33,8 +33,8 @@ public record VectorAngle(DensityFunction arg1,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new VectorAngle(
-                        arg1,
-                        arg2
+                        arg1.mapAll(visitor),
+                        arg2.mapAll(visitor)
                 )
         );
     }
