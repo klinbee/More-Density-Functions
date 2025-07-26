@@ -58,11 +58,11 @@ public record Power(DensityFunction base,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Power(
-                        base,
-                        exponent,
+                        base.mapAll(visitor),
+                        exponent.mapAll(visitor),
                         minOutput,
                         maxOutput,
-                        errorArg
+                        errorArg.mapAll(visitor)
                 )
         );
     }

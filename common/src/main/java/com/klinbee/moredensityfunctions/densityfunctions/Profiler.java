@@ -83,7 +83,7 @@ public record Profiler(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Profiler(
-                        arg,
+                        arg.mapAll(visitor),
                         iterations,
                         warmUp
                 )

@@ -34,7 +34,7 @@ public record Floor(DensityFunction arg)
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new Floor(arg));
+        return visitor.apply(new Floor(arg.mapAll(visitor)));
     }
 
     @Override

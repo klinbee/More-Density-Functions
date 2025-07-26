@@ -42,9 +42,9 @@ public record Remainder(DensityFunction numerator,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Remainder(
-                        numerator,
-                        denominator,
-                        errorArg
+                        numerator.mapAll(visitor),
+                        denominator.mapAll(visitor),
+                        errorArg.mapAll(visitor)
                 )
         );
     }

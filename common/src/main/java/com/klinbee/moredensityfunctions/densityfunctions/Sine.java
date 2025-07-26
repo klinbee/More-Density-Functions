@@ -34,7 +34,7 @@ public record Sine(DensityFunction arg)
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new Sine(arg)
+                new Sine(arg.mapAll(visitor))
         );
     }
 

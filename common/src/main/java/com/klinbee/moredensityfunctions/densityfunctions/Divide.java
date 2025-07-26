@@ -49,11 +49,11 @@ public record Divide(DensityFunction numerator,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Divide(
-                        numerator,
-                        denominator,
+                        numerator.mapAll(visitor),
+                        denominator.mapAll(visitor),
                         minOutput,
                         maxOutput,
-                        errorArg
+                        errorArg.mapAll(visitor)
                 )
         );
     }
