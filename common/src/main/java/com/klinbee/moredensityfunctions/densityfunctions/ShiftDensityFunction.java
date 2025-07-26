@@ -52,10 +52,10 @@ public record ShiftDensityFunction(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new ShiftDensityFunction(
-                        arg,
-                        shiftX,
-                        shiftY,
-                        shiftZ
+                        arg.mapAll(visitor),
+                        shiftX.mapAll(visitor),
+                        shiftY.mapAll(visitor),
+                        shiftZ.mapAll(visitor)
                 )
         );
     }

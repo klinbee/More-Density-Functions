@@ -98,10 +98,19 @@ public record DirectionalDerivative(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new DirectionalDerivative(
-                        arg,
-                        componentHolderX,
-                        componentHolderY,
-                        componentHolderZ
+                        arg.mapAll(visitor),
+                        componentHolderX.map(comp -> new DerivativeComponent(
+                                comp.step(),
+                                comp.direction().mapAll(visitor)
+                        )),
+                        componentHolderY.map(comp -> new DerivativeComponent(
+                                comp.step(),
+                                comp.direction().mapAll(visitor)
+                        )),
+                        componentHolderZ.map(comp -> new DerivativeComponent(
+                                comp.step(),
+                                comp.direction().mapAll(visitor)
+                        ))
                 )
         );
     }

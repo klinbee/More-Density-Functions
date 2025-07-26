@@ -50,10 +50,10 @@ public record NaturalLog(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new NaturalLog(
-                        arg,
+                        arg.mapAll(visitor),
                         minOutput,
                         maxOutput,
-                        errorArg
+                        errorArg.mapAll(visitor)
                 )
         );
     }

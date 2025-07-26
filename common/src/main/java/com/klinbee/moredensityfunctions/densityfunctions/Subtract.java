@@ -33,8 +33,8 @@ public record Subtract(DensityFunction arg1,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Subtract(
-                        arg1,
-                        arg2
+                        arg1.mapAll(visitor),
+                        arg2.mapAll(visitor)
                 )
         );
     }

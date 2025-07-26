@@ -82,7 +82,7 @@ public record GradientMagnitude(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new GradientMagnitude(
-                        arg,
+                        arg.mapAll(visitor),
                         stepHolderX,
                         stepHolderY,
                         stepHolderZ

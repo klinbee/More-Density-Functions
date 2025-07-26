@@ -34,7 +34,7 @@ public record Round(DensityFunction arg)
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new Round(arg)
+                new Round(arg.mapAll(visitor))
         );
     }
 

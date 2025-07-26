@@ -51,10 +51,10 @@ public record Log2Floor(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Log2Floor(
-                        arg,
+                        arg.mapAll(visitor),
                         minOutput,
                         maxOutput,
-                        errorArg
+                        errorArg.mapAll(visitor)
                 )
         );
     }

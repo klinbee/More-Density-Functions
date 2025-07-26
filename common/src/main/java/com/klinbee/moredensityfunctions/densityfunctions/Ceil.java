@@ -35,7 +35,7 @@ public record Ceil(DensityFunction arg)
     @Override
     public DensityFunction mapAll(DensityFunction.Visitor visitor) {
         return visitor.apply(
-                new Ceil(arg)
+                new Ceil(arg.mapAll(visitor))
         );
     }
 

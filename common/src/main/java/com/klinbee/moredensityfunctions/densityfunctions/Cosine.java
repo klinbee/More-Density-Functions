@@ -34,7 +34,7 @@ public record Cosine(DensityFunction arg)
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new Cosine(arg)
+                new Cosine(arg.mapAll(visitor))
         );
     }
 

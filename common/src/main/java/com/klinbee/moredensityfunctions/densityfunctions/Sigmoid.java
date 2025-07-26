@@ -34,7 +34,7 @@ public record Sigmoid(DensityFunction arg)
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new Sigmoid(arg)
+                new Sigmoid(arg.mapAll(visitor))
         );
     }
 
