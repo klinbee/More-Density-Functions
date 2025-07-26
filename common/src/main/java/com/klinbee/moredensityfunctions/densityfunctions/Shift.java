@@ -5,23 +5,23 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record ShiftDensityFunction(DensityFunction arg,
-                                   DensityFunction shiftX,
-                                   DensityFunction shiftY,
-                                   DensityFunction shiftZ)
+public record Shift(DensityFunction arg,
+                    DensityFunction shiftX,
+                    DensityFunction shiftY,
+                    DensityFunction shiftZ)
         implements DensityFunction {
 
-    private static final MapCodec<ShiftDensityFunction> MAP_CODEC =
+    private static final MapCodec<Shift> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(ShiftDensityFunction::arg),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shift_x").forGetter(ShiftDensityFunction::shiftX),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shift_y").forGetter(ShiftDensityFunction::shiftY),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shift_z").forGetter(ShiftDensityFunction::shiftZ)
-                    ).apply(instance, ShiftDensityFunction::new)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Shift::arg),
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shift_x").forGetter(Shift::shiftX),
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shift_y").forGetter(Shift::shiftY),
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shift_z").forGetter(Shift::shiftZ)
+                    ).apply(instance, Shift::new)
             );
 
-    public static final KeyDispatchDataCodec<ShiftDensityFunction> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public static final KeyDispatchDataCodec<Shift> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     @Override
     public double compute(FunctionContext pos) {
@@ -51,7 +51,7 @@ public record ShiftDensityFunction(DensityFunction arg,
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new ShiftDensityFunction(
+                new Shift(
                         arg.mapAll(visitor),
                         shiftX.mapAll(visitor),
                         shiftY.mapAll(visitor),
