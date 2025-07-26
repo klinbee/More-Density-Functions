@@ -4,17 +4,10 @@ import com.klinbee.moredensityfunctions.densityfunctions.*;
 import com.klinbee.moredensityfunctions.randomsamplers.*;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.*;
 
@@ -66,7 +59,7 @@ public class MoreDensityFunctionsForge {
         DENSITY_FUNCTIONS.register("ceil", Ceil.CODEC::codec);
         DENSITY_FUNCTIONS.register("clamp", Clamp.CODEC::codec);
         DENSITY_FUNCTIONS.register("cos", Cosine.CODEC::codec);
-        DENSITY_FUNCTIONS.register("derivative", DirectionalDerivative.CODEC::codec);
+        DENSITY_FUNCTIONS.register("derivative", Derivative.CODEC::codec);
         DENSITY_FUNCTIONS.register("div", Divide.CODEC::codec);
         DENSITY_FUNCTIONS.register("floor", Floor.CODEC::codec);
         DENSITY_FUNCTIONS.register("floor_div", FloorDivide.CODEC::codec);
@@ -84,7 +77,7 @@ public class MoreDensityFunctionsForge {
         DENSITY_FUNCTIONS.register("reciprocal", Reciprocal.CODEC::codec);
         DENSITY_FUNCTIONS.register("rem", Remainder.CODEC::codec);
         DENSITY_FUNCTIONS.register("round", Round.CODEC::codec);
-        DENSITY_FUNCTIONS.register("shift", ShiftDensityFunction.CODEC::codec);
+        DENSITY_FUNCTIONS.register("shift", Shift.CODEC::codec);
         DENSITY_FUNCTIONS.register("sigmoid", Sigmoid.CODEC::codec);
         DENSITY_FUNCTIONS.register("signum", Signum.CODEC::codec);
         DENSITY_FUNCTIONS.register("sine", Sine.CODEC::codec);

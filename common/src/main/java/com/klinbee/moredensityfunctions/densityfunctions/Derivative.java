@@ -9,32 +9,32 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Optional;
 
-public record DirectionalDerivative(DensityFunction arg,
-                                    Optional<DerivativeComponent> componentHolderX,
-                                    Optional<DerivativeComponent> componentHolderY,
-                                    Optional<DerivativeComponent> componentHolderZ)
+public record Derivative(DensityFunction arg,
+                         Optional<DerivativeComponent> componentHolderX,
+                         Optional<DerivativeComponent> componentHolderY,
+                         Optional<DerivativeComponent> componentHolderZ)
         implements DensityFunction {
 
-    private static final MapCodec<DirectionalDerivative> MAP_CODEC =
+    private static final MapCodec<Derivative> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(DirectionalDerivative::arg),
-                            DerivativeComponent.CODEC.optionalFieldOf("component_x").forGetter(DirectionalDerivative::componentHolderX),
-                            DerivativeComponent.CODEC.optionalFieldOf("component_y").forGetter(DirectionalDerivative::componentHolderY),
-                            DerivativeComponent.CODEC.optionalFieldOf("component_z").forGetter(DirectionalDerivative::componentHolderZ)
-                    ).apply(instance, DirectionalDerivative::create)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Derivative::arg),
+                            DerivativeComponent.CODEC.optionalFieldOf("component_x").forGetter(Derivative::componentHolderX),
+                            DerivativeComponent.CODEC.optionalFieldOf("component_y").forGetter(Derivative::componentHolderY),
+                            DerivativeComponent.CODEC.optionalFieldOf("component_z").forGetter(Derivative::componentHolderZ)
+                    ).apply(instance, Derivative::create)
             );
 
-    public static final KeyDispatchDataCodec<DirectionalDerivative> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public static final KeyDispatchDataCodec<Derivative> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    private static DirectionalDerivative create(DensityFunction arg,
-                                                Optional<DerivativeComponent> componentHolderX,
-                                                Optional<DerivativeComponent> componentHolderY,
-                                                Optional<DerivativeComponent> componentHolderZ) {
+    private static Derivative create(DensityFunction arg,
+                                     Optional<DerivativeComponent> componentHolderX,
+                                     Optional<DerivativeComponent> componentHolderY,
+                                     Optional<DerivativeComponent> componentHolderZ) {
         if (componentHolderX.isEmpty() && componentHolderY.isEmpty() && componentHolderZ.isEmpty()) {
             throw new IllegalArgumentException("Derivative must contain at least one valid directional component!");
         }
-        return new DirectionalDerivative(arg, componentHolderX, componentHolderY, componentHolderZ);
+        return new Derivative(arg, componentHolderX, componentHolderY, componentHolderZ);
     }
 
     /// Derivative Component CODEC
@@ -97,7 +97,7 @@ public record DirectionalDerivative(DensityFunction arg,
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new DirectionalDerivative(
+                new Derivative(
                         arg.mapAll(visitor),
                         componentHolderX.map(comp -> new DerivativeComponent(
                                 comp.step(),
