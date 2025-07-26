@@ -53,7 +53,7 @@ public class MoreDensityFunctionsNeoForge {
         DENSITY_FUNCTIONS.register("ceil", Ceil.CODEC::codec);
         DENSITY_FUNCTIONS.register("clamp", Clamp.CODEC::codec);
         DENSITY_FUNCTIONS.register("cos", Cosine.CODEC::codec);
-        DENSITY_FUNCTIONS.register("derivative", DirectionalDerivative.CODEC::codec);
+        DENSITY_FUNCTIONS.register("derivative", Derivative.CODEC::codec);
         DENSITY_FUNCTIONS.register("div", Divide.CODEC::codec);
         DENSITY_FUNCTIONS.register("floor", Floor.CODEC::codec);
         DENSITY_FUNCTIONS.register("floor_div", FloorDivide.CODEC::codec);
@@ -71,7 +71,7 @@ public class MoreDensityFunctionsNeoForge {
         DENSITY_FUNCTIONS.register("reciprocal", Reciprocal.CODEC::codec);
         DENSITY_FUNCTIONS.register("rem", Remainder.CODEC::codec);
         DENSITY_FUNCTIONS.register("round", Round.CODEC::codec);
-        DENSITY_FUNCTIONS.register("shift", ShiftDensityFunction.CODEC::codec);
+        DENSITY_FUNCTIONS.register("shift", Shift.CODEC::codec);
         DENSITY_FUNCTIONS.register("sigmoid", Sigmoid.CODEC::codec);
         DENSITY_FUNCTIONS.register("signum", Signum.CODEC::codec);
         DENSITY_FUNCTIONS.register("sine", Sine.CODEC::codec);
