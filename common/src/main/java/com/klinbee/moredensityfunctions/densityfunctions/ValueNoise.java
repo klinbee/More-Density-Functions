@@ -17,10 +17,25 @@ public record ValueNoise(RandomSampler randomSampler,
                          int sizeY,
                          int sizeZ,
                          Interpolation interpolation,
-                         Optional<Integer> saltHolder,
-                         Optional<ExtraOctaves> extraOctavesHolder,
-                         ExtraOctaves extraOctaves)
+                         ExtraOctaves extraOctaves,
+                         int salt)
         implements NoiseDensityFunction {
+
+    public ValueNoise(RandomSampler randomSampler,
+                      int sizeX,
+                      int sizeY,
+                      int sizeZ,
+                      Interpolation interpolation,
+                      ExtraOctaves extraOctaves,
+                      int salt) {
+        this.randomSampler = randomSampler;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        this.sizeZ = sizeZ;
+        this.interpolation = interpolation;
+        this.extraOctaves = extraOctaves.finalizedWithSalt(salt);
+        this.salt = salt;
+    }
 
     private static final MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
@@ -29,20 +44,9 @@ public record ValueNoise(RandomSampler randomSampler,
                     MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
                     MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
                     Interpolation.CODEC.fieldOf("interpolation").forGetter(ValueNoise::interpolation),
-                    Codec.INT.optionalFieldOf("salt").forGetter(ValueNoise::saltHolder),
-                    ExtraOctaves.CODEC.optionalFieldOf("extra_octaves").forGetter(ValueNoise::extraOctavesHolder)
-            ).apply(instance, (randomSampler, sizeX, sizeY, sizeZ, interpolation, saltHolder, extraOctavesHolder) ->
-                    new ValueNoise(
-                            randomSampler,
-                            sizeX,
-                            sizeY,
-                            sizeZ,
-                            interpolation,
-                            saltHolder,
-                            extraOctavesHolder,
-                            extraOctavesHolder.orElse(null)
-                    )
-            )
+                    ExtraOctaves.CODEC.optionalFieldOf("extra_octaves", ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
+                    Codec.INT.optionalFieldOf("salt", 0).forGetter(ValueNoise::salt)
+            ).apply(instance, ValueNoise::new)
     );
 
     public static final KeyDispatchDataCodec<ValueNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
@@ -69,7 +73,6 @@ public record ValueNoise(RandomSampler randomSampler,
 
     @Override
     public double eval(int x, int y, int z) {
-        int salt = saltHolder.orElse(0);
         boolean is2D = sizeY == 0;
 
         if (interpolation == Interpolation.NONE) {
@@ -172,9 +175,8 @@ public record ValueNoise(RandomSampler randomSampler,
                         sizeY,
                         sizeZ,
                         interpolation,
-                        saltHolder,
-                        extraOctavesHolder,
-                        extraOctaves
+                        extraOctaves,
+                        salt
                 )
         );
     }

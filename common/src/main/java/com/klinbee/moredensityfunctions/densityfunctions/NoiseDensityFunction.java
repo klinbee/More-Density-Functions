@@ -1,12 +1,13 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-import java.util.Optional;
+import java.util.Arrays;
 
 public interface NoiseDensityFunction extends DensityFunction {
 
@@ -16,7 +17,10 @@ public interface NoiseDensityFunction extends DensityFunction {
                         double persistence,
                         double[] frequencies,
                         double[] amplitudes,
-                        double maxAmplitude) {
+                        double maxAmplitude,
+                        int[] offsetsX,
+                        int[] offsetsY,
+                        int[] offsetsZ) {
 
         public static final Codec<ExtraOctaves> CODEC =
                 RecordCodecBuilder.create(instance ->
@@ -24,23 +28,58 @@ public interface NoiseDensityFunction extends DensityFunction {
                                 MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("count").forGetter(ExtraOctaves::count),
                                 Codec.DOUBLE.fieldOf("lacunarity").forGetter(ExtraOctaves::lacunarity),
                                 Codec.DOUBLE.fieldOf("persistence").forGetter(ExtraOctaves::persistence)
-                        ).apply(instance, ExtraOctaves::create)
+                        ).apply(instance, ExtraOctaves::tempNoSalt)
                 );
 
-        private static ExtraOctaves getDefault() {
-            return new ExtraOctaves(0, 0.0D, 0.0D, null, null, 1.0D);
+        public static ExtraOctaves getDefault() {
+            return new ExtraOctaves(0,
+                    0.0D,
+                    0.0D,
+                    null,
+                    null,
+                    1.0D,
+                    null,
+                    null,
+                    null);
         }
 
-        private static ExtraOctaves create(int count, double lacunarity, double persistence) {
-            if (count == 0) { // Treats as non-existent when count is 0; count 0 is allowed for easier extraOctaves toggling
+        public boolean isSingleOctave() {
+            return count == 0;
+        }
+
+        private static ExtraOctaves tempNoSalt(int count, double lacunarity, double persistence) {
+            if (count == 0) {
                 return getDefault();
             }
+
             double[] amplitudes = computeNoiseRatios(count, persistence);
             double[] frequencies = computeNoiseRatios(count, lacunarity);
-
             double maxAmplitude = computeAmplitudesSum(count, persistence);
 
-            return new ExtraOctaves(count, lacunarity, persistence, frequencies, amplitudes, maxAmplitude);
+            return new ExtraOctaves(count, lacunarity, persistence, frequencies, amplitudes, maxAmplitude, null, null, null);
+        }
+
+
+        public ExtraOctaves finalizedWithSalt(int salt) {
+            if (count == 0 || (offsetsX != null)) {
+                return this;
+            }
+
+            int[] offsetX = createOffsetsForAxis(count, salt, 12345);
+            int[] offsetY = createOffsetsForAxis(count, salt, 67890);
+            int[] offsetZ = createOffsetsForAxis(count, salt, 24680);
+            return new ExtraOctaves(count, lacunarity, persistence, frequencies, amplitudes, maxAmplitude, offsetX, offsetY, offsetZ);
+        }
+
+        // To pre-compute offsets based on extra octave count
+        private static int[] createOffsetsForAxis(int count, int baseSalt, int axisSalt) {
+            int[] offsets = new int[count];
+            long seed = RandomSampler.hashPosition(baseSalt, axisSalt, 0, 0);
+            for (int i = 0; i < count; i++) {
+                offsets[i] = (int) ((seed & 0x7FFFFFF));
+                seed = RandomSampler.mix(seed);
+            }
+            return offsets;
         }
 
         // To pre-compute amplitudes/frequencies based on extra octave count
@@ -59,16 +98,13 @@ public interface NoiseDensityFunction extends DensityFunction {
             if (ratio == 1.0D) return count;
             return ratio * (StrictMath.pow(ratio, count) - 1) / (ratio - 1);
         }
-
-        public boolean isSingleOctave() {
-            return count == 0;
-        }
     }
 
     /// Getter Contracts for all NoiseDensityFunctions
 
-    Optional<ExtraOctaves> extraOctavesHolder();
     ExtraOctaves extraOctaves();
+
+    int salt();
 
     /// Evaluation Method Contract for all NoiseDensityFunctions
     double eval(int x, int y, int z);
@@ -90,11 +126,15 @@ public interface NoiseDensityFunction extends DensityFunction {
 
         double[] frequencies = extraOctaves().frequencies;
         double[] amplitudes = extraOctaves().amplitudes;
+        int[] offsetsX = extraOctaves().offsetsX;
+        int[] offsetsY = extraOctaves().offsetsY;
+        int[] offsetsZ = extraOctaves().offsetsZ;
+
         for (int i = 0; i < frequencies.length; i++) {
             noiseResult += amplitudes[i] * eval(
-                    Mth.floor(x * frequencies[i]),
-                    Mth.floor(y * frequencies[i]),
-                    Mth.floor(z * frequencies[i])
+                    Mth.floor((x + offsetsX[i]) * frequencies[i]),
+                    Mth.floor((y + offsetsY[i]) * frequencies[i]),
+                    Mth.floor((z + offsetsZ[i]) * frequencies[i])
             );
         }
         return noiseResult;
