@@ -49,6 +49,7 @@ public class MoreDensityFunctionsNeoForge {
         DENSITY_FUNCTIONS.register("acos", ArcCosine.CODEC::codec);
         DENSITY_FUNCTIONS.register("asin", ArcSine.CODEC::codec);
         DENSITY_FUNCTIONS.register("atan", ArcTangent.CODEC::codec);
+        DENSITY_FUNCTIONS.register("cache", Cache.CODEC::codec);
         DENSITY_FUNCTIONS.register("ceil", Ceil.CODEC::codec);
         DENSITY_FUNCTIONS.register("clamp", Clamp.CODEC::codec);
         DENSITY_FUNCTIONS.register("cos", Cosine.CODEC::codec);
