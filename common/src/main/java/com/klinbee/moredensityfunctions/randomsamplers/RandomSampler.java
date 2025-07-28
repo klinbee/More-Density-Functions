@@ -78,10 +78,10 @@ public interface RandomSampler {
      * @return The long seed value for the input position
      */
     static long hashPosition(int x, int y, int z, int salt) {
-        // high 32-bits x, low 32-bits = y
-        long xy = ((long) x << 32) | (y & 0xFFFFFFFFL);
+        // high 32-bits = x, low 32-bits = y
+        long xy = ((long) x << 32) | (y & 0xFFFFFFFFL) + 31L;
         // high 32-bits = z, low 32-bits = salt
-        long zsalt = ((long) z << 32) | (salt & 0xFFFFFFFFL);
+        long zsalt = ((long) z << 32) | (salt & 0xFFFFFFFFL) + 1337L;
 
         long seed = WorldSeedHolder.worldSeed;
         seed ^= xy * 5490034563487805519L;
