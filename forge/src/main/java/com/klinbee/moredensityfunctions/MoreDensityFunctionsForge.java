@@ -39,23 +39,23 @@ public class MoreDensityFunctionsForge {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         /// Register the Random Sampler Registry
-        eventBus.addListener((DataPackRegistryEvent.NewRegistry event)
-                -> event.dataPackRegistry(MoreDensityFunctionsConstants.RANDOM_SAMPLER, RandomSampler.CODEC));
+        eventBus.addListener((DataPackRegistryEvent.NewRegistry event) ->
+                event.dataPackRegistry(MoreDensityFunctionsConstants.RANDOM_SAMPLER, RandomSampler.CODEC));
 
         /// Random Samplers
-        RANDOM_SAMPLERS.register("beta", BetaSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register("binomial", BinomialSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register("exponential", ExponentialSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register("gamma", GammaSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register("geometric", GeometricSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register("normal", NormalSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register("poisson", PoissonSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register("uniform", UniformSampler.CODEC::codec);
+        RANDOM_SAMPLERS.register(BetaSampler.NAME, BetaSampler.CODEC::codec);
+        RANDOM_SAMPLERS.register(BinomialSampler.NAME, BinomialSampler.CODEC::codec);
+        RANDOM_SAMPLERS.register(ExponentialSampler.NAME, ExponentialSampler.CODEC::codec);
+        RANDOM_SAMPLERS.register(GammaSampler.NAME, GammaSampler.CODEC::codec);
+        RANDOM_SAMPLERS.register(GeometricSampler.NAME, GeometricSampler.CODEC::codec);
+        RANDOM_SAMPLERS.register(NormalSampler.NAME, NormalSampler.CODEC::codec);
+        RANDOM_SAMPLERS.register(PoissonSampler.NAME, PoissonSampler.CODEC::codec);
+        RANDOM_SAMPLERS.register(UniformSampler.NAME, UniformSampler.CODEC::codec);
 
         /// Density Functions
-        DENSITY_FUNCTIONS.register("acos", ArcCosine.CODEC::codec);
-        DENSITY_FUNCTIONS.register("asin", ArcSine.CODEC::codec);
-        DENSITY_FUNCTIONS.register("atan", ArcTangent.CODEC::codec);
+        DENSITY_FUNCTIONS.register(ArcCosine.NAME, ArcCosine.CODEC::codec);
+        DENSITY_FUNCTIONS.register(ArcSine.NAME, ArcSine.CODEC::codec);
+        DENSITY_FUNCTIONS.register(ArcTangent.NAME, ArcTangent.CODEC::codec);
         DENSITY_FUNCTIONS.register("cache", Cache.CODEC::codec);
         DENSITY_FUNCTIONS.register("ceil", Ceil.CODEC::codec);
         DENSITY_FUNCTIONS.register("clamp", Clamp.CODEC::codec);
