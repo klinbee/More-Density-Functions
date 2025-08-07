@@ -17,6 +17,8 @@ public record Sigmoid(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Sigmoid> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "sigmoid";
+
     private static double eval(double density) {
         return 1.0D / (1.0D + StrictMath.exp(-density));
     }

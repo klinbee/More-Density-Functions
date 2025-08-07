@@ -17,6 +17,8 @@ public sealed interface PoissonSampler
 
     KeyDispatchDataCodec<PoissonSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    String NAME = "poisson";
+
     static PoissonSampler create(double lambda) {
         if (lambda < 30.0D) {
             double expNegativeLambda = StrictMath.exp(-lambda);

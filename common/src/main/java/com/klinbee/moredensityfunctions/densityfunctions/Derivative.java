@@ -27,6 +27,8 @@ public record Derivative(DensityFunction arg,
 
     public static final KeyDispatchDataCodec<Derivative> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "derivative";
+
     private static Derivative create(DensityFunction arg,
                                      Optional<DerivativeComponent> componentHolderX,
                                      Optional<DerivativeComponent> componentHolderY,

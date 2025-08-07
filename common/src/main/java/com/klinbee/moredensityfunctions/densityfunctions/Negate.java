@@ -17,6 +17,8 @@ public record Negate(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Negate> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "negate";
+
     private static double eval(double density) {
         return -density;
     }

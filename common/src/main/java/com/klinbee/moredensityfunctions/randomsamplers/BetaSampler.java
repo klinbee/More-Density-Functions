@@ -21,6 +21,8 @@ public record BetaSampler(double alpha,
 
     public static KeyDispatchDataCodec<BetaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "beta";
+
     public static BetaSampler create(double alpha, double beta) {
         return new BetaSampler(alpha, beta, GammaSampler.create(alpha, 1.0D), GammaSampler.create(beta, 1.0D));
     }

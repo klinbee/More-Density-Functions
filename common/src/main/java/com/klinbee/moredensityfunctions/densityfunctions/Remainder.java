@@ -21,6 +21,8 @@ public record Remainder(DensityFunction numerator,
 
     public static final KeyDispatchDataCodec<Remainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "rem";
+
     @Override
     public double compute(FunctionContext pos) {
         double numeratorValue = numerator.compute(pos);

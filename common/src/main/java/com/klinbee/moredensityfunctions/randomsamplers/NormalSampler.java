@@ -18,6 +18,8 @@ public record NormalSampler(double mean,
 
     public static final KeyDispatchDataCodec<NormalSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "normal";
+
     public static NormalSampler create(double mean, double stdDev) {
         return new NormalSampler(mean, stdDev);
     }

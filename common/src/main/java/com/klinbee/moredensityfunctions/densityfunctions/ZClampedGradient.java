@@ -26,6 +26,8 @@ public record ZClampedGradient(int fromZ,
 
     public static final KeyDispatchDataCodec<ZClampedGradient> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "z_clamped_gradient";
+
     @Override
     public double compute(FunctionContext pos) {
         return Mth.clampedMap(pos.blockZ(), fromZ, toZ, fromValue, toValue);

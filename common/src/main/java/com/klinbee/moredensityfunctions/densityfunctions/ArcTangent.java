@@ -17,6 +17,8 @@ public record ArcTangent(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<ArcTangent> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "atan";
+
     private static double eval(double density) {
         return StrictMath.atan(density);
     }

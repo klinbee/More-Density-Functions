@@ -26,6 +26,8 @@ public record XClampedGradient(int fromX,
 
     public static final KeyDispatchDataCodec<XClampedGradient> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "x_clamped_gradient";
+
     @Override
     public double compute(FunctionContext pos) {
         return Mth.clampedMap(pos.blockX(), fromX, toX, fromValue, toValue);

@@ -22,6 +22,9 @@ public record FloorModulo(DensityFunction numerator,
 
     public static final KeyDispatchDataCodec<FloorModulo> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+
+    public static final String NAME = "floor_mod";
+
     @Override
     public double compute(FunctionContext pos) {
         int numeratorValue = Mth.floor(numerator.compute(pos));

@@ -17,6 +17,8 @@ public record Sine(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Sine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "sin";
+
     private static double eval(double density) {
         return StrictMath.sin(density);
     }

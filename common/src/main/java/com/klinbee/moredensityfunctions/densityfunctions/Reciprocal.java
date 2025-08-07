@@ -24,6 +24,8 @@ public record Reciprocal(DensityFunction denominator,
 
     public static final KeyDispatchDataCodec<Reciprocal> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "reciprocal";
+
     @Override
     public double compute(FunctionContext pos) {
         double denominatorValue = denominator.compute(pos);

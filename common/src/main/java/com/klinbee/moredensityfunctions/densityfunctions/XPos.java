@@ -12,6 +12,8 @@ public record XPos()
 
     public static final KeyDispatchDataCodec<XPos> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "x";
+
     @Override
     public double compute(FunctionContext pos) {
         return pos.blockX();

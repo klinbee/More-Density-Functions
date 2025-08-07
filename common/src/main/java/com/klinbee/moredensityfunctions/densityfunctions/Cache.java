@@ -22,6 +22,8 @@ public record Cache(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Cache> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "cache";
+
     private static final Map<DensityFunction, Long> DF_LAST_POS = Collections.synchronizedMap(new IdentityHashMap<>());
     private static final Map<DensityFunction, Double> DF_LAST_VALUE = Collections.synchronizedMap(new IdentityHashMap<>());
 

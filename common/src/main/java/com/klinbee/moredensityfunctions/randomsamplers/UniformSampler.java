@@ -19,6 +19,8 @@ public record UniformSampler(double min,
 
     public static final KeyDispatchDataCodec<UniformSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "uniform";
+
     public static UniformSampler create(double min, double max) {
         if (min > max) {
             throw new IllegalArgumentException("Min must be less than max! min: " + min + " max: " + max);

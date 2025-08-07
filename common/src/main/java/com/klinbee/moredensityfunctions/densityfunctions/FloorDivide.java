@@ -27,6 +27,8 @@ public record FloorDivide(DensityFunction numerator,
 
     public static final KeyDispatchDataCodec<FloorDivide> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "floor_div";
+
     @Override
     public double compute(FunctionContext pos) {
         int numeratorValue = Mth.floor(numerator.compute(pos));

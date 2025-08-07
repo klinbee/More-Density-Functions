@@ -18,6 +18,8 @@ public record GeometricSampler(double probability,
 
     public static final KeyDispatchDataCodec<GeometricSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "geometric";
+
     public static GeometricSampler create(double probability) {
         double inverseLog1p = 1.0D / StrictMath.log(1.0D - probability);
         return new GeometricSampler(probability, inverseLog1p);
