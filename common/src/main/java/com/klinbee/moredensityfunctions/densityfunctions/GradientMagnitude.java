@@ -27,6 +27,8 @@ public record GradientMagnitude(DensityFunction arg,
 
     public static final KeyDispatchDataCodec<GradientMagnitude> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "gradient_magnitude";
+
     private static GradientMagnitude create(DensityFunction arg,
                                             Optional<Integer> stepHolderX,
                                             Optional<Integer> stepHolderY,

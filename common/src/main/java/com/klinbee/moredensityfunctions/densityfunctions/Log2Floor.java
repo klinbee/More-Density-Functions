@@ -24,6 +24,8 @@ public record Log2Floor(DensityFunction arg,
 
     public static final KeyDispatchDataCodec<Log2Floor> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "log2_floor";
+
     @Override
     public double compute(FunctionContext pos) {
         double argValue = arg.compute(pos);

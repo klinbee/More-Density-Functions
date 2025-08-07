@@ -19,6 +19,8 @@ public record Subtract(DensityFunction arg1,
 
     public static final KeyDispatchDataCodec<Subtract> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "subtract";
+
     @Override
     public double compute(FunctionContext pos) {
         return arg1.compute(pos) - arg2.compute(pos);

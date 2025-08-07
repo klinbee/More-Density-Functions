@@ -26,6 +26,8 @@ public record Divide(DensityFunction numerator,
 
     public static final KeyDispatchDataCodec<Divide> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "div";
+
     @Override
     public double compute(FunctionContext pos) {
         double numeratorValue = numerator.compute(pos);

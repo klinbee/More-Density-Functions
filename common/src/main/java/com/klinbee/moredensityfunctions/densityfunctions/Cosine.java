@@ -17,6 +17,8 @@ public record Cosine(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Cosine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "cos";
+
     private static double eval(double density) {
         return StrictMath.cos(density);
     }

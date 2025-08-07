@@ -26,6 +26,8 @@ public record Power(DensityFunction base,
 
     public static final KeyDispatchDataCodec<Power> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "power";
+
     @Override
     public double compute(FunctionContext pos) {
         double exponentValue = exponent.compute(pos);

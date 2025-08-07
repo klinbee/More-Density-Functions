@@ -18,6 +18,8 @@ public sealed interface GammaSampler
 
     KeyDispatchDataCodec<GammaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    String NAME = "gamma";
+
     double shape();
 
     double scale();

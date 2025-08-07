@@ -24,55 +24,55 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         DynamicRegistries.register(MoreDensityFunctionsConstants.RANDOM_SAMPLER, RandomSampler.CODEC);
 
         ///  Random Distributions ///
-        registerRandomSampler("beta", BetaSampler.CODEC.codec());
-        registerRandomSampler("binomial", BinomialSampler.CODEC.codec());
-        registerRandomSampler("exponential", ExponentialSampler.CODEC.codec());
-        registerRandomSampler("gamma", GammaSampler.CODEC.codec());
-        registerRandomSampler("geometric", GeometricSampler.CODEC.codec());
-        registerRandomSampler("normal", NormalSampler.CODEC.codec());
-        registerRandomSampler("poisson", PoissonSampler.CODEC.codec());
-        registerRandomSampler("uniform", UniformSampler.CODEC.codec());
+        registerRandomSampler(BetaSampler.NAME, BetaSampler.CODEC.codec());
+        registerRandomSampler(BinomialSampler.NAME, BinomialSampler.CODEC.codec());
+        registerRandomSampler(ExponentialSampler.NAME, ExponentialSampler.CODEC.codec());
+        registerRandomSampler(GammaSampler.NAME, GammaSampler.CODEC.codec());
+        registerRandomSampler(GeometricSampler.NAME, GeometricSampler.CODEC.codec());
+        registerRandomSampler(NormalSampler.NAME, NormalSampler.CODEC.codec());
+        registerRandomSampler(PoissonSampler.NAME, PoissonSampler.CODEC.codec());
+        registerRandomSampler(UniformSampler.NAME, UniformSampler.CODEC.codec());
 
         /// Density Functions ///
-        registerDensityFunction("acos", ArcCosine.CODEC.codec());
-        registerDensityFunction("asin",ArcSine.CODEC.codec());
-        registerDensityFunction("atan", ArcTangent.CODEC.codec());
-        registerDensityFunction("cache", Cache.CODEC.codec());
-        registerDensityFunction("ceil", Ceil.CODEC.codec());
-        registerDensityFunction("clamp", Clamp.CODEC.codec());
-        registerDensityFunction("cos", Cosine.CODEC.codec());
-        registerDensityFunction("derivative", Derivative.CODEC.codec());
-        registerDensityFunction("div", Divide.CODEC.codec());
-        registerDensityFunction("floor", Floor.CODEC.codec());
-        registerDensityFunction("floor_div", FloorDivide.CODEC.codec());
-        registerDensityFunction("floor_mod", FloorModulo.CODEC.codec());
-        registerDensityFunction("gradient_magnitude", GradientMagnitude.CODEC.codec());
-        registerDensityFunction("ieee_rem", IEEERemainder.CODEC.codec());
-        registerDensityFunction("log", Log.CODEC.codec());
-        registerDensityFunction("log2", Log2.CODEC.codec());
-        registerDensityFunction("log2_floor", Log2Floor.CODEC.codec());
-        registerDensityFunction("ln", NaturalLog.CODEC.codec());
-        registerDensityFunction("negate", Negate.CODEC.codec());
-        registerDensityFunction("polar_coords", PolarCoords.CODEC.codec());
-        registerDensityFunction("power", Power.CODEC.codec());
-        registerDensityFunction("profiler", Profiler.CODEC.codec());
-        registerDensityFunction("reciprocal", Reciprocal.CODEC.codec());
-        registerDensityFunction("rem", Remainder.CODEC.codec());
-        registerDensityFunction("round", Round.CODEC.codec());
-        registerDensityFunction("shift", Shift.CODEC.codec());
-        registerDensityFunction("sigmoid", Sigmoid.CODEC.codec());
-        registerDensityFunction("signum", Signum.CODEC.codec());
-        registerDensityFunction("sine", Sine.CODEC.codec());
-        registerDensityFunction("sqrt", SquareRoot.CODEC.codec());
-        registerDensityFunction("subtract", Subtract.CODEC.codec());
-        registerDensityFunction("tan", Tangent.CODEC.codec());
-        registerDensityFunction("value_noise", ValueNoise.CODEC.codec());
-        registerDensityFunction("vector_angle", VectorAngle.CODEC.codec());
-        registerDensityFunction( "x_clamped_gradient", XClampedGradient.CODEC.codec());
-        registerDensityFunction("x", XPos.CODEC.codec());
-        registerDensityFunction("y", YPos.CODEC.codec());
-        registerDensityFunction("z_clamped_gradient", ZClampedGradient.CODEC.codec());
-        registerDensityFunction("z", ZPos.CODEC.codec());
+        registerDensityFunction(ArcCosine.NAME, ArcCosine.CODEC.codec());
+        registerDensityFunction(ArcSine.NAME, ArcSine.CODEC.codec());
+        registerDensityFunction(ArcTangent.NAME, ArcTangent.CODEC.codec());
+        registerDensityFunction(Cache.NAME, Cache.CODEC.codec());
+        registerDensityFunction(Ceil.NAME, Ceil.CODEC.codec());
+        registerDensityFunction(Clamp.NAME, Clamp.CODEC.codec());
+        registerDensityFunction(Cosine.NAME, Cosine.CODEC.codec());
+        registerDensityFunction(Derivative.NAME, Derivative.CODEC.codec());
+        registerDensityFunction(Divide.NAME, Divide.CODEC.codec());
+        registerDensityFunction(Floor.NAME, Floor.CODEC.codec());
+        registerDensityFunction(FloorDivide.NAME, FloorDivide.CODEC.codec());
+        registerDensityFunction(FloorModulo.NAME, FloorModulo.CODEC.codec());
+        registerDensityFunction(GradientMagnitude.NAME, GradientMagnitude.CODEC.codec());
+        registerDensityFunction(IEEERemainder.NAME, IEEERemainder.CODEC.codec());
+        registerDensityFunction(Log.NAME, Log.CODEC.codec());
+        registerDensityFunction(Log2.NAME, Log2.CODEC.codec());
+        registerDensityFunction(Log2Floor.NAME, Log2Floor.CODEC.codec());
+        registerDensityFunction(NaturalLog.NAME, NaturalLog.CODEC.codec());
+        registerDensityFunction(Negate.NAME, Negate.CODEC.codec());
+        registerDensityFunction(PolarCoords.NAME, PolarCoords.CODEC.codec());
+        registerDensityFunction(Power.NAME, Power.CODEC.codec());
+        registerDensityFunction(Profiler.NAME, Profiler.CODEC.codec());
+        registerDensityFunction(Reciprocal.NAME, Reciprocal.CODEC.codec());
+        registerDensityFunction(Remainder.NAME, Remainder.CODEC.codec());
+        registerDensityFunction(Round.NAME, Round.CODEC.codec());
+        registerDensityFunction(Shift.NAME, Shift.CODEC.codec());
+        registerDensityFunction(Sigmoid.NAME, Sigmoid.CODEC.codec());
+        registerDensityFunction(Signum.NAME, Signum.CODEC.codec());
+        registerDensityFunction(Sine.NAME, Sine.CODEC.codec());
+        registerDensityFunction(SquareRoot.NAME, SquareRoot.CODEC.codec());
+        registerDensityFunction(Subtract.NAME, Subtract.CODEC.codec());
+        registerDensityFunction(Tangent.NAME, Tangent.CODEC.codec());
+        registerDensityFunction(ValueNoise.NAME, ValueNoise.CODEC.codec());
+        registerDensityFunction(VectorAngle.NAME, VectorAngle.CODEC.codec());
+        registerDensityFunction(XClampedGradient.NAME, XClampedGradient.CODEC.codec());
+        registerDensityFunction(XPos.NAME, XPos.CODEC.codec());
+        registerDensityFunction(YPos.NAME, YPos.CODEC.codec());
+        registerDensityFunction(ZClampedGradient.NAME, ZClampedGradient.CODEC.codec());
+        registerDensityFunction(ZPos.NAME, ZPos.CODEC.codec());
     }
 
     /**
@@ -80,13 +80,13 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
      * Method for ease of reading
      * Not generic, because Java hates that (makes it really annoying)
      *
-     * @param name: name of the DensityFunction type used for JSON
+     * @param name:  name of the DensityFunction type used for JSON
      * @param codec: the codec from the KeyDispatchDataCodec of the DensityFunction class
      */
     public void registerDensityFunction(String name, Codec<? extends DensityFunction> codec) {
         ResourceLocation resourceLocation = new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, name);
         ResourceKey<Codec<? extends DensityFunction>> resourceKey = ResourceKey.create(BuiltInRegistries.DENSITY_FUNCTION_TYPE.key(), resourceLocation);
-        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE,resourceKey,codec);
+        Registry.register(BuiltInRegistries.DENSITY_FUNCTION_TYPE, resourceKey, codec);
     }
 
     /**
@@ -94,13 +94,13 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
      * Method for ease of reading
      * Not generic, because Java hates that (makes it really annoying)
      *
-     * @param name: name of the RandomSampler type used for JSON
+     * @param name:  name of the RandomSampler type used for JSON
      * @param codec: the codec from the KeyDispatchDataCodec of the RandomSampler class
      */
     public void registerRandomSampler(String name, Codec<? extends RandomSampler> codec) {
         ResourceLocation resourceLocation = new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, name);
         ResourceKey<Codec<? extends RandomSampler>> resourceKey = ResourceKey.create(RANDOM_SAMPLER_TYPE.key(), resourceLocation);
-        Registry.register(RANDOM_SAMPLER_TYPE,resourceKey,codec);
+        Registry.register(RANDOM_SAMPLER_TYPE, resourceKey, codec);
     }
 
 }

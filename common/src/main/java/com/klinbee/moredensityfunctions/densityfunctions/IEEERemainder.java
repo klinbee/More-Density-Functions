@@ -21,6 +21,8 @@ public record IEEERemainder(DensityFunction numerator,
 
     public static final KeyDispatchDataCodec<IEEERemainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "ieee_rem";
+
     @Override
     public double compute(FunctionContext pos) {
         double numeratorValue = numerator.compute(pos);

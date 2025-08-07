@@ -24,6 +24,8 @@ public record NaturalLog(DensityFunction arg,
 
     public static final KeyDispatchDataCodec<NaturalLog> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "ln";
+
     @Override
     public double compute(FunctionContext pos) {
         double argValue = arg.compute(pos);

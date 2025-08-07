@@ -23,6 +23,8 @@ public record Shift(DensityFunction arg,
 
     public static final KeyDispatchDataCodec<Shift> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "shift";
+
     @Override
     public double compute(FunctionContext pos) {
         return arg.compute(new FunctionContext() {

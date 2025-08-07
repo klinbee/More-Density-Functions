@@ -17,6 +17,8 @@ public record Tangent(DensityFunction arg,
 
     public static final KeyDispatchDataCodec<Tangent> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "tan";
+
     @Override
     public double compute(FunctionContext pos) {
         double argValue = arg.compute(pos);

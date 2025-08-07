@@ -17,6 +17,8 @@ public record Round(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Round> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "round";
+
     private static double eval(double density) {
         return StrictMath.round(density);
     }

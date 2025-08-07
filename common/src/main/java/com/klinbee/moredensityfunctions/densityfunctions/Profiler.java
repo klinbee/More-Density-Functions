@@ -28,6 +28,8 @@ public record Profiler(DensityFunction arg,
 
     public static final KeyDispatchDataCodec<Profiler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "profiler";
+
     private static final Set<String> inactiveProfilers = Collections.synchronizedSet(
             Collections.newSetFromMap(new WeakHashMap<>())
     );

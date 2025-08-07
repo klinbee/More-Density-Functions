@@ -18,6 +18,8 @@ public record Floor(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Floor> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "floor";
+
     private static double eval(double density) {
         return Mth.floor(density);
     }

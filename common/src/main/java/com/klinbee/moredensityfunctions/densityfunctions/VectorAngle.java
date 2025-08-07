@@ -19,6 +19,8 @@ public record VectorAngle(DensityFunction arg1,
 
     public static final KeyDispatchDataCodec<VectorAngle> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "vector_angle";
+
     @Override
     public double compute(FunctionContext pos) {
         return StrictMath.atan2(arg1.compute(pos), arg2.compute(pos));
