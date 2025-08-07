@@ -51,6 +51,8 @@ public record ValueNoise(RandomSampler randomSampler,
 
     public static final KeyDispatchDataCodec<ValueNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "value_noise";
+
     /// Interpolation CODEC
     public enum Interpolation implements StringRepresentable {
         NONE("none"),

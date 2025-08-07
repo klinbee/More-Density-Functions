@@ -12,6 +12,8 @@ public record YPos()
 
     public static final KeyDispatchDataCodec<YPos> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "y";
+
     @Override
     public double compute(FunctionContext pos) {
         return pos.blockY();

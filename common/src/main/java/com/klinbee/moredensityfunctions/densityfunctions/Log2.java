@@ -23,6 +23,8 @@ public record Log2(DensityFunction arg,
             );
     public static final KeyDispatchDataCodec<Log2> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "log2";
+
     @Override
     public double compute(FunctionContext pos) {
         double argValue = arg.compute(pos);

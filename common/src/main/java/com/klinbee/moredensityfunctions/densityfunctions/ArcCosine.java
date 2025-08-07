@@ -17,6 +17,8 @@ public record ArcCosine(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<ArcCosine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "acos";
+
     private static double eval(double density) {
         return StrictMath.acos(density);
     }

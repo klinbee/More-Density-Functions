@@ -18,6 +18,8 @@ public sealed interface BinomialSampler
 
     KeyDispatchDataCodec<BinomialSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    String NAME = "binomial";
+
     static BinomialSampler create(int trials, double probability) {
 
         if (trials < 30) {

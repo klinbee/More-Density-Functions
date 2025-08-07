@@ -18,6 +18,8 @@ public record Ceil(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Ceil> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "ceil";
+
     private static double eval(double density) {
         return Mth.ceil(density);
     }

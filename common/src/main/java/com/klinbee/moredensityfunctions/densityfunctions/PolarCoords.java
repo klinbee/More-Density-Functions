@@ -11,6 +11,8 @@ public record PolarCoords()
 
     public static final KeyDispatchDataCodec<PolarCoords> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "polar_coords";
+
     @Override
     public double compute(FunctionContext pos) {
         return StrictMath.atan2(pos.blockX(), pos.blockZ());

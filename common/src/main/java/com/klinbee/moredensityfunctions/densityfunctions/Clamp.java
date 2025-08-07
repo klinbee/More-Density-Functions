@@ -23,6 +23,8 @@ public record Clamp(DensityFunction arg,
 
     public static final KeyDispatchDataCodec<Clamp> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "clamp";
+
     private static Clamp create(DensityFunction arg, double min, double max) {
         if (min > max) {
             throw new IllegalArgumentException("Min must be less than max! min: " + min + " max: " + max);

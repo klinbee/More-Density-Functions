@@ -17,6 +17,8 @@ public record Signum(DensityFunction arg)
 
     public static final KeyDispatchDataCodec<Signum> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "signum";
+
     private static double eval(double density) {
         return StrictMath.signum(density);
     }

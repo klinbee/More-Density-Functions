@@ -12,6 +12,8 @@ public record ZPos()
 
     public static final KeyDispatchDataCodec<ZPos> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "z";
+
     @Override
     public double compute(FunctionContext pos) {
         return pos.blockZ();

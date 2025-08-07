@@ -18,6 +18,8 @@ public record ExponentialSampler(double lambda,
 
     public static KeyDispatchDataCodec<ExponentialSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "exponential";
+
     public static ExponentialSampler create(double lambda) {
         double negativeInverseLambda = -1.0D / lambda;
         return new ExponentialSampler(lambda, negativeInverseLambda);

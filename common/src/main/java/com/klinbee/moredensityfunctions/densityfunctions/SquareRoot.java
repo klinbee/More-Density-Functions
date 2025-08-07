@@ -23,6 +23,8 @@ public record SquareRoot(DensityFunction arg,
             );
     public static final KeyDispatchDataCodec<SquareRoot> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
+    public static final String NAME = "sqrt";
+
     private static double eval(double density) {
         return StrictMath.sqrt(density);
     }
