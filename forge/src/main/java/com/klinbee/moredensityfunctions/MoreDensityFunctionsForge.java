@@ -27,9 +27,10 @@ public class MoreDensityFunctionsForge {
             MoreDensityFunctionsConstants.MOD_NAMESPACE
     );
 
+    // I *for some reason*, need to do this
     public static final Supplier<IForgeRegistry<Codec<? extends RandomSampler>>>
-            RANDOM_SAMPLER_REGISTRY_SUPPLIER = RANDOM_SAMPLERS.makeRegistry(
-            () -> new RegistryBuilder<Codec<? extends RandomSampler>>()
+            RANDOM_SAMPLER_REGISTRY_SUPPLIER = RANDOM_SAMPLERS.makeRegistry(() ->
+            new RegistryBuilder<Codec<? extends RandomSampler>>()
                     .hasTags()
                     .disableSync()
                     .disableSaving()
