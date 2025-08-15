@@ -44,8 +44,8 @@ public record ValueNoise(RandomSampler randomSampler,
                     MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
                     MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
                     Interpolation.CODEC.fieldOf("interpolation").forGetter(ValueNoise::interpolation),
-                    ExtraOctaves.CODEC.optionalFieldOf("extra_octaves", ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
-                    Codec.INT.optionalFieldOf("salt", 0).forGetter(ValueNoise::salt)
+                    ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse( ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
+                    Codec.INT.fieldOf("salt").orElse(0).forGetter(ValueNoise::salt)
             ).apply(instance, ValueNoise::new)
     );
 

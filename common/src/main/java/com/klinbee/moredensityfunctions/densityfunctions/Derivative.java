@@ -6,22 +6,21 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
-
-import java.util.Optional;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 public record Derivative(DensityFunction arg,
-                         Optional<DerivativeComponent> componentHolderX,
-                         Optional<DerivativeComponent> componentHolderY,
-                         Optional<DerivativeComponent> componentHolderZ)
+                         DerivativeComponent componentX,
+                         DerivativeComponent componentY,
+                         DerivativeComponent componentZ)
         implements DensityFunction {
 
     private static final MapCodec<Derivative> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Derivative::arg),
-                            DerivativeComponent.CODEC.optionalFieldOf("component_x").forGetter(Derivative::componentHolderX),
-                            DerivativeComponent.CODEC.optionalFieldOf("component_y").forGetter(Derivative::componentHolderY),
-                            DerivativeComponent.CODEC.optionalFieldOf("component_z").forGetter(Derivative::componentHolderZ)
+                            DerivativeComponent.CODEC.fieldOf("component_x").orElse(DerivativeComponent.NONE).forGetter(Derivative::componentX),
+                            DerivativeComponent.CODEC.fieldOf("component_y").orElse(DerivativeComponent.NONE).forGetter(Derivative::componentY),
+                            DerivativeComponent.CODEC.fieldOf("component_z").orElse(DerivativeComponent.NONE).forGetter(Derivative::componentZ)
                     ).apply(instance, Derivative::create)
             );
 
@@ -30,13 +29,13 @@ public record Derivative(DensityFunction arg,
     public static final String NAME = "derivative";
 
     private static Derivative create(DensityFunction arg,
-                                     Optional<DerivativeComponent> componentHolderX,
-                                     Optional<DerivativeComponent> componentHolderY,
-                                     Optional<DerivativeComponent> componentHolderZ) {
-        if (componentHolderX.isEmpty() && componentHolderY.isEmpty() && componentHolderZ.isEmpty()) {
-            throw new IllegalArgumentException("Derivative must contain at least one valid directional component!");
+                                     DerivativeComponent componentX,
+                                     DerivativeComponent componentY,
+                                     DerivativeComponent componentZ) {
+        if ((componentX.step | componentY.step | componentZ.step) == 0) {
+            throw new IllegalArgumentException("Derivative must contain at least one non-trivial directional component!");
         }
-        return new Derivative(arg, componentHolderX, componentHolderY, componentHolderZ);
+        return new Derivative(arg, componentX, componentY, componentZ);
     }
 
     /// Derivative Component CODEC
@@ -44,10 +43,11 @@ public record Derivative(DensityFunction arg,
         static final Codec<DerivativeComponent> CODEC =
                 RecordCodecBuilder.create(instance ->
                         instance.group(
-                                MoreDensityFunctionsConstants.POSITIVE_INT.fieldOf("step").forGetter(DerivativeComponent::step),
+                                MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("step").forGetter(DerivativeComponent::step),
                                 DensityFunction.HOLDER_HELPER_CODEC.fieldOf("direction").forGetter(DerivativeComponent::direction)
                         ).apply(instance, DerivativeComponent::new)
                 );
+        static final DerivativeComponent NONE = new DerivativeComponent(0, DensityFunctions.constant(0));
     }
 
     private record BlockContext(int blockX, int blockY, int blockZ) implements DensityFunction.FunctionContext {
@@ -60,35 +60,32 @@ public record Derivative(DensityFunction arg,
         double dirX = 0.0D, dirY = 0.0D, dirZ = 0.0D;
         double gradX = 0.0D, gradY = 0.0D, gradZ = 0.0D;
 
-        if (componentHolderX.isPresent()) {
-            var comp = componentHolderX.get();
-            dirX = comp.direction.compute(pos);
-            gradX = (arg.compute(new BlockContext(x + comp.step, y, z)) -
-                    arg.compute(new BlockContext(x - comp.step, y, z))) / (2.0D * comp.step);
+        if (componentX.step != 0) {
+            dirX = componentX.direction.compute(pos);
+            gradX = (arg.compute(new BlockContext(x + componentX.step, y, z)) -
+                    arg.compute(new BlockContext(x - componentX.step, y, z))) / (2.0D * componentX.step);
         }
 
-        if (componentHolderY.isPresent()) {
-            var comp = componentHolderY.get();
-            dirY = comp.direction.compute(pos);
-            gradY = (arg.compute(new BlockContext(x, y + comp.step, z)) -
-                    arg.compute(new BlockContext(x, y - comp.step, z))) / (2.0D * comp.step);
+        if (componentY.step != 0) {
+            dirY = componentY.direction.compute(pos);
+            gradY = (arg.compute(new BlockContext(x, y + componentY.step, z)) -
+                    arg.compute(new BlockContext(x, y - componentY.step, z))) / (2.0D * componentY.step);
         }
 
-        if (componentHolderZ.isPresent()) {
-            var comp = componentHolderZ.get();
-            dirZ = comp.direction.compute(pos);
-            gradZ = (arg.compute(new BlockContext(x, y, z + comp.step)) -
-                    arg.compute(new BlockContext(x, y, z - comp.step))) / (2.0D * comp.step);
+        if (componentZ.step != 0) {
+            dirZ = componentZ.direction.compute(pos);
+            gradZ = (arg.compute(new BlockContext(x, y, z + componentZ.step)) -
+                    arg.compute(new BlockContext(x, y, z - componentZ.step))) / (2.0D * componentZ.step);
         }
 
         // Single component case short-circuits
-        if (componentHolderY.isEmpty() && componentHolderZ.isEmpty()) {
+        if (componentY.step == 0 && componentZ.step == 0) {
             return StrictMath.signum(dirX) * gradX;
         }
-        if (componentHolderX.isEmpty() && componentHolderZ.isEmpty()) {
+        if (componentX.step == 0 && componentZ.step == 0) {
             return StrictMath.signum(dirY) * gradY;
         }
-        if (componentHolderX.isEmpty() && componentHolderY.isEmpty()) {
+        if (componentX.step == 0 && componentY.step == 0) {
             return StrictMath.signum(dirZ) * gradZ;
         }
 
@@ -98,21 +95,15 @@ public record Derivative(DensityFunction arg,
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
+        componentX.direction.mapAll(visitor);
+        componentY.direction.mapAll(visitor);
+        componentZ.direction.mapAll(visitor);
         return visitor.apply(
                 new Derivative(
                         arg.mapAll(visitor),
-                        componentHolderX.map(comp -> new DerivativeComponent(
-                                comp.step(),
-                                comp.direction().mapAll(visitor)
-                        )),
-                        componentHolderY.map(comp -> new DerivativeComponent(
-                                comp.step(),
-                                comp.direction().mapAll(visitor)
-                        )),
-                        componentHolderZ.map(comp -> new DerivativeComponent(
-                                comp.step(),
-                                comp.direction().mapAll(visitor)
-                        ))
+                        componentX,
+                        componentY,
+                        componentZ
                 )
         );
     }
