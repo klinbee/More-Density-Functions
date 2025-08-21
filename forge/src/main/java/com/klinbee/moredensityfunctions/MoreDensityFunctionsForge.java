@@ -61,6 +61,7 @@ public class MoreDensityFunctionsForge {
         DENSITY_FUNCTIONS.register(Ceil.NAME, Ceil.CODEC::codec);
         DENSITY_FUNCTIONS.register(Clamp.NAME, Clamp.CODEC::codec);
         DENSITY_FUNCTIONS.register(Cosine.NAME, Cosine.CODEC::codec);
+        DENSITY_FUNCTIONS.register(DotProduct.NAME, DotProduct.CODEC::codec);
         DENSITY_FUNCTIONS.register(Derivative.NAME, Derivative.CODEC::codec);
         DENSITY_FUNCTIONS.register(Divide.NAME, Divide.CODEC::codec);
         DENSITY_FUNCTIONS.register(Floor.NAME, Floor.CODEC::codec);

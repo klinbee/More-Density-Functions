@@ -43,6 +43,7 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         registerDensityFunction(Cosine.NAME, Cosine.CODEC.codec());
         registerDensityFunction(Derivative.NAME, Derivative.CODEC.codec());
         registerDensityFunction(Divide.NAME, Divide.CODEC.codec());
+        registerDensityFunction(DotProduct.NAME, DotProduct.CODEC.codec());
         registerDensityFunction(Floor.NAME, Floor.CODEC.codec());
         registerDensityFunction(FloorDivide.NAME, FloorDivide.CODEC.codec());
         registerDensityFunction(FloorModulo.NAME, FloorModulo.CODEC.codec());
