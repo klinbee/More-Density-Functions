@@ -1,7 +1,7 @@
 package com.klinbee.moredensityfunctions;
 
-import com.klinbee.moredensityfunctions.densityfunctions.*;
 import com.klinbee.moredensityfunctions.randomsamplers.*;
+import com.klinbee.moredensityfunctions.registration.CommonRegistrations;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -39,61 +39,16 @@ public class MoreDensityFunctionsForge {
     public MoreDensityFunctionsForge() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        /// Register the Random Sampler Registry
+        /// Register the RandomSampler Registry
         eventBus.addListener((DataPackRegistryEvent.NewRegistry event) ->
                 event.dataPackRegistry(MoreDensityFunctionsConstants.RANDOM_SAMPLER, RandomSampler.CODEC));
 
-        /// Random Samplers
-        RANDOM_SAMPLERS.register(BetaSampler.NAME, BetaSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register(BinomialSampler.NAME, BinomialSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register(ExponentialSampler.NAME, ExponentialSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register(GammaSampler.NAME, GammaSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register(GeometricSampler.NAME, GeometricSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register(NormalSampler.NAME, NormalSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register(PoissonSampler.NAME, PoissonSampler.CODEC::codec);
-        RANDOM_SAMPLERS.register(UniformSampler.NAME, UniformSampler.CODEC::codec);
+        /// Register through CommonRegistrations
+        ForgeGenericRegistrar.addRegistry(CommonRegistrations.DENSITY_FUNCTIONS, DENSITY_FUNCTIONS);
+        ForgeGenericRegistrar.addRegistry(CommonRegistrations.RANDOM_SAMPLERS, RANDOM_SAMPLERS);
 
-        /// Density Functions
-        DENSITY_FUNCTIONS.register(ArcCosine.NAME, ArcCosine.CODEC::codec);
-        DENSITY_FUNCTIONS.register(ArcSine.NAME, ArcSine.CODEC::codec);
-        DENSITY_FUNCTIONS.register(ArcTangent.NAME, ArcTangent.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Cache.NAME, Cache.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Ceil.NAME, Ceil.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Clamp.NAME, Clamp.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Cosine.NAME, Cosine.CODEC::codec);
-        DENSITY_FUNCTIONS.register(DotProduct.NAME, DotProduct.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Derivative.NAME, Derivative.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Divide.NAME, Divide.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Floor.NAME, Floor.CODEC::codec);
-        DENSITY_FUNCTIONS.register(FloorDivide.NAME, FloorDivide.CODEC::codec);
-        DENSITY_FUNCTIONS.register(FloorModulo.NAME, FloorModulo.CODEC::codec);
-        DENSITY_FUNCTIONS.register(GradientMagnitude.NAME, GradientMagnitude.CODEC::codec);
-        DENSITY_FUNCTIONS.register(IEEERemainder.NAME, IEEERemainder.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Log.NAME, Log.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Log2.NAME, Log2.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Log2Floor.NAME, Log2Floor.CODEC::codec);
-        DENSITY_FUNCTIONS.register(NaturalLog.NAME, NaturalLog.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Negate.NAME, Negate.CODEC::codec);
-        DENSITY_FUNCTIONS.register(PolarCoords.NAME, PolarCoords.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Power.NAME, Power.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Profiler.NAME, Profiler.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Reciprocal.NAME, Reciprocal.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Remainder.NAME, Remainder.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Round.NAME, Round.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Shift.NAME, Shift.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Sigmoid.NAME, Sigmoid.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Signum.NAME, Signum.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Sine.NAME, Sine.CODEC::codec);
-        DENSITY_FUNCTIONS.register(SquareRoot.NAME, SquareRoot.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Subtract.NAME, Subtract.CODEC::codec);
-        DENSITY_FUNCTIONS.register(Tangent.NAME, Tangent.CODEC::codec);
-        DENSITY_FUNCTIONS.register(ValueNoise.NAME, ValueNoise.CODEC::codec);
-        DENSITY_FUNCTIONS.register(VectorAngle.NAME, VectorAngle.CODEC::codec);
-        DENSITY_FUNCTIONS.register(XClampedGradient.NAME, XClampedGradient.CODEC::codec);
-        DENSITY_FUNCTIONS.register(XPos.NAME, XPos.CODEC::codec);
-        DENSITY_FUNCTIONS.register(YPos.NAME, YPos.CODEC::codec);
-        DENSITY_FUNCTIONS.register(ZClampedGradient.NAME, ZClampedGradient.CODEC::codec);
-        DENSITY_FUNCTIONS.register(ZPos.NAME, ZPos.CODEC::codec);
+        CommonRegistrations.registerCommon(ForgeGenericRegistrar::register);
+
 
         /// Add registrations to eventBus
         DENSITY_FUNCTIONS.register(eventBus);
