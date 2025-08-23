@@ -4,6 +4,7 @@ import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
@@ -21,8 +22,8 @@ public record Profiler(DensityFunction arg,
     private static final MapCodec<Profiler> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Profiler::arg),
-                    MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("iterations").forGetter(Profiler::iterations),
-                    MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("warm_up").forGetter(Profiler::warmUp)
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("iterations").forGetter(Profiler::iterations),
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("warm_up").forGetter(Profiler::warmUp)
             ).apply(instance, Profiler::new)
     );
 

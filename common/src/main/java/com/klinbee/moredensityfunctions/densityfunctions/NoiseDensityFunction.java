@@ -4,6 +4,7 @@ import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
@@ -25,7 +26,7 @@ public interface NoiseDensityFunction extends DensityFunction {
         public static final Codec<ExtraOctaves> CODEC =
                 RecordCodecBuilder.create(instance ->
                         instance.group(
-                                MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("count").forGetter(ExtraOctaves::count),
+                                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").forGetter(ExtraOctaves::count),
                                 Codec.DOUBLE.fieldOf("lacunarity").forGetter(ExtraOctaves::lacunarity),
                                 Codec.DOUBLE.fieldOf("persistence").forGetter(ExtraOctaves::persistence)
                         ).apply(instance, ExtraOctaves::tempNoSalt)

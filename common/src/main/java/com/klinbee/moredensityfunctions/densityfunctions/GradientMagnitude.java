@@ -4,6 +4,7 @@ import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
@@ -19,9 +20,9 @@ public record GradientMagnitude(DensityFunction arg,
             RecordCodecBuilder.mapCodec(instance ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(GradientMagnitude::arg),
-                            MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("step_x").orElse(0).forGetter(GradientMagnitude::stepX),
-                            MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("step_y").orElse(0).forGetter(GradientMagnitude::stepY),
-                            MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("step_z").orElse(0).forGetter(GradientMagnitude::stepZ)
+                            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step_x").orElse(0).forGetter(GradientMagnitude::stepX),
+                            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step_y").orElse(0).forGetter(GradientMagnitude::stepY),
+                            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step_z").orElse(0).forGetter(GradientMagnitude::stepZ)
                     ).apply(instance, GradientMagnitude::create)
             );
 

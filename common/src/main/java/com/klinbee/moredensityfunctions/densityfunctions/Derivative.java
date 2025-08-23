@@ -4,6 +4,7 @@ import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
@@ -43,7 +44,7 @@ public record Derivative(DensityFunction arg,
         static final Codec<DerivativeComponent> CODEC =
                 RecordCodecBuilder.create(instance ->
                         instance.group(
-                                MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("step").forGetter(DerivativeComponent::step),
+                                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step").forGetter(DerivativeComponent::step),
                                 DensityFunction.HOLDER_HELPER_CODEC.fieldOf("direction").forGetter(DerivativeComponent::direction)
                         ).apply(instance, DerivativeComponent::new)
                 );

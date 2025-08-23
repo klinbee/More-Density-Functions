@@ -1,8 +1,8 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
@@ -18,9 +18,9 @@ public record DotProduct(DensityFunction arg1,
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument1").forGetter(DotProduct::arg1),
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument2").forGetter(DotProduct::arg2),
-                            MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("step_x").orElse(0).forGetter(DotProduct::stepX),
-                            MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("step_y").orElse(0).forGetter(DotProduct::stepY),
-                            MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("step_z").orElse(0).forGetter(DotProduct::stepZ)
+                            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step_x").orElse(0).forGetter(DotProduct::stepX),
+                            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step_y").orElse(0).forGetter(DotProduct::stepY),
+                            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step_z").orElse(0).forGetter(DotProduct::stepZ)
                     ).apply(instance, DotProduct::create)
             );
 
