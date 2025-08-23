@@ -2,6 +2,7 @@ package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
+import net.minecraft.client.model.PufferfishBigModel;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -17,15 +18,17 @@ public class MoreDensityFunctionsConstants {
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
     /// Constant Values
-    public static final double MAX_COORD_DOUBLE = 30_000_000D;
-    public static final double MIN_COORD_DOUBLE = -MAX_COORD_DOUBLE;
-    public static final int MAX_COORD_INT = 30_000_000;
-    public static final int MIN_COORD_INT = -MAX_COORD_INT;
+    public static final int XZ_MAX_INT = 33_554_431;
+    public static final int XZ_MIN_INT = -33_554_432;
+    public static final int Y_MAX_INT = 6143;
+    public static final int Y_MIN_INT = -6144;
+    public static final double XZ_MAX_DOUBLE = XZ_MAX_INT;
+    public static final double XZ_MIN_DOUBLE = XZ_MIN_INT;
+    public static final double Y_MAX_DOUBLE = Y_MAX_INT;
+    public static final double Y_MIN_DOUBLE = Y_MIN_INT;
 
     /// Useful Codecs
-    public static final Codec<Integer> COORD_CODEC_INT = Codec.intRange(MIN_COORD_INT, MAX_COORD_INT);
-    public static final Codec<Integer> NON_NEGATIVE_INT = Codec.intRange(0, Integer.MAX_VALUE);
-    public static final Codec<Integer> POSITIVE_INT = Codec.intRange(1, Integer.MAX_VALUE);
+    public static final Codec<Integer> COORD_CODEC_INT = Codec.intRange(XZ_MIN_INT, XZ_MAX_INT);
 
     /// ResourceKeys
     public static final ResourceKey<Registry<RandomSampler>> RANDOM_SAMPLER = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "random_sampler"));

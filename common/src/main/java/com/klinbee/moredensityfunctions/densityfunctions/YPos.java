@@ -33,12 +33,12 @@ public record YPos()
 
     @Override
     public double minValue() {
-        return MoreDensityFunctionsConstants.MIN_COORD_DOUBLE;
+        return MoreDensityFunctionsConstants.Y_MIN_DOUBLE;
     }
 
     @Override
     public double maxValue() {
-        return MoreDensityFunctionsConstants.MAX_COORD_DOUBLE;
+        return MoreDensityFunctionsConstants.Y_MAX_DOUBLE;
     }
 
     @Override
