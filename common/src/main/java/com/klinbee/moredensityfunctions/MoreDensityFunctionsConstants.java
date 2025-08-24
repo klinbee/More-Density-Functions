@@ -6,8 +6,11 @@ import net.minecraft.client.model.PufferfishBigModel;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 public class MoreDensityFunctionsConstants {
 
@@ -29,6 +32,12 @@ public class MoreDensityFunctionsConstants {
 
     /// Useful Codecs
     public static final Codec<Integer> COORD_CODEC_INT = Codec.intRange(XZ_MIN_INT, XZ_MAX_INT);
+    public static final Codec<DensityFunction[]> DENSITY_FUNCTION_ARRAY_CODEC =
+            DensityFunction.HOLDER_HELPER_CODEC.listOf()
+                    .xmap(
+                            list -> list.toArray(new DensityFunction[0]),
+                            Arrays::asList
+                    );
 
     /// ResourceKeys
     public static final ResourceKey<Registry<RandomSampler>> RANDOM_SAMPLER = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "random_sampler"));

@@ -8,7 +8,7 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
-import java.util.Arrays;
+import static com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants.DENSITY_FUNCTION_ARRAY_CODEC;
 
 public record GappedGridSquareSpiral(int xSize,
                                      int zSize,
@@ -16,14 +16,6 @@ public record GappedGridSquareSpiral(int xSize,
                                      DensityFunction[] gridCellArgs,
                                      DensityFunction oobArg)
         implements DensityFunction {
-
-    // Conversion between List <-> Array
-    private static final Codec<DensityFunction[]> DENSITY_FUNCTION_ARRAY_CODEC =
-            DensityFunction.HOLDER_HELPER_CODEC.listOf()
-                    .xmap(
-                            list -> list.toArray(new DensityFunction[0]),
-                            Arrays::asList
-                    );
 
     private static final MapCodec<GappedGridSquareSpiral> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
