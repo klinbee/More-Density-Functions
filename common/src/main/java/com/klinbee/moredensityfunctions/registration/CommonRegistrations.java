@@ -19,6 +19,7 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, Clamp.NAME, Clamp.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Cosine.NAME, Cosine.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Derivative.NAME, Derivative.CODEC.codec());
+        registrar.register(DENSITY_FUNCTION, Distance.NAME, Distance.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Divide.NAME, Divide.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, DotProduct.NAME, DotProduct.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Floor.NAME, Floor.CODEC.codec());
@@ -35,6 +36,8 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, PolarCoords.NAME, PolarCoords.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Power.NAME, Power.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Profiler.NAME, Profiler.CODEC.codec());
+        registrar.register(DENSITY_FUNCTION, Radius.NAME, Radius.CODEC.codec());
+        registrar.register(DENSITY_FUNCTION, Radius3D.NAME, Radius3D.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Reciprocal.NAME, Reciprocal.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Remainder.NAME, Remainder.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Round.NAME, Round.CODEC.codec());
