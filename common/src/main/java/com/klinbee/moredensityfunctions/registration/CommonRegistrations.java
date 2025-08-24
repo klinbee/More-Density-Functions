@@ -3,10 +3,11 @@ package com.klinbee.moredensityfunctions.registration;
 import com.klinbee.moredensityfunctions.densityfunctions.*;
 import com.klinbee.moredensityfunctions.randomsamplers.*;
 
-import static com.klinbee.moredensityfunctions.registration.RegistryKey.*;
+import static com.klinbee.moredensityfunctions.registration.RegistryKey.DENSITY_FUNCTION;
+import static com.klinbee.moredensityfunctions.registration.RegistryKey.RANDOM_SAMPLER;
 
 public class CommonRegistrations {
-    
+
     public static void registerCommon(RegistrationFunction registrar) {
 
         /// DensityFunctions

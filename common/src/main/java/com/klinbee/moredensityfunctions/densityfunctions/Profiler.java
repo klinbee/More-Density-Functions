@@ -1,7 +1,5 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -12,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 public record Profiler(DensityFunction arg,
                        int iterations,

@@ -71,10 +71,10 @@ public interface RandomSampler {
      * <p>PLEASE let me know if this results in issues. I am not a number theory expert, just a nerd that likes programming and math.
      * Thank you!
      *
-     * @param x         The x cell value input
-     * @param y         The y cell value input
-     * @param z         The z cell value input
-     * @param salt      Randomization factor for different noises, defined by YOU, the user
+     * @param x    The x cell value input
+     * @param y    The y cell value input
+     * @param z    The z cell value input
+     * @param salt Randomization factor for different noises, defined by YOU, the user
      * @return The long seed value for the input position
      */
     static long hashPosition(int x, int y, int z, int salt) {

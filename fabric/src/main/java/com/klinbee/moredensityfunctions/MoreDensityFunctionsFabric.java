@@ -1,6 +1,6 @@
 package com.klinbee.moredensityfunctions;
 
-import com.klinbee.moredensityfunctions.randomsamplers.*;
+import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.klinbee.moredensityfunctions.registration.CommonRegistrations;
 import com.klinbee.moredensityfunctions.registration.RegistryKey;
 import com.mojang.serialization.Codec;

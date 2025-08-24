@@ -1,7 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -10,8 +9,6 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.levelgen.DensityFunction;
-
-import java.util.Optional;
 
 public record ValueNoise(RandomSampler randomSampler,
                          int sizeX,
@@ -45,7 +42,7 @@ public record ValueNoise(RandomSampler randomSampler,
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
                     Interpolation.CODEC.fieldOf("interpolation").forGetter(ValueNoise::interpolation),
-                    ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse( ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
+                    ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse(ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
                     Codec.INT.fieldOf("salt").orElse(0).forGetter(ValueNoise::salt)
             ).apply(instance, ValueNoise::new)
     );

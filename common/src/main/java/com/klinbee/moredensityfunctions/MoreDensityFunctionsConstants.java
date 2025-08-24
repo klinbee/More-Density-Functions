@@ -2,7 +2,6 @@ package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
-import net.minecraft.client.model.PufferfishBigModel;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

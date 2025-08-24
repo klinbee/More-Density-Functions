@@ -1,14 +1,11 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
-
-import java.util.Arrays;
 
 public interface NoiseDensityFunction extends DensityFunction {
 
