@@ -4,6 +4,6 @@ import com.mojang.serialization.Codec;
 
 @FunctionalInterface
 public interface RegistrationFunction {
-    <T> void register(String registryId, String name, Codec<? extends T> codec);
+    <T> void register(RegistryKey registryKey, String name, Codec<? extends T> codec);
 }
     

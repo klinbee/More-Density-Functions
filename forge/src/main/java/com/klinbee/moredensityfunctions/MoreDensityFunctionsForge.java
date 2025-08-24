@@ -2,6 +2,7 @@ package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.randomsamplers.*;
 import com.klinbee.moredensityfunctions.registration.CommonRegistrations;
+import com.klinbee.moredensityfunctions.registration.RegistryKey;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -44,8 +45,8 @@ public class MoreDensityFunctionsForge {
                 event.dataPackRegistry(MoreDensityFunctionsConstants.RANDOM_SAMPLER, RandomSampler.CODEC));
 
         /// Register through CommonRegistrations
-        ForgeGenericRegistrar.addRegistry(CommonRegistrations.DENSITY_FUNCTIONS, DENSITY_FUNCTIONS);
-        ForgeGenericRegistrar.addRegistry(CommonRegistrations.RANDOM_SAMPLERS, RANDOM_SAMPLERS);
+        ForgeGenericRegistrar.addRegistry(RegistryKey.DENSITY_FUNCTION, DENSITY_FUNCTIONS);
+        ForgeGenericRegistrar.addRegistry(RegistryKey.RANDOM_SAMPLER, RANDOM_SAMPLERS);
 
         CommonRegistrations.registerCommon(ForgeGenericRegistrar::register);
 

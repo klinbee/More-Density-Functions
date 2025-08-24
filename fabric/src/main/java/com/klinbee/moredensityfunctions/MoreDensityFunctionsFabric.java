@@ -2,6 +2,7 @@ package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.randomsamplers.*;
 import com.klinbee.moredensityfunctions.registration.CommonRegistrations;
+import com.klinbee.moredensityfunctions.registration.RegistryKey;
 import com.mojang.serialization.Codec;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
@@ -20,8 +21,8 @@ public class MoreDensityFunctionsFabric implements ModInitializer {
         DynamicRegistries.register(MoreDensityFunctionsConstants.RANDOM_SAMPLER, RandomSampler.CODEC);
 
         /// Register through CommonRegistrations
-        FabricGenericRegistrar.addRegistry(CommonRegistrations.DENSITY_FUNCTIONS, BuiltInRegistries.DENSITY_FUNCTION_TYPE);
-        FabricGenericRegistrar.addRegistry(CommonRegistrations.RANDOM_SAMPLERS, RANDOM_SAMPLER_TYPE);
+        FabricGenericRegistrar.addRegistry(RegistryKey.DENSITY_FUNCTION, BuiltInRegistries.DENSITY_FUNCTION_TYPE);
+        FabricGenericRegistrar.addRegistry(RegistryKey.RANDOM_SAMPLER, RANDOM_SAMPLER_TYPE);
 
         CommonRegistrations.registerCommon(FabricGenericRegistrar::register);
     }

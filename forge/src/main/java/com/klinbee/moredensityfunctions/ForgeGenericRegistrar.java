@@ -1,29 +1,30 @@
 package com.klinbee.moredensityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.RegistryKey;
 import com.mojang.serialization.Codec;
 import net.minecraftforge.registries.DeferredRegister;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 
 public class ForgeGenericRegistrar {
-    private static final Map<String, DeferredRegister<?>> registryMap = new HashMap<>();
+    private static final EnumMap<RegistryKey, Object> registries = new EnumMap<>(RegistryKey.class);
 
-    private ForgeGenericRegistrar() {}
+    private ForgeGenericRegistrar() {
+    }
 
-    public static <T> void addRegistry(String registryId, DeferredRegister<Codec<? extends T>> deferredRegister) {
-        registryMap.put(registryId, deferredRegister);
+    public static <T> void addRegistry(RegistryKey registryKey, DeferredRegister<Codec<? extends T>> deferredRegister) {
+        registries.put(registryKey, deferredRegister);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void register(String registryId, String name, Codec<? extends T> codec) {
+    public static <T> void register(RegistryKey registryKey, String name, Codec<? extends T> codec) {
         DeferredRegister<Codec<? extends T>> deferredRegister =
-                (DeferredRegister<Codec<? extends T>>) registryMap.get(registryId);
+                (DeferredRegister<Codec<? extends T>>) registries.get(registryKey);
 
         if (deferredRegister != null) {
             deferredRegister.register(name, () -> codec);
         } else {
-            throw new IllegalArgumentException("No registry mapped for ID: " + registryId);
+            throw new IllegalArgumentException("No registry mapped for ID: " + registryKey);
         }
     }
 }
