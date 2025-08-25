@@ -7,20 +7,14 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record Divide(DensityFunction numerator,
-                     DensityFunction denominator,
-                     double minOutput,
-                     double maxOutput,
-                     DensityFunction errorArg)
+                     DensityFunction denominator)
         implements DensityFunction {
 
     private static final MapCodec<Divide> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(Divide::numerator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Divide::denominator),
-                            Codec.DOUBLE.fieldOf("min_output").forGetter(Divide::minOutput),
-                            Codec.DOUBLE.fieldOf("max_output").forGetter(Divide::maxOutput),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(Divide::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Divide::denominator)
                     ).apply(instance, Divide::new)
             );
 
@@ -30,16 +24,7 @@ public record Divide(DensityFunction numerator,
 
     @Override
     public double compute(FunctionContext pos) {
-        double numeratorValue = numerator.compute(pos);
-        double denominatorValue = denominator.compute(pos);
-
-        if (denominatorValue == 0.0D) {
-            return errorArg.compute(pos);
-        }
-
-        double result = numeratorValue / denominatorValue;
-
-        return Math.max(Math.min(result, maxOutput), minOutput);
+        return numerator.compute(pos) / denominator.compute(pos);
     }
 
     @Override
@@ -52,22 +37,20 @@ public record Divide(DensityFunction numerator,
         return visitor.apply(
                 new Divide(
                         numerator.mapAll(visitor),
-                        denominator.mapAll(visitor),
-                        minOutput,
-                        maxOutput,
-                        errorArg.mapAll(visitor)
+                        denominator.mapAll(visitor)
                 )
         );
     }
 
+    // TODO:
     @Override
     public double minValue() {
-        return Math.min(errorArg.minValue(), minOutput);
+        return Double.NEGATIVE_INFINITY;
     }
 
     @Override
     public double maxValue() {
-        return Math.max(errorArg.maxValue(), maxOutput);
+        return Double.POSITIVE_INFINITY;
     }
 
     @Override

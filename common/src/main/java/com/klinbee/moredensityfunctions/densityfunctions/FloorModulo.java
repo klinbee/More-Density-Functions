@@ -7,16 +7,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record FloorModulo(DensityFunction numerator,
-                          DensityFunction denominator,
-                          DensityFunction errorArg)
+                          DensityFunction denominator)
         implements DensityFunction {
 
     private static final MapCodec<FloorModulo> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(FloorModulo::numerator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorModulo::denominator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(FloorModulo::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorModulo::denominator)
                     ).apply(instance, FloorModulo::new)
             );
 
@@ -27,14 +25,7 @@ public record FloorModulo(DensityFunction numerator,
 
     @Override
     public double compute(FunctionContext pos) {
-        int numeratorValue = Mth.floor(numerator.compute(pos));
-        int denominatorValue = Mth.floor(denominator.compute(pos));
-
-        if (denominatorValue == 0) {
-            return errorArg.compute(pos);
-        }
-
-        return StrictMath.floorMod(numeratorValue, denominatorValue);
+        return StrictMath.floorMod(Mth.floor(numerator.compute(pos)), Mth.floor(denominator.compute(pos)));
     }
 
     @Override
@@ -47,37 +38,30 @@ public record FloorModulo(DensityFunction numerator,
         return visitor.apply(
                 new FloorModulo(
                         numerator.mapAll(visitor),
-                        denominator.mapAll(visitor),
-                        errorArg.mapAll(visitor)
+                        denominator.mapAll(visitor)
                 )
         );
     }
 
     @Override
     public double minValue() {
-        double minError = errorArg.minValue();
-        double minDenom = denominator.minValue();
+        double floorMinDenom = Mth.floor(denominator.minValue());
 
-        if (Mth.floor(minDenom) < 0) {
-            // Worst case for negative: floorMod returns floor(minDenom) + 1
-            return Math.min(minError, Mth.floor(minDenom) + 1);
+        if (floorMinDenom < 0) {
+            return floorMinDenom + 1;
         } else {
-            // Worst case for positive: floorMod returns 0
-            return Math.min(minError, 0);
+            return 0;
         }
     }
 
     @Override
     public double maxValue() {
-        double maxError = errorArg.maxValue();
-        double maxDenom = denominator.maxValue();
+        double floorMaxDenom = Mth.floor(denominator.maxValue());
 
-        if (Mth.floor(maxDenom) > 0) {
-            // Worst case for negative: floorMod returns floor(maxDenom)  - 1
-            return Math.max(maxError, Mth.floor(maxDenom) - 1);
+        if (floorMaxDenom > 0) {
+            return floorMaxDenom - 1;
         } else {
-            // Worst case for positive: floorMod returns 0
-            return Math.max(maxError, 0);
+            return 0;
         }
     }
 

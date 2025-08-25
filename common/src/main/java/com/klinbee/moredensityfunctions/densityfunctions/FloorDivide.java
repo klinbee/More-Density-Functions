@@ -1,6 +1,5 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -8,20 +7,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record FloorDivide(DensityFunction numerator,
-                          DensityFunction denominator,
-                          double minOutput,
-                          double maxOutput,
-                          DensityFunction errorArg)
+                          DensityFunction denominator)
         implements DensityFunction {
 
     private static final MapCodec<FloorDivide> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(FloorDivide::numerator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorDivide::denominator),
-                            Codec.DOUBLE.fieldOf("min_output").forGetter(FloorDivide::minOutput),
-                            Codec.DOUBLE.fieldOf("max_output").forGetter(FloorDivide::maxOutput),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(FloorDivide::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorDivide::denominator)
                     ).apply(instance, FloorDivide::new)
             );
 
@@ -31,16 +24,7 @@ public record FloorDivide(DensityFunction numerator,
 
     @Override
     public double compute(FunctionContext pos) {
-        int numeratorValue = Mth.floor(numerator.compute(pos));
-        int denominatorValue = Mth.floor(denominator.compute(pos));
-
-        if (denominatorValue == 0) {
-            return errorArg.compute(pos);
-        }
-
-        double result = StrictMath.floorDiv(numeratorValue, denominatorValue);
-
-        return Math.max(Math.min(result, maxOutput), minOutput);
+        return StrictMath.floorDiv(Mth.floor(numerator.compute(pos)), Mth.floor(denominator.compute(pos)));
     }
 
     @Override
@@ -53,22 +37,20 @@ public record FloorDivide(DensityFunction numerator,
         return visitor.apply(
                 new FloorDivide(
                         numerator.mapAll(visitor),
-                        denominator.mapAll(visitor),
-                        minOutput,
-                        maxOutput,
-                        errorArg.mapAll(visitor)
+                        denominator.mapAll(visitor)
                 )
         );
     }
 
+    // TODO:
     @Override
     public double minValue() {
-        return Math.min(errorArg.minValue(), minOutput);
+        return Double.NEGATIVE_INFINITY;
     }
 
     @Override
     public double maxValue() {
-        return Math.max(errorArg.maxValue(), maxOutput);
+        return Double.POSITIVE_INFINITY;
     }
 
     @Override
