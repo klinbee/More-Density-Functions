@@ -1,0 +1,76 @@
+package com.klinbee.moredensityfunctions.densityfunctions;
+
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.levelgen.DensityFunction;
+
+public record HyperbolicCosine(DensityFunction arg)
+        implements DensityFunction {
+
+    private static final MapCodec<HyperbolicCosine> MAP_CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
+                    instance.group(
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(HyperbolicCosine::arg)
+                    ).apply(instance, HyperbolicCosine::new)
+            );
+
+    public static final KeyDispatchDataCodec<HyperbolicCosine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+
+    public static final String NAME = "cosh";
+
+    private static double eval(double density) {
+        return StrictMath.cosh(density);
+    }
+
+    @Override
+    public double compute(FunctionContext pos) {
+        return eval(arg.compute(pos));
+    }
+
+    @Override
+    public void fillArray(double[] densities, ContextProvider applier) {
+        applier.fillAllDirectly(densities, this);
+    }
+
+    @Override
+    public DensityFunction mapAll(Visitor visitor) {
+        return visitor.apply(
+                new HyperbolicCosine(arg.mapAll(visitor))
+        );
+    }
+
+    @Override
+    public double minValue() {
+        double globalMinLocation = 0.0D;
+
+        // Range is above `globalMinLocation`, `minValue()` must be `eval(argMin)`
+        double argMin = arg.minValue();
+
+        if (argMin > globalMinLocation) {
+            return eval(argMin);
+        }
+
+        // Range is below `globalMinLocation`, `minValue()` must be `eval(argMax)`
+        double argMax = arg.maxValue();
+
+        if (argMax < globalMinLocation) {
+            return eval(argMax);
+        }
+
+        // Range includes `globalMinLocation`, `minValue()` cannot be guaranteed, but must be `eval(globalMinLocation)`
+        return 1.0D;
+    }
+
+    @Override
+    public double maxValue() {
+        // Since `eval()` is an even concave-up function, `maxValue()` must be `eval()` of the larger absolute value
+        return eval(Mth.absMax(arg.minValue(), arg.maxValue()));
+    }
+
+    @Override
+    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
+        return CODEC;
+    }
+}
