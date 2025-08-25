@@ -23,15 +23,10 @@ public record OrElse(DensityFunction arg,
 
     @Override
     public double compute(FunctionContext pos) {
-        double result;
-        try {
-            result = arg.compute(pos);
-            if (Double.isFinite(result)) {
-                return result;
-            }
-        } catch (Exception ignored) {
-        }
-        return fallback.compute(pos);
+        double result = arg.compute(pos);
+        return Double.isFinite(result) ?
+                result :
+                fallback.compute(pos);
     }
 
     @Override
