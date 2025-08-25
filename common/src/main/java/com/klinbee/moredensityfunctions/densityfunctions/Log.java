@@ -1,6 +1,5 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -21,6 +20,10 @@ public record Log(DensityFunction arg,
     public static final KeyDispatchDataCodec<Log> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     public static final String NAME = "log";
+
+    private static double eval(double density) {
+        return StrictMath.sinh(density);
+    }
 
     @Override
     public double compute(FunctionContext pos) {

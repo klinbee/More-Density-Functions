@@ -65,7 +65,7 @@ public record HyperbolicCosine(DensityFunction arg)
 
     @Override
     public double maxValue() {
-        // Since `eval()` is an even concave-up function, `maxValue()` must be `eval()` of the larger absolute value
+        // Since `eval()` is an even increasing function, `maxValue()` must be `eval()` of the larger absolute value
         return eval(Mth.absMax(arg.minValue(), arg.maxValue()));
     }
 

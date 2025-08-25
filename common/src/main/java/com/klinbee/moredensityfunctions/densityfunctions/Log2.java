@@ -41,10 +41,19 @@ public record Log2(DensityFunction arg)
         );
     }
 
-    //TODO:
     @Override
     public double minValue() {
-        return eval(arg.minValue());
+        double asymptoteLocation = 0.0D;
+
+        // Range is above `asymptoteLocation`, `minValue()` must be `eval(argMin)`
+        double argMin = arg.minValue();
+
+        if (argMin > asymptoteLocation) {
+            return eval(argMin);
+        }
+
+        // Range is below `asymptoteLocation`, `minValue()` must be `eval(asymptoteLocation)`
+        return Double.NEGATIVE_INFINITY;
     }
 
     @Override
