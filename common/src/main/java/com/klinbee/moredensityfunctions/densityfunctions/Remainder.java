@@ -6,16 +6,14 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record Remainder(DensityFunction numerator,
-                        DensityFunction denominator,
-                        DensityFunction errorArg)
+                        DensityFunction denominator)
         implements DensityFunction {
 
     private static final MapCodec<Remainder> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(Remainder::numerator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Remainder::denominator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(Remainder::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Remainder::denominator)
                     ).apply(instance, Remainder::new)
             );
 
@@ -25,14 +23,7 @@ public record Remainder(DensityFunction numerator,
 
     @Override
     public double compute(FunctionContext pos) {
-        double numeratorValue = numerator.compute(pos);
-        double denominatorValue = denominator.compute(pos);
-
-        if (denominatorValue == 0) {
-            return errorArg.compute(pos);
-        }
-
-        return numeratorValue % denominatorValue;
+        return numerator.compute(pos) % denominator.compute(pos);
     }
 
     @Override
@@ -45,39 +36,32 @@ public record Remainder(DensityFunction numerator,
         return visitor.apply(
                 new Remainder(
                         numerator.mapAll(visitor),
-                        denominator.mapAll(visitor),
-                        errorArg.mapAll(visitor)
+                        denominator.mapAll(visitor)
                 )
         );
     }
 
+    //TODO: help
     @Override
     public double minValue() {
-        double errorMin = errorArg.minValue();
-
         double denomMin = denominator.minValue();
         double denomMax = denominator.maxValue();
 
         // Most negative possible: -|y|/2 where |y| is maximized
-
         double largestMagnitude = Math.max(Math.abs(denomMin), Math.abs(denomMax));
 
-        // Conservative: assume both error and mathematical minimum are possible
-        return Math.min(errorMin, -largestMagnitude / 2.0D);
+        return -largestMagnitude / 2.0D;
     }
 
     @Override
     public double maxValue() {
-        double errorMax = errorArg.maxValue();
-
         double denomMin = denominator.minValue();
         double denomMax = denominator.maxValue();
 
         // Most positive possible: |y|/2 where |y| is maximized
         double largestMagnitude = Math.max(Math.abs(denomMin), Math.abs(denomMax));
 
-        // Conservative: assume both error and mathematical maximum are possible
-        return Math.max(errorMax, largestMagnitude / 2.0D);
+        return largestMagnitude / 2.0D;
     }
 
     @Override

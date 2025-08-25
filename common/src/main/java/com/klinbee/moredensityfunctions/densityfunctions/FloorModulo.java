@@ -25,7 +25,9 @@ public record FloorModulo(DensityFunction numerator,
 
     @Override
     public double compute(FunctionContext pos) {
-        return StrictMath.floorMod(Mth.floor(numerator.compute(pos)), Mth.floor(denominator.compute(pos)));
+        double numeratorValue = numerator.compute(pos);
+        double denominatorValue = denominator.compute(pos);
+        return (numeratorValue % denominatorValue + denominatorValue) % denominatorValue;
     }
 
     @Override

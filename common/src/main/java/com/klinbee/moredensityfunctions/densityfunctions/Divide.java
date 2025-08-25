@@ -42,7 +42,7 @@ public record Divide(DensityFunction numerator,
         );
     }
 
-    // TODO:
+    //TODO:
     @Override
     public double minValue() {
         return Double.NEGATIVE_INFINITY;

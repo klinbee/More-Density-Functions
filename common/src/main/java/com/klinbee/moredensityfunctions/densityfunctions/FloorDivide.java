@@ -24,7 +24,7 @@ public record FloorDivide(DensityFunction numerator,
 
     @Override
     public double compute(FunctionContext pos) {
-        return StrictMath.floorDiv(Mth.floor(numerator.compute(pos)), Mth.floor(denominator.compute(pos)));
+        return Mth.floor(numerator.compute(pos) / denominator.compute(pos));
     }
 
     @Override

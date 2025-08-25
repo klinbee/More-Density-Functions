@@ -1,24 +1,17 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record Reciprocal(DensityFunction denominator,
-                         double minOutput,
-                         double maxOutput,
-                         DensityFunction errorArg)
+public record Reciprocal(DensityFunction denominator)
         implements DensityFunction {
 
     private static final MapCodec<Reciprocal> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Reciprocal::denominator),
-                            Codec.DOUBLE.fieldOf("min_output").forGetter(Reciprocal::minOutput),
-                            Codec.DOUBLE.fieldOf("max_output").forGetter(Reciprocal::maxOutput),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(Reciprocal::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Reciprocal::denominator)
                     ).apply(instance, Reciprocal::new)
             );
 
@@ -28,15 +21,7 @@ public record Reciprocal(DensityFunction denominator,
 
     @Override
     public double compute(FunctionContext pos) {
-        double denominatorValue = denominator.compute(pos);
-
-        if (denominatorValue == 0) {
-            return errorArg.compute(pos);
-        }
-
-        double result = 1.0D / denominatorValue;
-
-        return Math.max(Math.min(result, maxOutput), minOutput);
+        return 1.0D / denominator.compute(pos);
     }
 
     @Override
@@ -48,22 +33,20 @@ public record Reciprocal(DensityFunction denominator,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Reciprocal(
-                        denominator.mapAll(visitor),
-                        minOutput,
-                        maxOutput,
-                        errorArg.mapAll(visitor)
+                        denominator.mapAll(visitor)
                 )
         );
     }
 
+    //TODO: hgelp?
     @Override
     public double minValue() {
-        return Math.min(errorArg.minValue(), minOutput);
+        return Double.NEGATIVE_INFINITY;
     }
 
     @Override
     public double maxValue() {
-        return Math.max(errorArg.maxValue(), maxOutput);
+        return Double.POSITIVE_INFINITY;
     }
 
     @Override
