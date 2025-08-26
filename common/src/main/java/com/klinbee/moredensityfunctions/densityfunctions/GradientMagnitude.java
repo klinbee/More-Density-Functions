@@ -93,12 +93,48 @@ public record GradientMagnitude(DensityFunction arg,
 
     @Override
     public double minValue() {
-        return 0.0D;
+
+        double minGradX = 0.0D, minGradY = 0.0D, minGradZ = 0.0D;
+
+        if (stepX != 0) {
+            minGradX = (arg.minValue() -
+                    arg.maxValue()) / (2.0D * stepX);
+        }
+
+        if (stepY != 0) {
+            minGradY = (arg.minValue() -
+                    arg.maxValue()) / (2.0D * stepY);
+        }
+
+        if (stepZ != 0) {
+            minGradZ = (arg.minValue() -
+                    arg.maxValue()) / (2.0D * stepZ);
+        }
+
+        return minGradX * minGradX + minGradY * minGradY + minGradZ * minGradZ;
     }
 
     @Override
     public double maxValue() {
-        return Double.MAX_VALUE;
+
+        double maxGradX = 0.0D, maxGradY = 0.0D, maxGradZ = 0.0D;
+
+        if (stepX != 0) {
+            maxGradX = (arg.maxValue() -
+                    arg.minValue()) / (2.0D * stepX);
+        }
+
+        if (stepY != 0) {
+            maxGradY = (arg.maxValue() -
+                    arg.minValue()) / (2.0D * stepY);
+        }
+
+        if (stepZ != 0) {
+            maxGradZ = (arg.maxValue() -
+                    arg.minValue()) / (2.0D * stepZ);
+        }
+
+        return maxGradX * maxGradX + maxGradY * maxGradY + maxGradZ * maxGradZ;
     }
 
     @Override

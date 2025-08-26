@@ -105,12 +105,68 @@ public record DotProduct(DensityFunction arg1,
 
     @Override
     public double minValue() {
-        return -Double.MAX_VALUE;
+
+        double minGradX1 = 0.0D, minGradY1 = 0.0D, minGradZ1 = 0.0D;
+        double minGradX2 = 0.0D, minGradY2 = 0.0D, minGradZ2 = 0.0D;
+
+        if (stepX != 0) {
+            minGradX1 = (arg1.minValue() -
+                    arg1.maxValue()) / (2.0D * stepX);
+
+            minGradX2 = (arg2.minValue() -
+                    arg2.maxValue()) / (2.0D * stepX);
+        }
+
+        if (stepY != 0) {
+            minGradY1 = (arg1.minValue() -
+                    arg1.maxValue()) / (2.0D * stepY);
+
+            minGradY2 = (arg2.minValue() -
+                    arg2.maxValue()) / (2.0D * stepY);
+        }
+
+        if (stepZ != 0) {
+            minGradZ1 = (arg1.minValue() -
+                    arg1.maxValue()) / (2.0D * stepZ);
+
+            minGradZ2 = (arg2.minValue() -
+                    arg2.maxValue()) / (2.0D * stepZ);
+        }
+
+        return minGradX1 * minGradX2 + minGradY1 * minGradY2 + minGradZ1 * minGradZ2;
     }
 
     @Override
     public double maxValue() {
-        return Double.MAX_VALUE;
+
+        double maxGradX1 = 0.0D, maxGradY1 = 0.0D, maxGradZ1 = 0.0D;
+        double maxGradX2 = 0.0D, maxGradY2 = 0.0D, maxGradZ2 = 0.0D;
+
+        if (stepX != 0) {
+            maxGradX1 = (arg1.maxValue() -
+                    arg1.minValue()) / (2.0D * stepX);
+
+            maxGradX2 = (arg2.maxValue() -
+                    arg2.minValue()) / (2.0D * stepX);
+        }
+
+        if (stepY != 0) {
+            maxGradY1 = (arg1.maxValue() -
+                    arg1.minValue()) / (2.0D * stepY);
+
+            maxGradY2 = (arg2.maxValue() -
+                    arg2.minValue()) / (2.0D * stepY);
+        }
+
+        if (stepZ != 0) {
+            maxGradZ1 = (arg1.maxValue() -
+                    arg1.minValue()) / (2.0D * stepZ);
+
+            maxGradZ2 = (arg2.maxValue() -
+                    arg2.minValue()) / (2.0D * stepZ);
+        }
+
+        return maxGradX1 * maxGradX2 + maxGradY1 * maxGradY2 + maxGradZ1 * maxGradZ2;
     }
 
     @Override
