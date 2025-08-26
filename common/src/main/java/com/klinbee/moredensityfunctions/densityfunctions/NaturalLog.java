@@ -42,15 +42,32 @@ public record NaturalLog(DensityFunction arg)
         );
     }
 
-    //TODO: I think this is right??
     @Override
     public double minValue() {
-        return arg.minValue() <= 0 ? Double.NEGATIVE_INFINITY : eval(arg.minValue());
+        double asymptoteLocation = 0.0D;
+
+        // Lower bound is above `asymptoteLocation`, `minValue()` must be `eval(argMin)`
+        double argMin = arg.minValue();
+
+        if (argMin > asymptoteLocation) {
+            return eval(argMin);
+        }
+
+        // Upper bound is below `asymptoteLocation`, `minValue()` must be `NaN`
+        double argMax = arg.maxValue();
+
+        if (argMax < asymptoteLocation) {
+            return Double.NaN;
+        }
+
+        // Range includes `asymptoteLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(asymptoteLocation)`
+        return Double.NEGATIVE_INFINITY;
     }
 
     @Override
     public double maxValue() {
-        return arg.maxValue() <= 0 ? Double.POSITIVE_INFINITY : eval(arg.maxValue());
+        // Unlike `minValue()`, `maxValue()` can never be a result of `arg.minValue()`
+        return eval(arg.maxValue());
     }
 
     @Override

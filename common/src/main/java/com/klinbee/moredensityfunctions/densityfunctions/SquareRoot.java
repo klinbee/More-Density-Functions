@@ -43,17 +43,29 @@ public record SquareRoot(DensityFunction arg)
 
     @Override
     public double minValue() {
-        if (arg.minValue() < 0) { // Result would be NaN, but this is technically the lower bound besides that
-            return 0;
+        double domainMinLocation = 0.0D;
+
+        // Lower bound is above `domainMinLocation`, `minValue()` must be `eval(argMin)`
+        double argMin = arg.minValue();
+
+        if (argMin > domainMinLocation) {
+            return eval(argMin);
         }
-        return eval(arg.minValue());
+
+        // Upper bound is below `domainMinLocation`, `minValue()` must be `NaN`
+        double argMax = arg.maxValue();
+
+        if (argMax < domainMinLocation) {
+            return Double.NaN;
+        }
+
+        // Range includes `domainMinLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(domainMinLocation)`
+        return 0.0D;
     }
 
     @Override
     public double maxValue() {
-        if (arg.maxValue() < 0) { // Result would be NaN, but this is technically the lower bound besides that
-            return 0;
-        }
+        // Unlike `minValue()`, `maxValue()` can never be a result of `arg.minValue()`
         return eval(arg.maxValue());
     }
 

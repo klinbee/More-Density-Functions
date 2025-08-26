@@ -45,27 +45,27 @@ public record HyperbolicCosine(DensityFunction arg)
     public double minValue() {
         double globalMinLocation = 0.0D;
 
-        // Range is above `globalMinLocation`, `minValue()` must be `eval(argMin)`
+        // Lower bound is above `globalMinLocation`, `minValue()` must be `eval(argMin)`
         double argMin = arg.minValue();
 
         if (argMin > globalMinLocation) {
             return eval(argMin);
         }
 
-        // Range is below `globalMinLocation`, `minValue()` must be `eval(argMax)`
+        // Upper bound is below `globalMinLocation`, `minValue()` must be `eval(argMax)`
         double argMax = arg.maxValue();
 
         if (argMax < globalMinLocation) {
             return eval(argMax);
         }
 
-        // Range includes `globalMinLocation`, `minValue()` cannot be guaranteed, but must be `eval(globalMinLocation)`
+        // Range includes `globalMinLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(globalMinLocation)`
         return 1.0D;
     }
 
     @Override
     public double maxValue() {
-        // Since `eval()` is an even increasing function, `maxValue()` must be `eval()` of the larger absolute value
+        // Since `eval()` is an even function increasing away from 0, `maxValue()` must be `eval()` of the larger absolute value
         return eval(Mth.absMax(arg.minValue(), arg.maxValue()));
     }
 

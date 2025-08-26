@@ -45,19 +45,27 @@ public record Log2(DensityFunction arg)
     public double minValue() {
         double asymptoteLocation = 0.0D;
 
-        // Range is above `asymptoteLocation`, `minValue()` must be `eval(argMin)`
+        // Lower bound is above `asymptoteLocation`, `minValue()` must be `eval(argMin)`
         double argMin = arg.minValue();
 
         if (argMin > asymptoteLocation) {
             return eval(argMin);
         }
 
-        // Range is below `asymptoteLocation`, `minValue()` must be `eval(asymptoteLocation)`
+        // Upper bound is below `asymptoteLocation`, `minValue()` must be `NaN`
+        double argMax = arg.maxValue();
+
+        if (argMax < asymptoteLocation) {
+            return Double.NaN;
+        }
+
+        // Range includes `asymptoteLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(asymptoteLocation)`
         return Double.NEGATIVE_INFINITY;
     }
 
     @Override
     public double maxValue() {
+        // Unlike `minValue()`, `maxValue()` can never be a result of `arg.minValue()`
         return eval(arg.maxValue());
     }
 

@@ -49,27 +49,27 @@ public record Log2Floor(DensityFunction arg)
     public double minValue() {
         double symmetricAsymptoteLocation = 0.0D;
 
-        // Range is above `symmetricAsymptoteLocation`, `minValue()` must be `eval(argMin)`
+        // Lower bound is above `symmetricAsymptoteLocation`, `minValue()` must be `eval(argMin)`
         double argMin = arg.minValue();
 
         if (argMin > symmetricAsymptoteLocation) {
             return eval(argMin);
         }
 
-        // Range is below `symmetricAsymptoteLocation`, `minValue()` must be `eval(argMax)`
+        // Upper bound is below `symmetricAsymptoteLocation`, `minValue()` must be `eval(argMax)`
         double argMax = arg.maxValue();
 
         if (argMax < symmetricAsymptoteLocation) {
             return eval(argMax);
         }
 
-        // Range includes `symmetricAsymptoteLocation`, `minValue()` must be `eval(symmetricAsymptoteLocation)`
+        // Range includes `symmetricAsymptoteLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(symmetricAsymptoteLocation)`
         return -1023;
     }
 
     @Override
     public double maxValue() {
-        // Since `eval()` is an even increasing function, `maxValue()` must be `eval()` of the larger absolute value
+        // Since `eval()` is an even function increasing away from 0, `maxValue()` must be `eval()` of the larger absolute value
         return eval(Mth.absMax(arg.minValue(), arg.maxValue()));
     }
 
