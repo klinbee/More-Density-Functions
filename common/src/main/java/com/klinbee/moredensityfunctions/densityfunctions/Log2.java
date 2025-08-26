@@ -18,13 +18,13 @@ public record Log2(DensityFunction arg)
 
     public static final String NAME = "log2";
 
+    private static double eval(double density) {
+        return StrictMath.log(density) * 1.4426950408889634D; // 1/ln(2);
+    }
+
     @Override
     public double compute(FunctionContext pos) {
         return eval(arg.compute(pos));
-    }
-
-    private static double eval(double density) {
-        return StrictMath.log(density) * 1.4426950408889634D; // 1/ln(2);
     }
 
     @Override

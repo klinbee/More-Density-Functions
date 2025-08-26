@@ -3,7 +3,6 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record Log(DensityFunction arg,
@@ -22,13 +21,13 @@ public record Log(DensityFunction arg,
 
     public static final String NAME = "log";
 
-    private static double eval(double density1, double density2) {
-        return StrictMath.sinh(density);
+    private static double eval(double arg, double base) {
+        return StrictMath.log(arg / StrictMath.log(base));
     }
 
     @Override
     public double compute(FunctionContext pos) {
-        return StrictMath.log(arg.compute(pos)) / StrictMath.log(base.compute(pos));
+        return eval(arg.compute(pos), base.compute(pos));
     }
 
     @Override
@@ -143,6 +142,7 @@ public record Log(DensityFunction arg,
             case INVALID -> Double.NaN; // Cannot determine upper or lower bound
         };
     }
+
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;

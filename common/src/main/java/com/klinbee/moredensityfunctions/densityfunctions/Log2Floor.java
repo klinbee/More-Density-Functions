@@ -20,7 +20,7 @@ public record Log2Floor(DensityFunction arg)
 
     public static final String NAME = "log2_floor";
 
-    // Note: this should produce 1024 for ±∞ or NaN, and -1023 for ±0 and sub-normals
+    // Note: this produces 1024 for ±∞ or NaN, and -1023 for ±0 and sub-normals
     private static double eval(double density) {
         long bits = Double.doubleToLongBits(density);
         return (int) ((bits >>> 52) & 0x7FF) - 1023; // Exponent
