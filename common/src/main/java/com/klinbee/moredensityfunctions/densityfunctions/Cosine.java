@@ -40,6 +40,7 @@ public record Cosine(DensityFunction arg)
         );
     }
 
+    // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
         return -1;

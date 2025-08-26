@@ -40,14 +40,15 @@ public record Sine(DensityFunction arg)
         );
     }
 
+    // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
-        return -1;
+        return -1.0D;
     }
 
     @Override
     public double maxValue() {
-        return 1;
+        return 1.0D;
     }
 
     @Override

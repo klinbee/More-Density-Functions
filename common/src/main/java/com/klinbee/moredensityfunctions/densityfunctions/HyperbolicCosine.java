@@ -52,15 +52,16 @@ public record HyperbolicCosine(DensityFunction arg)
             return eval(argMin);
         }
 
-        // Upper bound is below `globalMinLocation`, `minValue()` must be `eval(argMax)`
+        // Range includes `globalMinLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(globalMinLocation)`
         double argMax = arg.maxValue();
 
-        if (argMax < globalMinLocation) {
-            return eval(argMax);
+        if (argMax > globalMinLocation) {
+            return 1.0D;
+
         }
 
-        // Range includes `globalMinLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(globalMinLocation)`
-        return 1.0D;
+        // Upper bound is below `globalMinLocation`, `minValue()` must be `eval(argMax)`
+        return eval(argMax);
     }
 
     @Override

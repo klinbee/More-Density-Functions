@@ -42,12 +42,46 @@ public record ArcSine(DensityFunction arg)
 
     @Override
     public double minValue() {
-        return -StrictMath.PI / 2.0D;
+        double rangeMinLocation = -1.0D;
+
+        // Upper bound is below `rangeMinLocation`, `minValue()` must be `NaN`
+        double argMax = arg.maxValue();
+
+        if (argMax < rangeMinLocation) {
+            return Double.NaN;
+        }
+
+        // Range includes `rangeMinLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(rangeMinLocation)`
+        double argMin = arg.minValue();
+
+        if (argMin < rangeMinLocation) {
+            return -StrictMath.PI / 2.0D;
+        }
+
+        // Lower bound is above `rangeMinLocation`, `minValue()` must be `eval(argMin)`
+        return eval(argMin);
     }
 
     @Override
     public double maxValue() {
-        return StrictMath.PI / 2.0D;
+        double rangeMaxLocation = 1.0D;
+
+        // Lower bound is above `rangeMaxLocation`, `maxValue()` must be `NaN`
+        double argMin = arg.minValue();
+
+        if (argMin > rangeMaxLocation) {
+            return Double.NaN;
+        }
+
+        // Range includes `rangeMaxLocation`, `maxValue()` cannot be guaranteed, but could be as low as `eval(rangeMaxLocation)`
+        double argMax = arg.maxValue();
+
+        if (argMax > rangeMaxLocation) {
+            return StrictMath.PI / 2.0D;
+        }
+
+        // Upper bound is below `rangeMaxLocation`, `maxValue()` must be `eval(argMax)`
+        return eval(argMax);
     }
 
     @Override

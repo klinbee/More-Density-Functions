@@ -36,6 +36,7 @@ public record Tangent(DensityFunction arg)
         );
     }
 
+    // Due to periodic nature, I'm using global min/max (though tangent never hits these)
     @Override
     public double minValue() {
         return -Double.MAX_VALUE;
