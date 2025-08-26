@@ -41,26 +41,17 @@ public record IEEERemainder(DensityFunction numerator,
         );
     }
 
+    // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
-        double denomMin = denominator.minValue();
-        double denomMax = denominator.maxValue();
-
-        // Most negative possible: -|y|/2 where |y| is maximized
-        double largestMagnitude = Math.max(Math.abs(denomMin), Math.abs(denomMax));
-
-        return -largestMagnitude / 2.0D;
+        // If it is positive, the min is 0, if negative, the min is the denominator
+        return StrictMath.min(0.0D, Math.nextUp(denominator.minValue()));
     }
 
     @Override
     public double maxValue() {
-        double denomMin = denominator.minValue();
-        double denomMax = denominator.maxValue();
-
-        // Most positive possible: |y|/2 where |y| is maximized
-        double largestMagnitude = Math.max(Math.abs(denomMin), Math.abs(denomMax));
-
-        return largestMagnitude / 2.0D;
+        // If it is positive, then the max is the denominator, if negative, the max is 0
+        return StrictMath.max(0.0D, Math.nextDown(denominator.maxValue()));
     }
 
     @Override

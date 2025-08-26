@@ -24,7 +24,7 @@ public record FloorModulo(DensityFunction numerator,
     public static final String NAME = "floor_mod";
 
     private static double eval(double numerator, double denominator) {
-        // Replication of `StrictMath.floorMod()` but for doubles, doesn't throw errors
+        // Similar to `StrictMath.floorMod()` but for doubles, doesn't throw errors
         return denominator < 0 ?
                 Math.floor((-numerator % -denominator - denominator) % -denominator) - 1 :
                 Math.floor((numerator % denominator + denominator) % denominator);
@@ -50,7 +50,7 @@ public record FloorModulo(DensityFunction numerator,
         );
     }
 
-    // Due to periodic nature, I'm using global min/max
+    // TODO
     @Override
     public double minValue() {
         return -1.0D;

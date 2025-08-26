@@ -20,7 +20,7 @@ public record Modulo(DensityFunction numerator,
     public static final KeyDispatchDataCodec<Modulo> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
 
-    public static final String NAME = "floor_mod";
+    public static final String NAME = "mod";
 
     private static double eval(double numerator, double denominator) {
         return (numerator % denominator + denominator) % denominator;
@@ -50,14 +50,15 @@ public record Modulo(DensityFunction numerator,
     @Override
     public double minValue() {
         // If it is positive, the min is 0, if negative, the min is the denominator
-        return StrictMath.min(0.0D, denominator.minValue());
+        return StrictMath.min(0.0D, Math.nextUp(denominator.minValue()));
     }
 
     @Override
     public double maxValue() {
         // If it is positive, then the max is the denominator, if negative, the max is 0
-        return StrictMath.max(0.0D, denominator.maxValue());
+        return StrictMath.max(0.0D, Math.nextDown(denominator.maxValue()));
     }
+
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
