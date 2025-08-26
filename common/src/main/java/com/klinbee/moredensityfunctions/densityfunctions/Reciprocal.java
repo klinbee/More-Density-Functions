@@ -19,9 +19,13 @@ public record Reciprocal(DensityFunction denominator)
 
     public static final String NAME = "reciprocal";
 
+    private static double eval(double density) {
+        return 1.0D / density;
+    }
+
     @Override
     public double compute(FunctionContext pos) {
-        return 1.0D / denominator.compute(pos);
+        return eval(denominator.compute(pos));
     }
 
     @Override
@@ -38,15 +42,48 @@ public record Reciprocal(DensityFunction denominator)
         );
     }
 
-    //TODO: hgelp?
     @Override
     public double minValue() {
-        return Double.NEGATIVE_INFINITY;
+        double asymptoteLocation = 0.0D;
+
+        // Lower bound is above `asymptoteLocation`, `minValue()` must be `eval(denomMax)`
+        double denomMin = denominator.minValue();
+        double denomMax = denominator.maxValue();
+
+        if (denomMin > asymptoteLocation) {
+            return eval(denomMax);
+        }
+
+        // Upper bound is below `asymptoteLocation`, `minValue()` must be `eval(denomMax)`
+
+        if (denomMax < asymptoteLocation) {
+            return eval(denomMax);
+        }
+
+        // Range includes `asymptoteLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(asymptoteLocation)`
+        return Double.NaN;
     }
 
     @Override
     public double maxValue() {
-        return Double.POSITIVE_INFINITY;
+        double asymptoteLocation = 0.0D;
+
+        // Lower bound is above `asymptoteLocation`, `maxValue()` must be `eval(denomMin)`
+        double denomMin = denominator.minValue();
+
+        if (denomMin > asymptoteLocation) {
+            return eval(denomMin);
+        }
+
+        // Upper bound is below `asymptoteLocation`, `maxValue()` must be `eval(denomMin)`
+        double denomMax = denominator.maxValue();
+
+        if (denomMax < asymptoteLocation) {
+            return eval(denomMin);
+        }
+
+        // Range includes `asymptoteLocation`, `maxValue()` cannot be guaranteed, but could be as high as `eval(asymptoteLocation)`
+        return Double.NaN;
     }
 
     @Override

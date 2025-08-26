@@ -3,31 +3,27 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record FloorModulo(DensityFunction numerator,
-                          DensityFunction denominator)
+public record Modulo(DensityFunction numerator,
+                     DensityFunction denominator)
         implements DensityFunction {
 
-    private static final MapCodec<FloorModulo> MAP_CODEC =
+    private static final MapCodec<Modulo> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(FloorModulo::numerator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorModulo::denominator)
-                    ).apply(instance, FloorModulo::new)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(Modulo::numerator),
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Modulo::denominator)
+                    ).apply(instance, Modulo::new)
             );
 
-    public static final KeyDispatchDataCodec<FloorModulo> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public static final KeyDispatchDataCodec<Modulo> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
 
     public static final String NAME = "floor_mod";
 
     private static double eval(double numerator, double denominator) {
-        // Replication of `StrictMath.floorMod()` but for doubles, doesn't throw errors
-        return denominator < 0 ?
-                Math.floor((-numerator % -denominator - denominator) % -denominator) - 1 :
-                Math.floor((numerator % denominator + denominator) % denominator);
+        return (numerator % denominator + denominator) % denominator;
     }
 
     @Override
@@ -43,7 +39,7 @@ public record FloorModulo(DensityFunction numerator,
     @Override
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
-                new FloorModulo(
+                new Modulo(
                         numerator.mapAll(visitor),
                         denominator.mapAll(visitor)
                 )
@@ -53,12 +49,14 @@ public record FloorModulo(DensityFunction numerator,
     // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
-        return -1.0D;
+        // If it is positive, the min is 0, if negative, the min is the denominator
+        return StrictMath.min(0.0D, denominator.minValue());
     }
 
     @Override
     public double maxValue() {
-        return 1.0D;
+        // If it is positive, then the max is the denominator, if negative, the max is 0
+        return StrictMath.max(0.0D, denominator.maxValue());
     }
 
     @Override

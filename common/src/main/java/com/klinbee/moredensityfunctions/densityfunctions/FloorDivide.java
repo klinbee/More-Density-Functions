@@ -22,9 +22,13 @@ public record FloorDivide(DensityFunction numerator,
 
     public static final String NAME = "floor_div";
 
+    private static double eval(double numerator, double denominator) {
+        return Mth.floor(numerator / denominator);
+    }
+
     @Override
     public double compute(FunctionContext pos) {
-        return Mth.floor(numerator.compute(pos) / denominator.compute(pos));
+        return eval(numerator.compute(pos), denominator.compute(pos));
     }
 
     @Override
@@ -42,15 +46,54 @@ public record FloorDivide(DensityFunction numerator,
         );
     }
 
-    // TODO:
     @Override
     public double minValue() {
-        return Double.NEGATIVE_INFINITY;
+        double asymptoteLocation = 0.0D;
+
+        // Lower bound is above `asymptoteLocation`, `minValue()` must be `eval(numMin, denomMax)`
+        double denomMin = denominator.minValue();
+        double denomMax = denominator.maxValue();
+        double numMin = numerator.minValue();
+
+
+        if (denomMin > asymptoteLocation) {
+            return eval(numMin, denomMax);
+        }
+
+        // Upper bound is below `asymptoteLocation`, `minValue()` must be `eval(numMax, denomMax)`
+        double numMax = numerator.maxValue();
+
+        if (denomMax < asymptoteLocation) {
+            return eval(numMax, denomMax);
+        }
+
+        // Range includes `asymptoteLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(asymptoteLocation)`
+        return Double.NaN;
     }
 
     @Override
     public double maxValue() {
-        return Double.POSITIVE_INFINITY;
+        double asymptoteLocation = 0.0D;
+
+        // Lower bound is above `asymptoteLocation`, `maxValue()` must be `eval(numMax, denomMin)`
+        double denomMin = denominator.minValue();
+        double numMax = numerator.maxValue();
+
+
+        if (denomMin > asymptoteLocation) {
+            return eval(numMax, denomMin);
+        }
+
+        // Upper bound is below `asymptoteLocation`, `maxValue()` must be `eval(numMin, denomMin)`
+        double denomMax = denominator.maxValue();
+        double numMin = numerator.minValue();
+
+        if (denomMax < asymptoteLocation) {
+            return eval(numMin, denomMin);
+        }
+
+        // Range includes `asymptoteLocation`, `maxValue()` cannot be guaranteed, but could be as high as `eval(asymptoteLocation)`
+        return Double.NaN;
     }
 
     @Override
