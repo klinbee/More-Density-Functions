@@ -3,6 +3,7 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record Remainder(DensityFunction numerator,
@@ -44,14 +45,20 @@ public record Remainder(DensityFunction numerator,
     // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
-        // If it is positive, the min is 0, if negative, the min is the denominator
-        return StrictMath.min(0.0D, Math.nextUp(denominator.minValue()));
+        // The sign is the same as the numerator, if negative, the minimum is the negative absolute maximum of the denominator's range
+        // Otherwise, it is simply 0
+        return (numerator.minValue() < 0) ?
+                -Mth.absMax(denominator.minValue(), denominator.maxValue()) :
+                0.0D;
     }
 
     @Override
     public double maxValue() {
-        // If it is positive, then the max is the denominator, if negative, the max is 0
-        return StrictMath.max(0.0D, Math.nextDown(denominator.maxValue()));
+        // The sign is the same as the numerator, if positive, the maximum is the absolute maximum of the denominator's range
+        // Otherwise, it is simply 0
+        return (numerator.maxValue() > 0) ?
+                Mth.absMax(denominator.minValue(), denominator.maxValue()) :
+                0.0D;
     }
 
     @Override
