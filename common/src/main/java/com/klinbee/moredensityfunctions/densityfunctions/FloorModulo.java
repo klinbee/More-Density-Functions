@@ -50,15 +50,17 @@ public record FloorModulo(DensityFunction numerator,
         );
     }
 
-    // TODO
+    // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
-        return -1.0D;
+        // If it is positive, the min is 0, if negative, the min is the denominator
+        return StrictMath.min(0.0D, Mth.floor(Math.nextUp(denominator.minValue())));
     }
 
     @Override
     public double maxValue() {
-        return 1.0D;
+        // If it is positive, then the max is the denominator, if negative, the max is 0
+        return StrictMath.max(0.0D, Mth.floor(Math.nextDown(denominator.maxValue())));
     }
 
     @Override
