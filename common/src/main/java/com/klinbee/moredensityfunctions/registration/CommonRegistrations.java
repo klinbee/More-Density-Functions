@@ -27,12 +27,17 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, FloorModulo.NAME, FloorModulo.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, GappedGridSquareSpiral.NAME, GappedGridSquareSpiral.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, GradientMagnitude.NAME, GradientMagnitude.CODEC.codec());
+        registrar.register(DENSITY_FUNCTION, HyperbolicCosine.NAME, HyperbolicCosine.CODEC.codec());
+        registrar.register(DENSITY_FUNCTION, HyperbolicSine.NAME, HyperbolicSine.CODEC.codec());
+        registrar.register(DENSITY_FUNCTION, HyperbolicTangent.NAME, HyperbolicTangent.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, IEEERemainder.NAME, IEEERemainder.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Log.NAME, Log.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Log2.NAME, Log2.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Log2Floor.NAME, Log2Floor.CODEC.codec());
+        registrar.register(DENSITY_FUNCTION, Modulo.NAME, Modulo.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, NaturalLog.NAME, NaturalLog.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Negate.NAME, Negate.CODEC.codec());
+        registrar.register(DENSITY_FUNCTION, OrElse.NAME, OrElse.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, PolarCoords.NAME, PolarCoords.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Power.NAME, Power.CODEC.codec());
         registrar.register(DENSITY_FUNCTION, Profiler.NAME, Profiler.CODEC.codec());
