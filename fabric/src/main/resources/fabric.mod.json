@@ -1,32 +1,32 @@
 {
-    "schemaVersion": 1,
-    "id": "moredensityfunctions",
-    "version": "${version}",
-    "name": "${mod_name}",
-    "description": "${description}",
-    "authors": [
-        "${mod_author}"
-    ],
-    "contact": {
-        "sources": "${github_page}"
-    },
-    "license": "${license}",
-    "icon": "${icon}",
-    "environment": "*",
-    "entrypoints": {
-        "main": [
-            "${group}.MoreDensityFunctionsFabric"
-        ]
-    },
-    "mixins": [
-        "${mod_id}.mixins.json",
-        "${mod_id}.fabric.mixins.json"
-    ],
-    "depends": {
-        "fabricloader": ">=0.14",
-        "fabric": "*",
-        "minecraft": ">=${minecraft_version} <1.20.5",
-        "java": ">=17"
-    }
+  "schemaVersion": 1,
+  "id": "moredensityfunctions",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "sources": "${github_page}"
+  },
+  "license": "${license}",
+  "icon": "${icon}",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "${group}.MoreDensityFunctionsFabric"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": ">=${minecraft_version} <1.20.5",
+    "java": ">=17"
+  }
 }
   
