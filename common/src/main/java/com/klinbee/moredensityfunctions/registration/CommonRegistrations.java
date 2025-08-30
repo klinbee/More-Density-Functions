@@ -18,6 +18,7 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, Ceil.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Clamp.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Cosine.TYPED_CODEC);
+        registrar.register(DENSITY_FUNCTION, CubeRoot.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Derivative.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Distance.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Divide.TYPED_CODEC);
