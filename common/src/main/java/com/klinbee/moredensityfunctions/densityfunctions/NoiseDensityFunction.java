@@ -9,7 +9,7 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 public interface NoiseDensityFunction extends DensityFunction {
 
-    /// Extra Octaves CODEC
+    /// Extra Octaves codec
     record ExtraOctaves(int count,
                         double lacunarity,
                         double persistence,

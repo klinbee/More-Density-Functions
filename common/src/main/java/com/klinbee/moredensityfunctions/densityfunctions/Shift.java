@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -21,9 +22,7 @@ public record Shift(DensityFunction arg,
                     ).apply(instance, Shift::new)
             );
 
-    public static final KeyDispatchDataCodec<Shift> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "shift";
+    public static final TypedCodec<Shift> TYPED_CODEC = new TypedCodec<>("shift", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -74,6 +73,6 @@ public record Shift(DensityFunction arg,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
@@ -11,9 +12,7 @@ public record Radius3D()
 
     private static final MapCodec<Radius3D> MAP_CODEC = MapCodec.unit(new Radius3D());
 
-    public static final KeyDispatchDataCodec<Radius3D> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "radius_3d";
+    public static final TypedCodec<Radius3D> TYPED_CODEC = new TypedCodec<>("radius_3d", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -45,6 +44,6 @@ public record Radius3D()
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

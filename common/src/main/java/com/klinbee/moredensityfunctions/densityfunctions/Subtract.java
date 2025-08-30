@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -17,9 +18,7 @@ public record Subtract(DensityFunction arg1,
                     ).apply(instance, Subtract::new)
             );
 
-    public static final KeyDispatchDataCodec<Subtract> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "subtract";
+    public static final TypedCodec<Subtract> TYPED_CODEC = new TypedCodec<>("subtract", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -53,6 +52,6 @@ public record Subtract(DensityFunction arg1,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

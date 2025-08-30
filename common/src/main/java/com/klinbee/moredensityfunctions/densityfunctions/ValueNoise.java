@@ -2,6 +2,7 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 
 
 import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -47,11 +48,9 @@ public record ValueNoise(RandomSampler randomSampler,
             ).apply(instance, ValueNoise::new)
     );
 
-    public static final KeyDispatchDataCodec<ValueNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public static final TypedCodec<ValueNoise> TYPED_CODEC = new TypedCodec<>("value_noise", KeyDispatchDataCodec.of(MAP_CODEC));
 
-    public static final String NAME = "value_noise";
-
-    /// Interpolation CODEC
+    /// Interpolation codec
     public enum Interpolation implements StringRepresentable {
         NONE("none"),
         LERP("lerp"),
@@ -193,6 +192,6 @@ public record ValueNoise(RandomSampler randomSampler,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

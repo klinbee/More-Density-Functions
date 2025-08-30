@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -22,9 +23,7 @@ public record GradientMagnitude(DensityFunction arg,
                     ).apply(instance, GradientMagnitude::create)
             );
 
-    public static final KeyDispatchDataCodec<GradientMagnitude> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "gradient_magnitude";
+    public static final TypedCodec<GradientMagnitude> TYPED_CODEC = new TypedCodec<>("gradient_magnitude", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static GradientMagnitude create(DensityFunction arg,
                                             int stepX,
@@ -139,6 +138,6 @@ public record GradientMagnitude(DensityFunction arg,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,9 +26,7 @@ public record SingleChannelImageTessellation(int xSize,
             ).apply(instance, SingleChannelImageTessellation::create)
     );
 
-    public static final KeyDispatchDataCodec<SingleChannelImageTessellation> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "single_channel_image_tessellation";
+    public static final TypedCodec<SingleChannelImageTessellation> TYPED_CODEC = new TypedCodec<>("single_channel_image_tessellation", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static SingleChannelImageTessellation create(int xSize,
                                                          int zSize,
@@ -67,6 +66,7 @@ public record SingleChannelImageTessellation(int xSize,
         );
     }
 
+    // Min and Max u8 Values
     @Override
     public double minValue() {
         return 0.0D;
@@ -79,7 +79,7 @@ public record SingleChannelImageTessellation(int xSize,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }
 

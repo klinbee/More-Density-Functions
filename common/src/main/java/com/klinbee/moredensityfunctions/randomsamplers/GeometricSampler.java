@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,9 +17,7 @@ public record GeometricSampler(double probability,
             ).apply(instance, GeometricSampler::create)
     );
 
-    public static final KeyDispatchDataCodec<GeometricSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "geometric";
+    public static final TypedCodec<GeometricSampler> TYPED_CODEC = new TypedCodec<>("geometric", KeyDispatchDataCodec.of(MAP_CODEC));
 
     public static GeometricSampler create(double probability) {
         double inverseLog1p = 1.0D / StrictMath.log(1.0D - probability);
@@ -40,7 +39,7 @@ public record GeometricSampler(double probability,
         return Double.MAX_VALUE;
     }
 
-    public Codec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    public KeyDispatchDataCodec<? extends RandomSampler> codec() {
+        return TYPED_CODEC.codec();
     }
 }

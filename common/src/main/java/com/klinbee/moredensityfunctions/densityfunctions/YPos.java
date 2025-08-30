@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -10,9 +11,7 @@ public record YPos()
 
     private static final MapCodec<YPos> MAP_CODEC = MapCodec.unit(new YPos());
 
-    public static final KeyDispatchDataCodec<YPos> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "y";
+    public static final TypedCodec<YPos> TYPED_CODEC = new TypedCodec<>("y", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -43,6 +42,6 @@ public record YPos()
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

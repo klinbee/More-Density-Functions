@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -16,9 +17,7 @@ public record Ceil(DensityFunction arg)
                     ).apply(instance, Ceil::new)
             );
 
-    public static final KeyDispatchDataCodec<Ceil> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "ceil";
+    public static final TypedCodec<Ceil> TYPED_CODEC = new TypedCodec<>("ceil", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return Mth.ceil(density);
@@ -53,6 +52,6 @@ public record Ceil(DensityFunction arg)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

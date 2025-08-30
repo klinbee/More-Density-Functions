@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -17,9 +18,7 @@ public record UniformSampler(double min,
             ).apply(instance, UniformSampler::create)
     );
 
-    public static final KeyDispatchDataCodec<UniformSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "uniform";
+    public static final TypedCodec<UniformSampler> TYPED_CODEC = new TypedCodec<>("uniform", KeyDispatchDataCodec.of(MAP_CODEC));
 
     public static UniformSampler create(double min, double max) {
         if (min > max) {
@@ -42,7 +41,7 @@ public record UniformSampler(double min,
         return max;
     }
 
-    public Codec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    public KeyDispatchDataCodec<? extends RandomSampler> codec() {
+        return TYPED_CODEC.codec();
     }
 }

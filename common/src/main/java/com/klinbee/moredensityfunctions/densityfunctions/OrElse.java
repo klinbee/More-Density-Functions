@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -17,9 +18,7 @@ public record OrElse(DensityFunction arg,
                     ).apply(instance, OrElse::new)
             );
 
-    public static final KeyDispatchDataCodec<OrElse> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "or_else";
+    public static final TypedCodec<OrElse> TYPED_CODEC = new TypedCodec<>("or_else", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -56,6 +55,6 @@ public record OrElse(DensityFunction arg,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -27,9 +28,7 @@ public record GappedGridSquareSpiral(int xSize,
             ).apply(instance, GappedGridSquareSpiral::create)
     );
 
-    public static final KeyDispatchDataCodec<GappedGridSquareSpiral> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "gapped_grid_square_spiral";
+    public static final TypedCodec<GappedGridSquareSpiral> TYPED_CODEC = new TypedCodec<>("gapped_grid_square_spiral", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static GappedGridSquareSpiral create(int xSize,
                                                  int zSize,
@@ -145,6 +144,6 @@ public record GappedGridSquareSpiral(int xSize,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

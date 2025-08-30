@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,9 +16,7 @@ public sealed interface PoissonSampler
                     ).apply(instance, PoissonSampler::create)
             );
 
-    KeyDispatchDataCodec<PoissonSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    String NAME = "poisson";
+    TypedCodec<PoissonSampler> TYPED_CODEC = new TypedCodec<>("poisson", KeyDispatchDataCodec.of(MAP_CODEC));
 
     static PoissonSampler create(double lambda) {
         if (lambda < 30.0D) {
@@ -66,7 +65,7 @@ public sealed interface PoissonSampler
         return Double.MAX_VALUE;
     }
 
-    default Codec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    default KeyDispatchDataCodec<? extends RandomSampler> codec() {
+        return TYPED_CODEC.codec();
     }
 }

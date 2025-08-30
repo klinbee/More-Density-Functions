@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,9 +17,7 @@ public sealed interface GammaSampler
                     ).apply(instance, GammaSampler::create)
             );
 
-    KeyDispatchDataCodec<GammaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    String NAME = "gamma";
+    TypedCodec<GammaSampler> TYPED_CODEC = new TypedCodec<>("gamma", KeyDispatchDataCodec.of(MAP_CODEC));
 
     double shape();
 
@@ -105,7 +104,7 @@ public sealed interface GammaSampler
         return Double.MAX_VALUE;
     }
 
-    default Codec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    default KeyDispatchDataCodec<? extends RandomSampler> codec() {
+        return TYPED_CODEC.codec();
     }
 }

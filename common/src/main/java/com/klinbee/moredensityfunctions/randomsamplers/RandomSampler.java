@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.KeyDispatchDataCodec;
 
 import java.util.function.Function;
 
@@ -17,9 +18,9 @@ public interface RandomSampler {
             throw new NullPointerException("RandomSampler registry does not exist yet!");
         }
         return ((Registry<Codec<? extends RandomSampler>>) randomSamplerRegistry).byNameCodec();
-    }).dispatch(RandomSampler::codec, Function.identity());
+    }).dispatch((RandomSampler sampler) -> sampler.codec().codec(), Function.identity());
 
-    Codec<? extends RandomSampler> codec();
+    KeyDispatchDataCodec<? extends RandomSampler> codec();
 
     /// World Seed Storage
 

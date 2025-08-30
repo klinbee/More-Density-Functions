@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.RegistryKey;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -19,13 +20,13 @@ public class FabricGenericRegistrar {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void register(RegistryKey registryKey, String name, Codec<? extends T> codec) {
+    public static <T> void register(RegistryKey registryKey, TypedCodec<T> typedCodec) {
         Registry<Codec<? extends T>> registry = (Registry<Codec<? extends T>>) registries.get(registryKey);
 
         if (registry != null) {
-            ResourceLocation resourceLocation = new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, name);
+            ResourceLocation resourceLocation = new ResourceLocation(MoreDensityFunctionsConstants.MOD_NAMESPACE, typedCodec.type());
             ResourceKey<Codec<? extends T>> resourceKey = ResourceKey.create(registry.key(), resourceLocation);
-            Registry.register(registry, resourceKey, codec);
+            Registry.register(registry, resourceKey, typedCodec.codec().codec());
         } else {
             throw new IllegalArgumentException("No registry mapped for ID: " + registryKey);
         }

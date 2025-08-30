@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -15,9 +16,7 @@ public record Sine(DensityFunction arg)
                     ).apply(instance, Sine::new)
             );
 
-    public static final KeyDispatchDataCodec<Sine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "sin";
+    public static final TypedCodec<Sine> TYPED_CODEC = new TypedCodec<>("sin", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return StrictMath.sin(density);
@@ -53,6 +52,6 @@ public record Sine(DensityFunction arg)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -14,9 +15,8 @@ public record Log2(DensityFunction arg)
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Log2::arg)
                     ).apply(instance, Log2::new)
             );
-    public static final KeyDispatchDataCodec<Log2> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public static final String NAME = "log2";
+    public static final TypedCodec<Log2> TYPED_CODEC = new TypedCodec<>("log2", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return StrictMath.log(density) * 1.4426950408889634D; // 1/ln(2);
@@ -71,6 +71,6 @@ public record Log2(DensityFunction arg)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

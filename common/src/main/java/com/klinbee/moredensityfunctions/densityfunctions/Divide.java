@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -17,9 +18,7 @@ public record Divide(DensityFunction numerator,
                     ).apply(instance, Divide::new)
             );
 
-    public static final KeyDispatchDataCodec<Divide> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "div";
+    public static final TypedCodec<Divide> TYPED_CODEC = new TypedCodec<>("div", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double numerator, double denominator) {
         return numerator / denominator;
@@ -98,6 +97,6 @@ public record Divide(DensityFunction numerator,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

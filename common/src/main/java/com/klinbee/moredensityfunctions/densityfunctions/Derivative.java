@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -24,9 +25,7 @@ public record Derivative(DensityFunction arg,
                     ).apply(instance, Derivative::create)
             );
 
-    public static final KeyDispatchDataCodec<Derivative> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "derivative";
+    public static final TypedCodec<Derivative> TYPED_CODEC = new TypedCodec<>("derivative", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static Derivative create(DensityFunction arg,
                                      DerivativeComponent componentX,
@@ -38,7 +37,7 @@ public record Derivative(DensityFunction arg,
         return new Derivative(arg, componentX, componentY, componentZ);
     }
 
-    /// Derivative Component CODEC
+    /// Derivative Component codec
     private record DerivativeComponent(int step, DensityFunction direction) {
         static final Codec<DerivativeComponent> CODEC =
                 RecordCodecBuilder.create(instance ->
@@ -125,6 +124,6 @@ public record Derivative(DensityFunction arg,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

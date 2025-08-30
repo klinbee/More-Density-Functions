@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -15,9 +16,7 @@ public record Reciprocal(DensityFunction denominator)
                     ).apply(instance, Reciprocal::new)
             );
 
-    public static final KeyDispatchDataCodec<Reciprocal> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "reciprocal";
+    public static final TypedCodec<Reciprocal> TYPED_CODEC = new TypedCodec<>("reciprocal", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return 1.0D / density;
@@ -88,6 +87,6 @@ public record Reciprocal(DensityFunction denominator)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

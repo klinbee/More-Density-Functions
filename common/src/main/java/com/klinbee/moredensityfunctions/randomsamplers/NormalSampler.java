@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,9 +17,7 @@ public record NormalSampler(double mean,
             ).apply(instance, NormalSampler::create)
     );
 
-    public static final KeyDispatchDataCodec<NormalSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "normal";
+    public static final TypedCodec<NormalSampler> TYPED_CODEC = new TypedCodec<>("normal", KeyDispatchDataCodec.of(MAP_CODEC));
 
     public static NormalSampler create(double mean, double stdDev) {
         return new NormalSampler(mean, stdDev);
@@ -39,7 +38,7 @@ public record NormalSampler(double mean,
         return Double.MAX_VALUE;
     }
 
-    public Codec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    public KeyDispatchDataCodec<? extends RandomSampler> codec() {
+        return TYPED_CODEC.codec();
     }
 }

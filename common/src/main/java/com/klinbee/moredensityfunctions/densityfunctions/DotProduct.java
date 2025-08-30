@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -24,9 +25,7 @@ public record DotProduct(DensityFunction arg1,
                     ).apply(instance, DotProduct::create)
             );
 
-    public static final KeyDispatchDataCodec<DotProduct> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "dot_product";
+    public static final TypedCodec<DotProduct> TYPED_CODEC = new TypedCodec<>("dot_product", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static DotProduct create(DensityFunction arg1,
                                      DensityFunction arg2,
@@ -171,6 +170,6 @@ public record DotProduct(DensityFunction arg1,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

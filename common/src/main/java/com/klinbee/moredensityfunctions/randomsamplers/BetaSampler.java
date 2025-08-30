@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,9 +20,7 @@ public record BetaSampler(double alpha,
                     ).apply(instance, BetaSampler::create)
             );
 
-    public static KeyDispatchDataCodec<BetaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "beta";
+    public static final TypedCodec<BetaSampler> TYPED_CODEC = new TypedCodec<>("beta", KeyDispatchDataCodec.of(MAP_CODEC));
 
     public static BetaSampler create(double alpha, double beta) {
         return new BetaSampler(alpha, beta, GammaSampler.create(alpha, 1.0D), GammaSampler.create(beta, 1.0D));
@@ -42,7 +41,7 @@ public record BetaSampler(double alpha,
         return 1.0D;
     }
 
-    public Codec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    public KeyDispatchDataCodec<? extends RandomSampler> codec() {
+        return TYPED_CODEC.codec();
     }
 }

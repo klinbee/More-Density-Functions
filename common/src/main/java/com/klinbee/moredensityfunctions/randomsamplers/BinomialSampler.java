@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,9 +17,7 @@ public sealed interface BinomialSampler
                     ).apply(instance, BinomialSampler::create)
             );
 
-    KeyDispatchDataCodec<BinomialSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    String NAME = "binomial";
+    TypedCodec<BinomialSampler> TYPED_CODEC = new TypedCodec<>("binomial", KeyDispatchDataCodec.of(MAP_CODEC));
 
     static BinomialSampler create(int trials, double probability) {
 
@@ -110,7 +109,7 @@ public sealed interface BinomialSampler
         return trials();
     }
 
-    default Codec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    default KeyDispatchDataCodec<? extends RandomSampler> codec() {
+        return TYPED_CODEC.codec();
     }
 }

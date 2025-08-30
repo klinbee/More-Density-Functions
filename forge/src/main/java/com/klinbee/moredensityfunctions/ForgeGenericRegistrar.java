@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.RegistryKey;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -17,12 +18,12 @@ public class ForgeGenericRegistrar {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void register(RegistryKey registryKey, String name, Codec<? extends T> codec) {
+    public static <T> void register(RegistryKey registryKey, TypedCodec<T> typedCodec) {
         DeferredRegister<Codec<? extends T>> deferredRegister =
                 (DeferredRegister<Codec<? extends T>>) registries.get(registryKey);
 
         if (deferredRegister != null) {
-            deferredRegister.register(name, () -> codec);
+            deferredRegister.register(typedCodec.type(), () -> typedCodec.codec().codec());
         } else {
             throw new IllegalArgumentException("No registry mapped for ID: " + registryKey);
         }

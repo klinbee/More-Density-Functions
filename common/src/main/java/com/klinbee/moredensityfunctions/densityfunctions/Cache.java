@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -20,9 +21,7 @@ public record Cache(DensityFunction arg)
                     ).apply(instance, Cache::new)
             );
 
-    public static final KeyDispatchDataCodec<Cache> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "cache";
+    public static final TypedCodec<Cache> TYPED_CODEC = new TypedCodec<>("cache", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static final Map<DensityFunction, Long> DF_LAST_POS = Collections.synchronizedMap(new IdentityHashMap<>());
     private static final Map<DensityFunction, Double> DF_LAST_VALUE = Collections.synchronizedMap(new IdentityHashMap<>());
@@ -68,6 +67,6 @@ public record Cache(DensityFunction arg)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

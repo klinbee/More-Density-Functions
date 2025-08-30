@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -24,9 +25,7 @@ public record Profiler(DensityFunction arg,
             ).apply(instance, Profiler::new)
     );
 
-    public static final KeyDispatchDataCodec<Profiler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "profiler";
+    public static final TypedCodec<Profiler> TYPED_CODEC = new TypedCodec<>("profiler", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static final Set<String> inactiveProfilers = Collections.synchronizedSet(
             Collections.newSetFromMap(new WeakHashMap<>())
@@ -104,6 +103,6 @@ public record Profiler(DensityFunction arg,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

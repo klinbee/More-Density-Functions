@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,9 +17,7 @@ public record ExponentialSampler(double lambda,
                     ).apply(instance, ExponentialSampler::create)
             );
 
-    public static KeyDispatchDataCodec<ExponentialSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "exponential";
+    public static final TypedCodec<ExponentialSampler> TYPED_CODEC = new TypedCodec<>("exponential", KeyDispatchDataCodec.of(MAP_CODEC));
 
     public static ExponentialSampler create(double lambda) {
         double negativeInverseLambda = -1.0D / lambda;
@@ -40,7 +39,7 @@ public record ExponentialSampler(double lambda,
         return Double.MAX_VALUE;
     }
 
-    public Codec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    public KeyDispatchDataCodec<? extends RandomSampler> codec() {
+        return TYPED_CODEC.codec();
     }
 }
