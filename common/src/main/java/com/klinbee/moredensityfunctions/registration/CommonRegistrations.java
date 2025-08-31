@@ -46,6 +46,7 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, Radius3D.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Reciprocal.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Remainder.TYPED_CODEC);
+        registrar.register(DENSITY_FUNCTION, Resolver.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Round.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Shift.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Sigmoid.TYPED_CODEC);
