@@ -2,8 +2,10 @@ package com.klinbee.moredensityfunctions.randomsamplers;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.mojang.serialization.Codec;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.KeyDispatchDataCodec;
 
@@ -19,6 +21,13 @@ public interface RandomSampler {
         }
         return ((Registry<Codec<? extends RandomSampler>>) randomSamplerRegistry).byNameCodec();
     }).dispatch((RandomSampler sampler) -> sampler.codec().codec(), Function.identity());
+
+    Codec<RandomSampler> HOLDER_HELPER_CODEC =
+            RegistryFileCodec.create(MoreDensityFunctionsConstants.RANDOM_SAMPLER, CODEC)
+                    .xmap(
+                            Holder::value,  // Holder<RandomSampler> -> RandomSampler
+                            Holder.Direct::new  // RandomSampler -> Holder<RandomSampler>
+                    );
 
     KeyDispatchDataCodec<? extends RandomSampler> codec();
 

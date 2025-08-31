@@ -38,7 +38,7 @@ public record ValueNoise(RandomSampler randomSampler,
 
     private static final MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    RandomSampler.CODEC.fieldOf("sampler").forGetter(ValueNoise::randomSampler),
+                    RandomSampler.HOLDER_HELPER_CODEC.fieldOf("sampler").forGetter(ValueNoise::randomSampler),
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_x").forGetter(ValueNoise::sizeX),
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
