@@ -25,28 +25,13 @@ public interface RandomSampler {
     Codec<RandomSampler> HOLDER_HELPER_CODEC =
             RegistryFileCodec.create(MoreDensityFunctionsConstants.RANDOM_SAMPLER, CODEC)
                     .xmap(
-                            Holder::value,  // Holder<RandomSampler> -> RandomSampler
-                            Holder.Direct::new  // RandomSampler -> Holder<RandomSampler>
+                            HolderSampler::new,  // Holder<RandomSampler> -> RandomSampler
+                            sampler -> sampler instanceof HolderSampler hs ?   // RandomSampler -> Holder<RandomSampler>
+                                    hs.samplerHolder() :
+                                    new Holder.Direct<>(sampler)
                     );
 
     KeyDispatchDataCodec<? extends RandomSampler> codec();
-
-    /// World Seed Storage
-
-    /**
-     * <p>Holds the WorldSeed
-     * <p>Its kind of safe? I did test, and the {@code ChunkMapMixin} goes off everytime
-     * a world is joined, so the {@code worldSeed} <i>should</i> always be set to the world you join.
-     */
-    class WorldSeedHolder {
-        static volatile long worldSeed;
-
-        public static void setWorldSeed(long seed) {
-            worldSeed = seed;
-        }
-    }
-
-    /// Core Methods
 
     /**
      * Samples a value from the Sampler's distribution using the given already hashedSeed.
@@ -61,6 +46,19 @@ public interface RandomSampler {
     double maxValue();
 
     /// Seed Randomization
+
+    /**
+     * <p>Holds the WorldSeed
+     * <p>Its kind of safe? I did test, and the {@code ChunkMapMixin} goes off everytime
+     * a world is joined, so the {@code worldSeed} <i>should</i> always be set to the world you join.
+     */
+    class WorldSeedHolder {
+        static volatile long worldSeed;
+
+        public static void setWorldSeed(long seed) {
+            worldSeed = seed;
+        }
+    }
 
     /**
      * <p>Wicked Salted 3D Positional Hashing Function
