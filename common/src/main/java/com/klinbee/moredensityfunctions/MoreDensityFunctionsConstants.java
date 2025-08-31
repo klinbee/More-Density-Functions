@@ -39,6 +39,6 @@ public class MoreDensityFunctionsConstants {
                     );
 
     /// ResourceKeys
-    public static final ResourceKey<Registry<RandomSampler>> RANDOM_SAMPLER = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "random_sampler"));
-    public static final ResourceKey<Registry<Codec<? extends RandomSampler>>> RANDOM_SAMPLER_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "random_sampler_type"));
+    public static final ResourceKey<Registry<RandomSampler>> RANDOM_SAMPLER = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "worldgen/random_sampler"));
+    public static final ResourceKey<Registry<Codec<? extends RandomSampler>>> RANDOM_SAMPLER_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "worldgen/random_sampler_type"));
 }
