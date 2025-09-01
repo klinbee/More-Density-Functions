@@ -7,7 +7,9 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 public record Resolver(DensityFunction arg)
         implements DensityFunction {
@@ -21,7 +23,7 @@ public record Resolver(DensityFunction arg)
 
     public static final TypedCodec<Resolver> TYPED_CODEC = new TypedCodec<>("resolver", KeyDispatchDataCodec.of(MAP_CODEC));
 
-    private static final ConcurrentHashMap<Integer, DensityFunction> RESOLUTION_CACHE = new ConcurrentHashMap<>();
+    private static final Map<DensityFunction, DensityFunction> RESOLUTION_CACHE = Collections.synchronizedMap(new IdentityHashMap<>());
 
     private static DensityFunction unwrapHolder(DensityFunction df) {
         return df instanceof DensityFunctions.HolderHolder ?
@@ -31,7 +33,7 @@ public record Resolver(DensityFunction arg)
 
     @Override
     public double compute(FunctionContext pos) {
-        return RESOLUTION_CACHE.get(arg.hashCode()).compute(pos);
+        return RESOLUTION_CACHE.get(arg).compute(pos);
     }
 
     @Override
@@ -41,11 +43,10 @@ public record Resolver(DensityFunction arg)
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        int argHash = arg.hashCode();
-        DensityFunction visited = RESOLUTION_CACHE.get(argHash);
+        DensityFunction visited = RESOLUTION_CACHE.get(arg);
         if (visited == null) {
             visited = visitor.apply(arg.mapAll(visitor)).mapAll(Resolver::unwrapHolder);
-            RESOLUTION_CACHE.put(argHash, visited);
+            RESOLUTION_CACHE.put(arg, visited);
         }
         return visited;
     }
