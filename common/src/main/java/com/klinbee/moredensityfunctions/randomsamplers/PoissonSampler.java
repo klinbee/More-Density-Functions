@@ -29,11 +29,6 @@ public sealed interface PoissonSampler
     record Knuth(double lambda,
                  double expNegativeLambda)
             implements PoissonSampler {
-
-        static {
-            REGISTRY.register(ANON_CODEC);
-        }
-
         @Override
         public double sample(long hashedSeed) {
             double p = 1.0D;

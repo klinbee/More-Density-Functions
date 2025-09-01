@@ -47,11 +47,6 @@ public sealed interface BinomialSampler
     record Direct(int trials,
                   double probability)
             implements BinomialSampler {
-
-        static {
-            REGISTRY.register(ANON_CODEC);
-        }
-
         @Override
         public double sample(long hashedSeed) {
             int successes = 0;

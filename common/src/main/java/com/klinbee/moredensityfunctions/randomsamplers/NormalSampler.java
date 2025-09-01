@@ -17,10 +17,6 @@ public record NormalSampler(double mean,
 
     public static final AnonymousTypedCodec<NormalSampler> ANON_CODEC = new AnonymousTypedCodec<>("normal", CODEC);
 
-    static {
-        REGISTRY.register(ANON_CODEC);
-    }
-
     public static NormalSampler create(double mean, double stdDev) {
         return new NormalSampler(mean, stdDev);
     }

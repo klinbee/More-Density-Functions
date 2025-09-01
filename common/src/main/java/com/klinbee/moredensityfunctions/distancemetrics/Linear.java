@@ -9,10 +9,6 @@ public record Linear() implements DistanceMetric {
 
     public static final AnonymousTypedCodec<Linear> ANON_CODEC = new AnonymousTypedCodec<>("linear", CODEC);
 
-    static {
-        REGISTRY.register(ANON_CODEC);
-    }
-
     @Override
     public double distance(double[] point1, double[] point2) {
         return StrictMath.abs(point2[0] - point1[0]);

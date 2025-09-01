@@ -9,10 +9,6 @@ public record Manhattan() implements DistanceMetric {
 
     public static final AnonymousTypedCodec<Manhattan> ANON_CODEC = new AnonymousTypedCodec<>("manhattan", CODEC);
 
-    static {
-        REGISTRY.register(ANON_CODEC);
-    }
-
     @Override
     public double distance(double[] point1, double[] point2) {
         double sum = 0.0D;

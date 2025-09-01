@@ -14,10 +14,6 @@ public record Minkowski(int p) implements DistanceMetric {
 
     public static final AnonymousTypedCodec<DistanceMetric> ANON_CODEC = new AnonymousTypedCodec<>("minkowski", CODEC);
 
-    static {
-        REGISTRY.register(ANON_CODEC);
-    }
-
     private static DistanceMetric create(int p) {
         return switch (p) {
             case 0 -> new Manhattan();

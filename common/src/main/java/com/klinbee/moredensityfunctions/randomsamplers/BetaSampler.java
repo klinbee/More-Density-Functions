@@ -20,10 +20,6 @@ public record BetaSampler(double alpha,
 
     public static final AnonymousTypedCodec<BetaSampler> ANON_CODEC = new AnonymousTypedCodec<>("beta", CODEC);
 
-    static {
-        REGISTRY.register(ANON_CODEC);
-    }
-
     public static BetaSampler create(double alpha, double beta) {
         return new BetaSampler(alpha, beta, GammaSampler.create(alpha, 1.0D), GammaSampler.create(beta, 1.0D));
     }

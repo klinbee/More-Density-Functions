@@ -18,10 +18,6 @@ public record UniformSampler(double min,
 
     public static final AnonymousTypedCodec<UniformSampler> ANON_CODEC = new AnonymousTypedCodec<>("uniform", CODEC);
 
-    static {
-        REGISTRY.register(ANON_CODEC);
-    }
-
     public static UniformSampler create(double min, double max) {
         if (min > max) {
             throw new IllegalArgumentException("Min must be less than max! min: " + min + " max: " + max);

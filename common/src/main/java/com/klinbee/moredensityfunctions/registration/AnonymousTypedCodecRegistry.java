@@ -20,7 +20,7 @@ public class AnonymousTypedCodecRegistry<T> {
             throw new IllegalArgumentException("AnonymousRegistry " + registryType +
                     " type '" + type + "' is already registered!");
         }
-        registry.put(anonCodec.type(), anonCodec.codec());
+        registry.put(type, anonCodec.codec());
     }
 
     public Codec<? extends T> getCodec(String type) {

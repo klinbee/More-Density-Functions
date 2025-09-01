@@ -1,6 +1,8 @@
 package com.klinbee.moredensityfunctions.registration;
 
 import com.klinbee.moredensityfunctions.densityfunctions.*;
+import com.klinbee.moredensityfunctions.distancemetrics.*;
+import com.klinbee.moredensityfunctions.randomsamplers.*;
 
 import static com.klinbee.moredensityfunctions.registration.RegistryKey.DENSITY_FUNCTION;
 
@@ -61,5 +63,22 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, YPos.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, ZClampedGradient.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, ZPos.TYPED_CODEC);
+
+        /// DistanceMetrics
+        DistanceMetric.REGISTRY.register(Chebyshev.ANON_CODEC);
+        DistanceMetric.REGISTRY.register(Euclidean.ANON_CODEC);
+        DistanceMetric.REGISTRY.register(Linear.ANON_CODEC);
+        DistanceMetric.REGISTRY.register(Manhattan.ANON_CODEC);
+        DistanceMetric.REGISTRY.register(Minkowski.ANON_CODEC);
+
+        /// RandomSamplers
+        RandomSampler.REGISTRY.register(BetaSampler.ANON_CODEC);
+        RandomSampler.REGISTRY.register(BinomialSampler.ANON_CODEC);
+        RandomSampler.REGISTRY.register(ExponentialSampler.ANON_CODEC);
+        RandomSampler.REGISTRY.register(GammaSampler.ANON_CODEC);
+        RandomSampler.REGISTRY.register(GeometricSampler.ANON_CODEC);
+        RandomSampler.REGISTRY.register(NormalSampler.ANON_CODEC);
+        RandomSampler.REGISTRY.register(PoissonSampler.ANON_CODEC);
+        RandomSampler.REGISTRY.register(UniformSampler.ANON_CODEC);
     }
 }

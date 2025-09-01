@@ -17,10 +17,6 @@ public record ExponentialSampler(double lambda,
 
     public static final AnonymousTypedCodec<ExponentialSampler> ANON_CODEC = new AnonymousTypedCodec<>("exponential", CODEC);
 
-    static {
-        REGISTRY.register(ANON_CODEC);
-    }
-
     public static ExponentialSampler create(double lambda) {
         double negativeInverseLambda = -1.0D / lambda;
         return new ExponentialSampler(lambda, negativeInverseLambda);

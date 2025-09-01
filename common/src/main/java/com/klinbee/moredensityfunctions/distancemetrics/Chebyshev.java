@@ -9,10 +9,6 @@ public record Chebyshev() implements DistanceMetric {
 
     public static final AnonymousTypedCodec<Chebyshev> ANON_CODEC = new AnonymousTypedCodec<>("chebyshev", CODEC);
 
-    static {
-        REGISTRY.register(ANON_CODEC);
-    }
-
     @Override
     public double distance(double[] point1, double[] point2) {
         double maxDistance = 0.0D;

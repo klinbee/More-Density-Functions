@@ -35,11 +35,6 @@ public sealed interface GammaSampler
                         double scale,
                         double inverseShape)
             implements GammaSampler {
-
-        static {
-            REGISTRY.register(ANON_CODEC);
-        }
-
         @Override
         public double sample(long hashedSeed) {
             double u, v, w, x, y, z;
