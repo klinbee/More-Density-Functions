@@ -1,37 +1,19 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodecRegistry;
 import com.mojang.serialization.Codec;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.RegistryFileCodec;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.KeyDispatchDataCodec;
-
-import java.util.function.Function;
 
 public interface RandomSampler {
 
-    @SuppressWarnings("unchecked")
-    Codec<RandomSampler> CODEC = ExtraCodecs.lazyInitializedCodec(() -> {
-        var randomSamplerRegistry = BuiltInRegistries.REGISTRY.get(MoreDensityFunctionsConstants.RANDOM_SAMPLER_TYPE.location());
-        if (randomSamplerRegistry == null) {
-            throw new NullPointerException("RandomSampler registry does not exist yet!");
-        }
-        return ((Registry<Codec<? extends RandomSampler>>) randomSamplerRegistry).byNameCodec();
-    }).dispatch((RandomSampler sampler) -> sampler.codec().codec(), Function.identity());
+    AnonymousTypedCodecRegistry<RandomSampler> REGISTRY =
+            new AnonymousTypedCodecRegistry<>("RandomSampler");
 
-    Codec<RandomSampler> HOLDER_HELPER_CODEC =
-            RegistryFileCodec.create(MoreDensityFunctionsConstants.RANDOM_SAMPLER, CODEC)
-                    .xmap(
-                            HolderSampler::new,  // Holder<RandomSampler> -> RandomSampler
-                            sampler -> sampler instanceof HolderSampler hs ?   // RandomSampler -> Holder<RandomSampler>
-                                    hs.samplerHolder() :
-                                    new Holder.Direct<>(sampler)
-                    );
+    Codec<RandomSampler> CODEC = REGISTRY.createDispatchCodec(
+            randomSampler -> randomSampler.anonCodec().type()
+    );
 
-    KeyDispatchDataCodec<? extends RandomSampler> codec();
+    AnonymousTypedCodec<? extends RandomSampler> anonCodec();
 
     /**
      * Samples a value from the Sampler's distribution using the given already hashedSeed.

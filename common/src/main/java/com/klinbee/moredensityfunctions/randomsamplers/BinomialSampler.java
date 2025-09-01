@@ -1,23 +1,21 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
-import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 
 public sealed interface BinomialSampler
         extends RandomSampler {
 
-    MapCodec<BinomialSampler> MAP_CODEC =
-            RecordCodecBuilder.mapCodec((instance) ->
+    Codec<BinomialSampler> CODEC =
+            RecordCodecBuilder.create((instance) ->
                     instance.group(
                             Codec.intRange(0, 1_000_000).fieldOf("trials").forGetter(BinomialSampler::trials),
                             Codec.doubleRange(0.0D, 1.0D).fieldOf("probability").forGetter(BinomialSampler::probability)
                     ).apply(instance, BinomialSampler::create)
             );
 
-    TypedCodec<BinomialSampler> TYPED_CODEC = new TypedCodec<>("binomial", KeyDispatchDataCodec.of(MAP_CODEC));
+    AnonymousTypedCodec<BinomialSampler> ANON_CODEC = new AnonymousTypedCodec<>("binomial", CODEC);
 
     static BinomialSampler create(int trials, double probability) {
 
@@ -49,6 +47,11 @@ public sealed interface BinomialSampler
     record Direct(int trials,
                   double probability)
             implements BinomialSampler {
+
+        static {
+            REGISTRY.register(ANON_CODEC);
+        }
+
         @Override
         public double sample(long hashedSeed) {
             int successes = 0;
@@ -109,7 +112,8 @@ public sealed interface BinomialSampler
         return trials();
     }
 
-    default KeyDispatchDataCodec<? extends RandomSampler> codec() {
-        return TYPED_CODEC.codec();
+    @Override
+    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }

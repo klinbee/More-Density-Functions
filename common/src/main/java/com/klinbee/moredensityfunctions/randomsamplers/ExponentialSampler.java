@@ -1,23 +1,25 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
-import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 
 public record ExponentialSampler(double lambda,
                                  double negativeInverseLambda)
         implements RandomSampler {
 
-    private static final MapCodec<ExponentialSampler> MAP_CODEC =
-            RecordCodecBuilder.mapCodec((instance) ->
+    private static final Codec<ExponentialSampler> CODEC =
+            RecordCodecBuilder.create((instance) ->
                     instance.group(
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("lambda").forGetter(ExponentialSampler::lambda)
                     ).apply(instance, ExponentialSampler::create)
             );
 
-    public static final TypedCodec<ExponentialSampler> TYPED_CODEC = new TypedCodec<>("exponential", KeyDispatchDataCodec.of(MAP_CODEC));
+    public static final AnonymousTypedCodec<ExponentialSampler> ANON_CODEC = new AnonymousTypedCodec<>("exponential", CODEC);
+
+    static {
+        REGISTRY.register(ANON_CODEC);
+    }
 
     public static ExponentialSampler create(double lambda) {
         double negativeInverseLambda = -1.0D / lambda;
@@ -39,7 +41,8 @@ public record ExponentialSampler(double lambda,
         return Double.MAX_VALUE;
     }
 
-    public KeyDispatchDataCodec<? extends RandomSampler> codec() {
-        return TYPED_CODEC.codec();
+    @Override
+    public AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }

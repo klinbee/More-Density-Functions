@@ -1,23 +1,21 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
-import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 
 public sealed interface GammaSampler
         extends RandomSampler {
 
-    MapCodec<GammaSampler> MAP_CODEC =
-            RecordCodecBuilder.mapCodec((instance) ->
+    Codec<GammaSampler> CODEC =
+            RecordCodecBuilder.create((instance) ->
                     instance.group(
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("shape").forGetter(GammaSampler::shape),
                             Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("scale").forGetter(GammaSampler::scale)
                     ).apply(instance, GammaSampler::create)
             );
 
-    TypedCodec<GammaSampler> TYPED_CODEC = new TypedCodec<>("gamma", KeyDispatchDataCodec.of(MAP_CODEC));
+    AnonymousTypedCodec<GammaSampler> ANON_CODEC = new AnonymousTypedCodec<>("gamma", CODEC);
 
     double shape();
 
@@ -37,6 +35,11 @@ public sealed interface GammaSampler
                         double scale,
                         double inverseShape)
             implements GammaSampler {
+
+        static {
+            REGISTRY.register(ANON_CODEC);
+        }
+
         @Override
         public double sample(long hashedSeed) {
             double u, v, w, x, y, z;
@@ -104,7 +107,8 @@ public sealed interface GammaSampler
         return Double.MAX_VALUE;
     }
 
-    default KeyDispatchDataCodec<? extends RandomSampler> codec() {
-        return TYPED_CODEC.codec();
+    @Override
+    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }
