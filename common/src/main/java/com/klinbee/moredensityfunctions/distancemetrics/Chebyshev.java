@@ -28,12 +28,12 @@ public record Chebyshev() implements DistanceMetric {
         for (double diff : minAbsDiffs) {
             if (diff < min) min = diff;
         }
-        return min == Double.POSITIVE_INFINITY ? 0 : min;
+        return min == Double.POSITIVE_INFINITY ? 0.0D : min;
     }
 
     @Override
     public double maxValue(double[] maxAbsDiffs) {
-        double max = 0;
+        double max = 0.0D;
         for (double diff : maxAbsDiffs) {
             if (diff > max) max = diff;
         }

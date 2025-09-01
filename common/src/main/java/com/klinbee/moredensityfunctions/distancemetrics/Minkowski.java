@@ -34,7 +34,7 @@ public record Minkowski(int p) implements DistanceMetric {
 
     @Override
     public double minValue(double[] minAbsDiffs) {
-        double sum = 0;
+        double sum = 0.0D;
         for (double diff : minAbsDiffs) {
             sum += StrictMath.pow(diff, p);
         }
@@ -43,7 +43,7 @@ public record Minkowski(int p) implements DistanceMetric {
 
     @Override
     public double maxValue(double[] maxAbsDiffs) {
-        double sum = 0;
+        double sum = 0.0D;
         for (double diff : maxAbsDiffs) {
             sum += StrictMath.pow(diff, p);
         }
