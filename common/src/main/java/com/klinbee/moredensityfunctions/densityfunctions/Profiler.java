@@ -9,8 +9,8 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 public record Profiler(DensityFunction arg,
                        int iterations,
@@ -27,17 +27,15 @@ public record Profiler(DensityFunction arg,
 
     public static final TypedCodec<Profiler> TYPED_CODEC = new TypedCodec<>("profiler", KeyDispatchDataCodec.of(MAP_CODEC));
 
-    private static final Set<String> inactiveProfilers = Collections.synchronizedSet(
-            Collections.newSetFromMap(new WeakHashMap<>())
-    );
+    private static final Set<DensityFunction> inactiveProfilers = Collections.synchronizedSet(Collections.newSetFromMap(new IdentityHashMap<>()));
 
     @Override
     public double compute(FunctionContext pos) {
-        if (inactiveProfilers.contains(this.toString())) {
+        if (inactiveProfilers.contains(arg)) {
             return arg.compute(pos);
         }
 
-        System.out.println("\nBeginning Profile of Density Function: " + this);
+        System.out.println("\nBeginning Profile of Density Function: " + arg);
 
         long[] warmUpTimes = new long[warmUp];
         long[] iterationTimes = new long[iterations];
@@ -71,7 +69,7 @@ public record Profiler(DensityFunction arg,
                 avgIterationTime,
                 (avgWarmUpTime * warmUp + avgIterationTime * iterations) / (1_000_000_000.0D));
 
-        inactiveProfilers.add(this.toString());
+        inactiveProfilers.add(arg);
         return arg.compute(pos);
     }
 
@@ -82,12 +80,17 @@ public record Profiler(DensityFunction arg,
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
+        if (!inactiveProfilers.contains(arg)) {
+            inactiveProfilers.add(arg);
+            return new Profiler(
+                    arg.mapAll(visitor),
+                    iterations,
+                    warmUp
+            );
+        }
+
         return visitor.apply(
-                new Profiler(
-                        arg.mapAll(visitor),
-                        iterations,
-                        warmUp
-                )
+                arg.mapAll(visitor)
         );
     }
 
