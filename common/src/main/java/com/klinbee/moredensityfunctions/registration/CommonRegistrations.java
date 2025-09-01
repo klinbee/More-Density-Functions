@@ -1,10 +1,8 @@
 package com.klinbee.moredensityfunctions.registration;
 
 import com.klinbee.moredensityfunctions.densityfunctions.*;
-import com.klinbee.moredensityfunctions.randomsamplers.*;
 
 import static com.klinbee.moredensityfunctions.registration.RegistryKey.DENSITY_FUNCTION;
-import static com.klinbee.moredensityfunctions.registration.RegistryKey.RANDOM_SAMPLER;
 
 public class CommonRegistrations {
 
@@ -63,15 +61,5 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, YPos.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, ZClampedGradient.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, ZPos.TYPED_CODEC);
-
-        /// RandomSamplers
-        registrar.register(RANDOM_SAMPLER, BetaSampler.TYPED_CODEC);
-        registrar.register(RANDOM_SAMPLER, BinomialSampler.TYPED_CODEC);
-        registrar.register(RANDOM_SAMPLER, ExponentialSampler.TYPED_CODEC);
-        registrar.register(RANDOM_SAMPLER, GammaSampler.TYPED_CODEC);
-        registrar.register(RANDOM_SAMPLER, GeometricSampler.TYPED_CODEC);
-        registrar.register(RANDOM_SAMPLER, NormalSampler.TYPED_CODEC);
-        registrar.register(RANDOM_SAMPLER, PoissonSampler.TYPED_CODEC);
-        registrar.register(RANDOM_SAMPLER, UniformSampler.TYPED_CODEC);
     }
 }
