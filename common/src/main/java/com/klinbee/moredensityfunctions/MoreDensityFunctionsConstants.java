@@ -1,10 +1,6 @@
 package com.klinbee.moredensityfunctions;
 
-import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.mojang.serialization.Codec;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +33,4 @@ public class MoreDensityFunctionsConstants {
                             list -> list.toArray(new DensityFunction[0]),
                             Arrays::asList
                     );
-
-    /// ResourceKeys
-    public static final ResourceKey<Registry<RandomSampler>> RANDOM_SAMPLER = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "worldgen/random_sampler"));
-    public static final ResourceKey<Registry<Codec<? extends RandomSampler>>> RANDOM_SAMPLER_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(MOD_NAMESPACE, "worldgen/random_sampler_type"));
 }

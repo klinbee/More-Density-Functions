@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.EnumMap;
 
 public class FabricGenericRegistrar {
+
     private static final EnumMap<RegistryKey, Object> registries = new EnumMap<>(RegistryKey.class);
 
     private FabricGenericRegistrar() {
@@ -31,4 +32,5 @@ public class FabricGenericRegistrar {
             throw new IllegalArgumentException("No registry mapped for ID: " + registryKey);
         }
     }
+
 }

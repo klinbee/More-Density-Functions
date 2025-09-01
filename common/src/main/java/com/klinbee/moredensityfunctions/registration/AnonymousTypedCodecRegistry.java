@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public class AnonymousTypedCodecRegistry<T> {
+
     private final Map<String, Codec<? extends T>> registry = new ConcurrentHashMap<>();
     private final String registryType;
 
@@ -38,4 +39,5 @@ public class AnonymousTypedCodecRegistry<T> {
                 this::getCodec
         );
     }
+
 }

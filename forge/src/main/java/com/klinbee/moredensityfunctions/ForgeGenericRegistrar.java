@@ -8,6 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import java.util.EnumMap;
 
 public class ForgeGenericRegistrar {
+
     private static final EnumMap<RegistryKey, Object> registries = new EnumMap<>(RegistryKey.class);
 
     private ForgeGenericRegistrar() {
@@ -28,4 +29,5 @@ public class ForgeGenericRegistrar {
             throw new IllegalArgumentException("No registry mapped for ID: " + registryKey);
         }
     }
+
 }

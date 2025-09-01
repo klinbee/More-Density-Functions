@@ -9,7 +9,6 @@ import static com.klinbee.moredensityfunctions.registration.RegistryKey.DENSITY_
 public class CommonRegistrations {
 
     public static void registerCommon(RegistrationFunction registrar) {
-
         /// DensityFunctions
         registrar.register(DENSITY_FUNCTION, ArcCosine.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, ArcSine.TYPED_CODEC);
