@@ -7,6 +7,8 @@ import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public record Resolver(DensityFunction arg)
         implements DensityFunction {
 
@@ -14,29 +16,22 @@ public record Resolver(DensityFunction arg)
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Resolver::arg)
-                    ).apply(instance, Resolver::create)
+                    ).apply(instance, Resolver::new)
             );
 
     public static final TypedCodec<Resolver> TYPED_CODEC = new TypedCodec<>("resolver", KeyDispatchDataCodec.of(MAP_CODEC));
 
-    private static Resolver create(DensityFunction arg) {
-        return new Resolver(resolve(arg));
-    }
-
-    private static DensityFunction resolve(DensityFunction df) {
-        DensityFunction unwrapped = unwrapHolder(df);
-        return unwrapped.mapAll(Resolver::resolve);
-    }
+    private static final ConcurrentHashMap<Integer, DensityFunction> RESOLUTION_CACHE = new ConcurrentHashMap<>();
 
     private static DensityFunction unwrapHolder(DensityFunction df) {
         return df instanceof DensityFunctions.HolderHolder ?
-                unwrapHolder(df) :
+                ((DensityFunctions.HolderHolder) df).function().value() :
                 df;
     }
 
     @Override
     public double compute(FunctionContext pos) {
-        return arg.compute(pos);
+        return RESOLUTION_CACHE.get(arg.hashCode()).compute(pos);
     }
 
     @Override
@@ -46,9 +41,13 @@ public record Resolver(DensityFunction arg)
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(
-                new Resolver(arg.mapAll(visitor))
-        );
+        int argHash = arg.hashCode();
+        DensityFunction visited = RESOLUTION_CACHE.get(argHash);
+        if (visited == null) {
+            visited = visitor.apply(arg.mapAll(visitor)).mapAll(Resolver::unwrapHolder);
+            RESOLUTION_CACHE.put(argHash, visited);
+        }
+        return visited;
     }
 
     @Override
