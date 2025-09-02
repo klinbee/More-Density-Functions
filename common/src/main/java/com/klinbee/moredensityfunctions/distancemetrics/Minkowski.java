@@ -2,11 +2,12 @@ package com.klinbee.moredensityfunctions.distancemetrics;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record Minkowski(int p) implements DistanceMetric {
 
-    public static final Codec<DistanceMetric> CODEC = RecordCodecBuilder.create(instance ->
+    public static final MapCodec<DistanceMetric> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     Codec.INT.fieldOf("p").forGetter(m -> ((Minkowski) m).p)
             ).apply(instance, Minkowski::create)

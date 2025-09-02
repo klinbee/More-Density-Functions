@@ -2,13 +2,14 @@ package com.klinbee.moredensityfunctions.randomsamplers;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public sealed interface BinomialSampler
         extends RandomSampler {
 
-    Codec<BinomialSampler> CODEC =
-            RecordCodecBuilder.create((instance) ->
+    MapCodec<BinomialSampler> CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             Codec.intRange(0, 1_000_000).fieldOf("trials").forGetter(BinomialSampler::trials),
                             Codec.doubleRange(0.0D, 1.0D).fieldOf("probability").forGetter(BinomialSampler::probability)
