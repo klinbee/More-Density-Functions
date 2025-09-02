@@ -1,42 +1,30 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.mojang.serialization.Codec;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record Reciprocal(DensityFunction denominator,
-                         double minOutput,
-                         double maxOutput,
-                         DensityFunction errorArg)
+public record Reciprocal(DensityFunction denominator)
         implements DensityFunction {
 
     private static final MapCodec<Reciprocal> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Reciprocal::denominator),
-                            Codec.DOUBLE.fieldOf("min_output").forGetter(Reciprocal::minOutput),
-                            Codec.DOUBLE.fieldOf("max_output").forGetter(Reciprocal::maxOutput),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(Reciprocal::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(Reciprocal::denominator)
                     ).apply(instance, Reciprocal::new)
             );
 
-    public static final KeyDispatchDataCodec<Reciprocal> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public static final TypedCodec<Reciprocal> TYPED_CODEC = new TypedCodec<>("reciprocal", KeyDispatchDataCodec.of(MAP_CODEC));
 
-    public static final String NAME = "reciprocal";
+    private static double eval(double density) {
+        return 1.0D / density;
+    }
 
     @Override
     public double compute(FunctionContext pos) {
-        double denominatorValue = denominator.compute(pos);
-
-        if (denominatorValue == 0) {
-            return errorArg.compute(pos);
-        }
-
-        double result = 1.0D / denominatorValue;
-
-        return Math.max(Math.min(result, maxOutput), minOutput);
+        return eval(denominator.compute(pos));
     }
 
     @Override
@@ -48,26 +36,57 @@ public record Reciprocal(DensityFunction denominator,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Reciprocal(
-                        denominator.mapAll(visitor),
-                        minOutput,
-                        maxOutput,
-                        errorArg.mapAll(visitor)
+                        denominator.mapAll(visitor)
                 )
         );
     }
 
     @Override
     public double minValue() {
-        return Math.min(errorArg.minValue(), minOutput);
+        double asymptoteLocation = 0.0D;
+
+        // Lower bound is above `asymptoteLocation`, `minValue()` must be `eval(denomMax)`
+        double denomMin = denominator.minValue();
+        double denomMax = denominator.maxValue();
+
+        if (denomMin > asymptoteLocation) {
+            return eval(denomMax);
+        }
+
+        // Upper bound is below `asymptoteLocation`, `minValue()` must be `eval(denomMax)`
+
+        if (denomMax < asymptoteLocation) {
+            return eval(denomMax);
+        }
+
+        // Range includes `asymptoteLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(asymptoteLocation)`
+        return Double.NaN;
     }
 
     @Override
     public double maxValue() {
-        return Math.max(errorArg.maxValue(), maxOutput);
+        double asymptoteLocation = 0.0D;
+
+        // Lower bound is above `asymptoteLocation`, `maxValue()` must be `eval(denomMin)`
+        double denomMin = denominator.minValue();
+
+        if (denomMin > asymptoteLocation) {
+            return eval(denomMin);
+        }
+
+        // Upper bound is below `asymptoteLocation`, `maxValue()` must be `eval(denomMin)`
+        double denomMax = denominator.maxValue();
+
+        if (denomMax < asymptoteLocation) {
+            return eval(denomMin);
+        }
+
+        // Range includes `asymptoteLocation`, `maxValue()` cannot be guaranteed, but could be as high as `eval(asymptoteLocation)`
+        return Double.NaN;
     }
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

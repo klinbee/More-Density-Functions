@@ -1,24 +1,21 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 
 public record GeometricSampler(double probability,
                                double inverseLog1p)
         implements RandomSampler {
 
-    private static final MapCodec<GeometricSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
+    private static final Codec<GeometricSampler> CODEC = RecordCodecBuilder.create((instance) ->
             instance.group(
                     Codec.doubleRange(Double.MIN_NORMAL, 1.0D).fieldOf("probability").forGetter(GeometricSampler::probability)
             ).apply(instance, GeometricSampler::create)
     );
 
-    public static final KeyDispatchDataCodec<GeometricSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "geometric";
+    public static final AnonymousTypedCodec<GeometricSampler> ANON_CODEC = new AnonymousTypedCodec<>("geometric", CODEC);
 
     public static GeometricSampler create(double probability) {
         double inverseLog1p = 1.0D / StrictMath.log(1.0D - probability);
@@ -40,7 +37,8 @@ public record GeometricSampler(double probability,
         return Double.MAX_VALUE;
     }
 
-    public MapCodec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    @Override
+    public AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }

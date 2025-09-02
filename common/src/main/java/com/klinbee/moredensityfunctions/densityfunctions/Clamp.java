@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -21,9 +22,7 @@ public record Clamp(DensityFunction arg,
                     ).apply(instance, Clamp::create)
             );
 
-    public static final KeyDispatchDataCodec<Clamp> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "clamp";
+    public static final TypedCodec<Clamp> TYPED_CODEC = new TypedCodec<>("clamp", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static Clamp create(DensityFunction arg, double min, double max) {
         if (min > max) {
@@ -65,6 +64,6 @@ public record Clamp(DensityFunction arg,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

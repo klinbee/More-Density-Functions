@@ -1,16 +1,15 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.levelgen.DensityFunction;
-
-import java.util.Optional;
 
 public record ValueNoise(RandomSampler randomSampler,
                          int sizeX,
@@ -40,20 +39,18 @@ public record ValueNoise(RandomSampler randomSampler,
     private static final MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     RandomSampler.CODEC.fieldOf("sampler").forGetter(ValueNoise::randomSampler),
-                    MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("size_x").forGetter(ValueNoise::sizeX),
-                    MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
-                    MoreDensityFunctionsConstants.NON_NEGATIVE_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_x").forGetter(ValueNoise::sizeX),
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
                     Interpolation.CODEC.fieldOf("interpolation").forGetter(ValueNoise::interpolation),
-                    ExtraOctaves.CODEC.optionalFieldOf("extra_octaves", ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
-                    Codec.INT.optionalFieldOf("salt", 0).forGetter(ValueNoise::salt)
+                    ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse(ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
+                    Codec.INT.fieldOf("salt").orElse(0).forGetter(ValueNoise::salt)
             ).apply(instance, ValueNoise::new)
     );
 
-    public static final KeyDispatchDataCodec<ValueNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public static final TypedCodec<ValueNoise> TYPED_CODEC = new TypedCodec<>("value_noise", KeyDispatchDataCodec.of(MAP_CODEC));
 
-    public static final String NAME = "value_noise";
-
-    /// Interpolation CODEC
+    /// Interpolation codec
     public enum Interpolation implements StringRepresentable {
         NONE("none"),
         LERP("lerp"),
@@ -195,6 +192,6 @@ public record ValueNoise(RandomSampler randomSampler,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

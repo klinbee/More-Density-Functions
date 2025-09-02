@@ -19,13 +19,13 @@ package com.klinbee.moredensityfunctions.densityfunctions;//package com.klinbee.
 //) implements NoiseDensityFunction {
 //
 //    private static final MapCodec<WorleyNoise> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-//            RandomSampler.CODEC.fieldOf("sampler").forGetter(df -> df.interpolator().randomSampler()),
+//            RandomSampler.codec.fieldOf("sampler").forGetter(df -> df.interpolator().randomSampler()),
 //            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_x").forGetter(df -> df.interpolator().sizeX()),
 //            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_y").forGetter(df -> df.interpolator().sizeY()),
 //            MoreDensityFunctionsConstants.COORD_CODEC_INT.fieldOf("size_z").forGetter(df -> df.interpolator().sizeZ()),
-//            Interpolator.Type.CODEC.fieldOf("interpolation").forGetter(df -> df.interpolator().interpolation()),
+//            Interpolator.Type.codec.fieldOf("interpolation").forGetter(df -> df.interpolator().interpolation()),
 //            MoreDensityFunctionsConstants.COORD_CODEC_INT.optionalFieldOf("salt").forGetter(WorleyNoise::saltHolder),
-//            ExtraOctaves.CODEC.optionalFieldOf("extra_octaves").forGetter(WorleyNoise::extraOctavesHolder)
+//            ExtraOctaves.codec.optionalFieldOf("extra_octaves").forGetter(WorleyNoise::extraOctavesHolder)
 //    ).apply(instance, WorleyNoise::create));
 //
 //    /// Evaluates the noise based on the ValueNoise.Interpolator instance ///
@@ -151,14 +151,14 @@ package com.klinbee.moredensityfunctions.densityfunctions;//package com.klinbee.
 //        return visitor.apply(new WorleyNoise(interpolator, saltHolder, extraOctavesHolder, singleOctave, frequencies, amplitudes, minValue, maxValue));
 //    }
 //
-//    public static KeyDispatchDataCodec<WorleyNoise> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+//    public static KeyDispatchDataCodec<WorleyNoise> codec = KeyDispatchDataCodec.of(MAP_CODEC);
 //
 //    public static MapCodec<WorleyNoise> getMapCodec() {
 //        return MAP_CODEC;
 //    }
 //
 //    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-//        return CODEC;
+//        return codec;
 //    }
 //
 //    @Override

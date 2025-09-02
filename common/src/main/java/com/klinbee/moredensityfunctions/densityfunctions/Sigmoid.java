@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -15,9 +16,7 @@ public record Sigmoid(DensityFunction arg)
                     ).apply(instance, Sigmoid::new)
             );
 
-    public static final KeyDispatchDataCodec<Sigmoid> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "sigmoid";
+    public static final TypedCodec<Sigmoid> TYPED_CODEC = new TypedCodec<>("sigmoid", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return 1.0D / (1.0D + StrictMath.exp(-density));
@@ -52,6 +51,6 @@ public record Sigmoid(DensityFunction arg)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

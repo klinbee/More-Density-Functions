@@ -1,38 +1,29 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record IEEERemainder(DensityFunction numerator,
-                            DensityFunction denominator,
-                            DensityFunction errorArg)
+                            DensityFunction denominator)
         implements DensityFunction {
 
     private static final MapCodec<IEEERemainder> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(IEEERemainder::numerator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(IEEERemainder::denominator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(IEEERemainder::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(IEEERemainder::denominator)
                     ).apply(instance, IEEERemainder::new)
             );
 
-    public static final KeyDispatchDataCodec<IEEERemainder> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "ieee_rem";
+    public static final TypedCodec<IEEERemainder> TYPED_CODEC = new TypedCodec<>("ieee_rem", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
-        double numeratorValue = numerator.compute(pos);
-        double denominatorValue = denominator.compute(pos);
-
-        if (denominatorValue == 0.0D) {
-            return errorArg.compute(pos);
-        }
-
-        return StrictMath.IEEEremainder(numeratorValue, denominatorValue);
+        return StrictMath.IEEEremainder(numerator.compute(pos), denominator.compute(pos));
     }
 
     @Override
@@ -45,43 +36,32 @@ public record IEEERemainder(DensityFunction numerator,
         return visitor.apply(
                 new IEEERemainder(
                         numerator.mapAll(visitor),
-                        denominator.mapAll(visitor),
-                        errorArg.mapAll(visitor)
+                        denominator.mapAll(visitor)
                 )
         );
     }
 
+    // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
-        double errorMin = errorArg.minValue();
-
-        double denomMin = denominator.minValue();
-        double denomMax = denominator.maxValue();
-
-        // Most negative possible: -|y|/2 where |y| is maximized
-
-        double largestMagnitude = Math.max(Math.abs(denomMin), Math.abs(denomMax));
-
-        // Conservative: assume both error and mathematical minimum are possible
-        return Math.min(errorMin, -largestMagnitude / 2.0D);
+        // The sign is the same as the numerator, if negative, the minimum is the negative absolute maximum of the denominator's range
+        // Otherwise, it is simply 0
+        return (numerator.minValue() < 0) ?
+                -Mth.absMax(denominator.minValue(), denominator.maxValue()) :
+                0.0D;
     }
 
     @Override
     public double maxValue() {
-        double errorMax = errorArg.maxValue();
-
-        double denomMin = denominator.minValue();
-        double denomMax = denominator.maxValue();
-
-        // Most positive possible: |y|/2 where |y| is maximized
-        double largestMagnitude = Math.max(Math.abs(denomMin), Math.abs(denomMax));
-
-        // Conservative: assume both error and mathematical maximum are possible
-        return Math.max(errorMax, largestMagnitude / 2.0D);
+        // The sign is the same as the numerator, if positive, the maximum is the absolute maximum of the denominator's range
+        // Otherwise, it is simply 0
+        return (numerator.maxValue() > 0) ?
+                Mth.absMax(denominator.minValue(), denominator.maxValue()) :
+                0.0D;
     }
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

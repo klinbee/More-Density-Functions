@@ -1,42 +1,19 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
-import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodecRegistry;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-
-import java.util.function.Function;
 
 public interface RandomSampler {
 
-    @SuppressWarnings("unchecked")
-    Codec<RandomSampler> CODEC = Codec.lazyInitialized(() -> {
-        var randomSamplerRegistry = BuiltInRegistries.REGISTRY.get(MoreDensityFunctionsConstants.RANDOM_SAMPLER_TYPE.location());
-        if (randomSamplerRegistry == null) {
-            throw new NullPointerException("RandomSampler registry does not exist yet!");
-        }
-        return ((Registry<MapCodec<? extends RandomSampler>>) randomSamplerRegistry).byNameCodec();
-    }).dispatch(RandomSampler::codec, Function.identity());
+    AnonymousTypedCodecRegistry<RandomSampler> REGISTRY =
+            new AnonymousTypedCodecRegistry<>("RandomSampler");
 
-    MapCodec<? extends RandomSampler> codec();
+    Codec<RandomSampler> CODEC = REGISTRY.createDispatchCodec(
+            randomSampler -> randomSampler.anonCodec().type()
+    );
 
-    /// World Seed Storage
-
-    /**
-     * <p>Holds the WorldSeed
-     * <p>Its kind of safe? I did test, and the {@code ChunkMapMixin} goes off everytime
-     * a world is joined, so the {@code worldSeed} <i>should</i> always be set to the world you join.
-     */
-    class WorldSeedHolder {
-        static volatile long worldSeed;
-
-        public static void setWorldSeed(long seed) {
-            worldSeed = seed;
-        }
-    }
-
-    /// Core Methods
+    AnonymousTypedCodec<? extends RandomSampler> anonCodec();
 
     /**
      * Samples a value from the Sampler's distribution using the given already hashedSeed.
@@ -51,6 +28,19 @@ public interface RandomSampler {
     double maxValue();
 
     /// Seed Randomization
+
+    /**
+     * <p>Holds the WorldSeed
+     * <p>Its kind of safe? I did test, and the {@code ChunkMapMixin} goes off everytime
+     * a world is joined, so the {@code worldSeed} <i>should</i> always be set to the world you join.
+     */
+    class WorldSeedHolder {
+        static volatile long worldSeed;
+
+        public static void setWorldSeed(long seed) {
+            worldSeed = seed;
+        }
+    }
 
     /**
      * <p>Wicked Salted 3D Positional Hashing Function
@@ -71,10 +61,10 @@ public interface RandomSampler {
      * <p>PLEASE let me know if this results in issues. I am not a number theory expert, just a nerd that likes programming and math.
      * Thank you!
      *
-     * @param x         The x cell value input
-     * @param y         The y cell value input
-     * @param z         The z cell value input
-     * @param salt      Randomization factor for different noises, defined by YOU, the user
+     * @param x    The x cell value input
+     * @param y    The y cell value input
+     * @param z    The z cell value input
+     * @param salt Randomization factor for different noises, defined by YOU, the user
      * @return The long seed value for the input position
      */
     static long hashPosition(int x, int y, int z, int salt) {

@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -16,9 +17,7 @@ public record Floor(DensityFunction arg)
                     ).apply(instance, Floor::new)
             );
 
-    public static final KeyDispatchDataCodec<Floor> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "floor";
+    public static final TypedCodec<Floor> TYPED_CODEC = new TypedCodec<>("floor", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return Mth.floor(density);
@@ -51,6 +50,6 @@ public record Floor(DensityFunction arg)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

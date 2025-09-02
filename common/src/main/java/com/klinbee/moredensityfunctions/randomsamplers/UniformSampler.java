@@ -1,25 +1,22 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 
 public record UniformSampler(double min,
                              double max,
                              double range)
         implements RandomSampler {
 
-    private static final MapCodec<UniformSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
+    private static final Codec<UniformSampler> CODEC = RecordCodecBuilder.create((instance) ->
             instance.group(
                     Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min").forGetter(UniformSampler::min),
                     Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max").forGetter(UniformSampler::max)
             ).apply(instance, UniformSampler::create)
     );
 
-    public static final KeyDispatchDataCodec<UniformSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "uniform";
+    public static final AnonymousTypedCodec<UniformSampler> ANON_CODEC = new AnonymousTypedCodec<>("uniform", CODEC);
 
     public static UniformSampler create(double min, double max) {
         if (min > max) {
@@ -42,7 +39,8 @@ public record UniformSampler(double min,
         return max;
     }
 
-    public MapCodec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    @Override
+    public AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }

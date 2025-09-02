@@ -1,24 +1,21 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 
 public sealed interface GammaSampler
         extends RandomSampler {
 
-    MapCodec<GammaSampler> MAP_CODEC =
-            RecordCodecBuilder.mapCodec((instance) ->
+    Codec<GammaSampler> CODEC =
+            RecordCodecBuilder.create((instance) ->
                     instance.group(
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("shape").forGetter(GammaSampler::shape),
                             Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("scale").forGetter(GammaSampler::scale)
                     ).apply(instance, GammaSampler::create)
             );
 
-    KeyDispatchDataCodec<GammaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    String NAME = "gamma";
+    AnonymousTypedCodec<GammaSampler> ANON_CODEC = new AnonymousTypedCodec<>("gamma", CODEC);
 
     double shape();
 
@@ -105,7 +102,8 @@ public sealed interface GammaSampler
         return Double.MAX_VALUE;
     }
 
-    default MapCodec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    @Override
+    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }

@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -24,9 +25,7 @@ public record XClampedGradient(int fromX,
                     ).apply(instance, XClampedGradient::new)
             );
 
-    public static final KeyDispatchDataCodec<XClampedGradient> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "x_clamped_gradient";
+    public static final TypedCodec<XClampedGradient> TYPED_CODEC = new TypedCodec<>("x_clamped_gradient", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -62,6 +61,6 @@ public record XClampedGradient(int fromX,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }
