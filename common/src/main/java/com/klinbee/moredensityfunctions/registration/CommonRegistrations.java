@@ -65,7 +65,6 @@ public class CommonRegistrations {
         /// DistanceMetrics
         DistanceMetric.REGISTRY.register(Chebyshev.ANON_CODEC);
         DistanceMetric.REGISTRY.register(Euclidean.ANON_CODEC);
-        DistanceMetric.REGISTRY.register(Linear.ANON_CODEC);
         DistanceMetric.REGISTRY.register(Manhattan.ANON_CODEC);
         DistanceMetric.REGISTRY.register(Minkowski.ANON_CODEC);
 
