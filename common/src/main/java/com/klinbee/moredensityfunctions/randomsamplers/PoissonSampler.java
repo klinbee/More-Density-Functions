@@ -2,13 +2,14 @@ package com.klinbee.moredensityfunctions.randomsamplers;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public sealed interface PoissonSampler
         extends RandomSampler {
 
-    Codec<PoissonSampler> CODEC =
-            RecordCodecBuilder.create((instance) ->
+    MapCodec<PoissonSampler> CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("lambda").forGetter(PoissonSampler::lambda)
                     ).apply(instance, PoissonSampler::create)

@@ -2,6 +2,7 @@ package com.klinbee.moredensityfunctions.randomsamplers;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record UniformSampler(double min,
@@ -9,7 +10,7 @@ public record UniformSampler(double min,
                              double range)
         implements RandomSampler {
 
-    private static final Codec<UniformSampler> CODEC = RecordCodecBuilder.create((instance) ->
+    private static final MapCodec<UniformSampler> CODEC = RecordCodecBuilder.mapCodec((instance) ->
             instance.group(
                     Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("min").forGetter(UniformSampler::min),
                     Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("max").forGetter(UniformSampler::max)

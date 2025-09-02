@@ -1,6 +1,6 @@
 package com.klinbee.moredensityfunctions.registration;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
-public record AnonymousTypedCodec<T>(String type, Codec<T> codec) {
+public record AnonymousTypedCodec<T>(String type, MapCodec<T> codec) {
 }

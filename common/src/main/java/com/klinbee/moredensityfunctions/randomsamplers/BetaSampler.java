@@ -2,6 +2,7 @@ package com.klinbee.moredensityfunctions.randomsamplers;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record BetaSampler(double alpha,
@@ -10,8 +11,8 @@ public record BetaSampler(double alpha,
                           GammaSampler betaGen)
         implements RandomSampler {
 
-    private static final Codec<BetaSampler> CODEC =
-            RecordCodecBuilder.create((instance) ->
+    private static final MapCodec<BetaSampler> CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("alpha").forGetter(BetaSampler::alpha),
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("beta").forGetter(BetaSampler::beta)

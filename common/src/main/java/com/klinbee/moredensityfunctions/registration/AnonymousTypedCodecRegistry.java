@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.registration;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,7 +9,7 @@ import java.util.function.Function;
 
 public class AnonymousTypedCodecRegistry<T> {
 
-    private final Map<String, Codec<? extends T>> registry = new ConcurrentHashMap<>();
+    private final Map<String, MapCodec<? extends T>> registry = new ConcurrentHashMap<>();
     private final String registryType;
 
     public AnonymousTypedCodecRegistry(String registryType) {
@@ -24,8 +25,8 @@ public class AnonymousTypedCodecRegistry<T> {
         registry.put(type, anonCodec.codec());
     }
 
-    public Codec<? extends T> getCodec(String type) {
-        Codec<? extends T> codec = registry.get(type);
+    public MapCodec<? extends T> getCodec(String type) {
+        MapCodec<? extends T> codec = registry.get(type);
         if (codec == null) {
             throw new IllegalArgumentException("Unknown " + registryType + " type: " + type);
         }

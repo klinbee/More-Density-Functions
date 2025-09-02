@@ -2,10 +2,11 @@ package com.klinbee.moredensityfunctions.distancemetrics;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 public record Chebyshev() implements DistanceMetric {
 
-    public static final Codec<Chebyshev> CODEC = Codec.unit(new Chebyshev());
+    public static final MapCodec<Chebyshev> CODEC = MapCodec.unit(new Chebyshev());
 
     public static final AnonymousTypedCodec<Chebyshev> ANON_CODEC = new AnonymousTypedCodec<>("chebyshev", CODEC);
 

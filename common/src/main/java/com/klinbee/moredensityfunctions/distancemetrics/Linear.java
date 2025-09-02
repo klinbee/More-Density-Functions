@@ -2,13 +2,14 @@ package com.klinbee.moredensityfunctions.distancemetrics;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 /**
  * The Contract for this record is that it will never be used for arrays of size > 1
  */
 public record Linear() implements DistanceMetric {
 
-    public static final Codec<Linear> CODEC = Codec.unit(new Linear());
+    public static final MapCodec<Linear> CODEC = MapCodec.unit(new Linear());
 
     public static final AnonymousTypedCodec<Linear> ANON_CODEC = new AnonymousTypedCodec<>("linear", CODEC);
 
