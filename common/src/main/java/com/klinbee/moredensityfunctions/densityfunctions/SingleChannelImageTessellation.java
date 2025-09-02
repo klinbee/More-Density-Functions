@@ -20,8 +20,8 @@ public record SingleChannelImageTessellation(int xSize,
 
     private static final MapCodec<SingleChannelImageTessellation> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    Codec.INT.fieldOf("x_size").forGetter(SingleChannelImageTessellation::xSize),
-                    Codec.INT.fieldOf("z_size").forGetter(SingleChannelImageTessellation::zSize),
+                    ExtraCodecs.POSITIVE_INT.fieldOf("x_size").forGetter(SingleChannelImageTessellation::xSize),
+                    ExtraCodecs.POSITIVE_INT.fieldOf("z_size").forGetter(SingleChannelImageTessellation::zSize),
                     ExtraCodecs.BASE64_STRING.fieldOf("deflated_frame_data").forGetter(SingleChannelImageTessellation::inflatedFrameData)
             ).apply(instance, SingleChannelImageTessellation::create)
     );

@@ -20,8 +20,8 @@ public record GappedGridSquareSpiral(int xSize,
 
     private static final MapCodec<GappedGridSquareSpiral> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    Codec.INT.fieldOf("x_size").forGetter(GappedGridSquareSpiral::xSize),
-                    Codec.INT.fieldOf("z_size").forGetter(GappedGridSquareSpiral::zSize),
+                    ExtraCodecs.POSITIVE_INT.fieldOf("x_size").forGetter(GappedGridSquareSpiral::xSize),
+                    ExtraCodecs.POSITIVE_INT.fieldOf("z_size").forGetter(GappedGridSquareSpiral::zSize),
                     ExtraCodecs.POSITIVE_INT.fieldOf("spacing").orElse(1).forGetter(GappedGridSquareSpiral::spacing),
                     DENSITY_FUNCTION_ARRAY_CODEC.fieldOf("grid_cell_args").forGetter(GappedGridSquareSpiral::gridCellArgs),
                     DensityFunction.HOLDER_HELPER_CODEC.fieldOf("out_of_bounds_argument").orElse(DensityFunctions.constant(-1)).forGetter(GappedGridSquareSpiral::oobArg)
