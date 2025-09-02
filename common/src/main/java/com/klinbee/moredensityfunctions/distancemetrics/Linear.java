@@ -5,13 +5,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
 /**
- * The Contract for this record is that it will never be used for arrays of size > 1
+ * The Contract for this record is that it should never be used for arrays of size > 1
  */
 public record Linear() implements DistanceMetric {
-
-    public static final MapCodec<Linear> CODEC = MapCodec.unit(new Linear());
-
-    public static final AnonymousTypedCodec<Linear> ANON_CODEC = new AnonymousTypedCodec<>("linear", CODEC);
 
     @Override
     public double distance(double[] point1, double[] point2) {
@@ -30,6 +26,6 @@ public record Linear() implements DistanceMetric {
 
     @Override
     public AnonymousTypedCodec<? extends DistanceMetric> anonCodec() {
-        return ANON_CODEC;
+        throw new UnsupportedOperationException("More Density Functions: attempting to make linear distance metric via CODEC");
     }
 }
