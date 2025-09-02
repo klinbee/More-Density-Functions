@@ -37,7 +37,7 @@ public class AnonymousTypedCodecRegistry<T> {
         return Codec.STRING.dispatch(
                 "type",
                 typeGetter,
-                this::getCodec
+                type -> getCodec(type).codec()
         );
     }
 
