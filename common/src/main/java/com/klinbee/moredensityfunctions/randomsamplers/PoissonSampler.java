@@ -1,23 +1,20 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 
 public sealed interface PoissonSampler
         extends RandomSampler {
 
-    MapCodec<PoissonSampler> MAP_CODEC =
-            RecordCodecBuilder.mapCodec((instance) ->
+    Codec<PoissonSampler> CODEC =
+            RecordCodecBuilder.create((instance) ->
                     instance.group(
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("lambda").forGetter(PoissonSampler::lambda)
                     ).apply(instance, PoissonSampler::create)
             );
 
-    KeyDispatchDataCodec<PoissonSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    String NAME = "poisson";
+    AnonymousTypedCodec<PoissonSampler> ANON_CODEC = new AnonymousTypedCodec<>("poisson", CODEC);
 
     static PoissonSampler create(double lambda) {
         if (lambda < 30.0D) {
@@ -66,7 +63,8 @@ public sealed interface PoissonSampler
         return Double.MAX_VALUE;
     }
 
-    default MapCodec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    @Override
+    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }

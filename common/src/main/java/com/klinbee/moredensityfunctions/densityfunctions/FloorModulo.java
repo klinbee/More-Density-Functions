@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -7,34 +8,27 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record FloorModulo(DensityFunction numerator,
-                          DensityFunction denominator,
-                          DensityFunction errorArg)
+                          DensityFunction denominator)
         implements DensityFunction {
 
     private static final MapCodec<FloorModulo> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("numerator").forGetter(FloorModulo::numerator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorModulo::denominator),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(FloorModulo::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("denominator").forGetter(FloorModulo::denominator)
                     ).apply(instance, FloorModulo::new)
             );
 
-    public static final KeyDispatchDataCodec<FloorModulo> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+    public static final TypedCodec<FloorModulo> TYPED_CODEC = new TypedCodec<>("floor_mod", KeyDispatchDataCodec.of(MAP_CODEC));
 
-
-    public static final String NAME = "floor_mod";
+    private static double eval(double numerator, double denominator) {
+        // Similar to `StrictMath.floorMod()` but for doubles, doesn't throw errors
+        return Mth.floor((numerator % denominator + denominator) % denominator);
+    }
 
     @Override
     public double compute(FunctionContext pos) {
-        int numeratorValue = Mth.floor(numerator.compute(pos));
-        int denominatorValue = Mth.floor(denominator.compute(pos));
-
-        if (denominatorValue == 0) {
-            return errorArg.compute(pos);
-        }
-
-        return StrictMath.floorMod(numeratorValue, denominatorValue);
+        return eval(numerator.compute(pos), denominator.compute(pos));
     }
 
     @Override
@@ -47,42 +41,26 @@ public record FloorModulo(DensityFunction numerator,
         return visitor.apply(
                 new FloorModulo(
                         numerator.mapAll(visitor),
-                        denominator.mapAll(visitor),
-                        errorArg.mapAll(visitor)
+                        denominator.mapAll(visitor)
                 )
         );
     }
 
+    // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
-        double minError = errorArg.minValue();
-        double minDenom = denominator.minValue();
-
-        if (Mth.floor(minDenom) < 0) {
-            // Worst case for negative: floorMod returns floor(minDenom) + 1
-            return Math.min(minError, Mth.floor(minDenom) + 1);
-        } else {
-            // Worst case for positive: floorMod returns 0
-            return Math.min(minError, 0);
-        }
+        // If it is positive, the min is 0, if negative, the min is the denominator
+        return StrictMath.min(0.0D, Mth.floor(Math.nextUp(denominator.minValue())));
     }
 
     @Override
     public double maxValue() {
-        double maxError = errorArg.maxValue();
-        double maxDenom = denominator.maxValue();
-
-        if (Mth.floor(maxDenom) > 0) {
-            // Worst case for negative: floorMod returns floor(maxDenom)  - 1
-            return Math.max(maxError, Mth.floor(maxDenom) - 1);
-        } else {
-            // Worst case for positive: floorMod returns 0
-            return Math.max(maxError, 0);
-        }
+        // If it is positive, then the max is the denominator, if negative, the max is 0
+        return StrictMath.max(0.0D, Mth.floor(Math.nextDown(denominator.maxValue())));
     }
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

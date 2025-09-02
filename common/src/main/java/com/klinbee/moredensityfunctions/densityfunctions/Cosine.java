@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -15,9 +16,7 @@ public record Cosine(DensityFunction arg)
                     ).apply(instance, Cosine::new)
             );
 
-    public static final KeyDispatchDataCodec<Cosine> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "cos";
+    public static final TypedCodec<Cosine> TYPED_CODEC = new TypedCodec<>("cos", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return StrictMath.cos(density);
@@ -40,6 +39,7 @@ public record Cosine(DensityFunction arg)
         );
     }
 
+    // Due to periodic nature, I'm using global min/max
     @Override
     public double minValue() {
         return -1;
@@ -52,6 +52,6 @@ public record Cosine(DensityFunction arg)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

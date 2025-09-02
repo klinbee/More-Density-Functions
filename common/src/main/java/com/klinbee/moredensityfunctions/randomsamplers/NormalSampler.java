@@ -1,24 +1,21 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 
 public record NormalSampler(double mean,
                             double stdDev)
         implements RandomSampler {
 
-    private static final MapCodec<NormalSampler> MAP_CODEC = RecordCodecBuilder.mapCodec((instance) ->
+    private static final Codec<NormalSampler> CODEC = RecordCodecBuilder.create((instance) ->
             instance.group(
                     Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("mean").forGetter(NormalSampler::mean),
                     Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("std_dev").forGetter(NormalSampler::stdDev)
             ).apply(instance, NormalSampler::create)
     );
 
-    public static final KeyDispatchDataCodec<NormalSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "normal";
+    public static final AnonymousTypedCodec<NormalSampler> ANON_CODEC = new AnonymousTypedCodec<>("normal", CODEC);
 
     public static NormalSampler create(double mean, double stdDev) {
         return new NormalSampler(mean, stdDev);
@@ -39,7 +36,8 @@ public record NormalSampler(double mean,
         return Double.MAX_VALUE;
     }
 
-    public MapCodec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    @Override
+    public AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }

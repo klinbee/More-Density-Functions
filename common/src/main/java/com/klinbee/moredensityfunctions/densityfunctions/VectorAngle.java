@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -17,9 +18,7 @@ public record VectorAngle(DensityFunction arg1,
                     ).apply(instance, VectorAngle::new)
             );
 
-    public static final KeyDispatchDataCodec<VectorAngle> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "vector_angle";
+    public static final TypedCodec<VectorAngle> TYPED_CODEC = new TypedCodec<>("vector_angle", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -53,6 +52,6 @@ public record VectorAngle(DensityFunction arg1,
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

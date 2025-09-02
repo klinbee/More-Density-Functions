@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -10,9 +11,7 @@ public record ZPos()
 
     private static final MapCodec<ZPos> MAP_CODEC = MapCodec.unit(new ZPos());
 
-    public static final KeyDispatchDataCodec<ZPos> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "z";
+    public static final TypedCodec<ZPos> TYPED_CODEC = new TypedCodec<>("z", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -33,16 +32,16 @@ public record ZPos()
 
     @Override
     public double minValue() {
-        return MoreDensityFunctionsConstants.MIN_COORD_DOUBLE;
+        return MoreDensityFunctionsConstants.XZ_MIN_DOUBLE;
     }
 
     @Override
     public double maxValue() {
-        return MoreDensityFunctionsConstants.MAX_COORD_DOUBLE;
+        return MoreDensityFunctionsConstants.XZ_MAX_DOUBLE;
     }
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

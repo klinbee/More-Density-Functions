@@ -1,9 +1,8 @@
 package com.klinbee.moredensityfunctions.randomsamplers;
 
+import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.KeyDispatchDataCodec;
 
 public record BetaSampler(double alpha,
                           double beta,
@@ -11,17 +10,15 @@ public record BetaSampler(double alpha,
                           GammaSampler betaGen)
         implements RandomSampler {
 
-    private static final MapCodec<BetaSampler> MAP_CODEC =
-            RecordCodecBuilder.mapCodec((instance) ->
+    private static final Codec<BetaSampler> CODEC =
+            RecordCodecBuilder.create((instance) ->
                     instance.group(
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("alpha").forGetter(BetaSampler::alpha),
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("beta").forGetter(BetaSampler::beta)
                     ).apply(instance, BetaSampler::create)
             );
 
-    public static KeyDispatchDataCodec<BetaSampler> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "beta";
+    public static final AnonymousTypedCodec<BetaSampler> ANON_CODEC = new AnonymousTypedCodec<>("beta", CODEC);
 
     public static BetaSampler create(double alpha, double beta) {
         return new BetaSampler(alpha, beta, GammaSampler.create(alpha, 1.0D), GammaSampler.create(beta, 1.0D));
@@ -42,7 +39,8 @@ public record BetaSampler(double alpha,
         return 1.0D;
     }
 
-    public MapCodec<? extends RandomSampler> codec() {
-        return CODEC.codec();
+    @Override
+    public AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 }

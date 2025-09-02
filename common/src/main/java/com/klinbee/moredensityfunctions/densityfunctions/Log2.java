@@ -1,45 +1,30 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
-import com.mojang.serialization.Codec;
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record Log2(DensityFunction arg,
-                   double minOutput,
-                   double maxOutput,
-                   DensityFunction errorArg)
+public record Log2(DensityFunction arg)
         implements DensityFunction {
 
     private static final MapCodec<Log2> MAP_CODEC =
             RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Log2::arg),
-                            Codec.DOUBLE.fieldOf("min_output").forGetter(Log2::minOutput),
-                            Codec.DOUBLE.fieldOf("max_output").forGetter(Log2::maxOutput),
-                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("error_argument").forGetter(Log2::errorArg)
+                            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(Log2::arg)
                     ).apply(instance, Log2::new)
             );
-    public static final KeyDispatchDataCodec<Log2> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
-    public static final String NAME = "log2";
-
-    @Override
-    public double compute(FunctionContext pos) {
-        double argValue = arg.compute(pos);
-
-        if (argValue <= 0.0D) {
-            return errorArg.compute(pos);
-        }
-
-        double result = eval(argValue);
-
-        return Math.max(Math.min(result, maxOutput), minOutput);
-    }
+    public static final TypedCodec<Log2> TYPED_CODEC = new TypedCodec<>("log2", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return StrictMath.log(density) * 1.4426950408889634D; // 1/ln(2);
+    }
+
+    @Override
+    public double compute(FunctionContext pos) {
+        return eval(arg.compute(pos));
     }
 
     @Override
@@ -51,26 +36,41 @@ public record Log2(DensityFunction arg,
     public DensityFunction mapAll(Visitor visitor) {
         return visitor.apply(
                 new Log2(
-                        arg.mapAll(visitor),
-                        minOutput,
-                        maxOutput,
-                        errorArg.mapAll(visitor)
+                        arg.mapAll(visitor)
                 )
         );
     }
 
     @Override
     public double minValue() {
-        return arg.minValue() <= 0 ? errorArg.minValue() : eval(arg.minValue());
+        double asymptoteLocation = 0.0D;
+
+        // Lower bound is above `asymptoteLocation`, `minValue()` must be `eval(argMin)`
+        double argMin = arg.minValue();
+
+        if (argMin > asymptoteLocation) {
+            return eval(argMin);
+        }
+
+        // Upper bound is below `asymptoteLocation`, `minValue()` must be `NaN`
+        double argMax = arg.maxValue();
+
+        if (argMax < asymptoteLocation) {
+            return Double.NaN;
+        }
+
+        // Range includes `asymptoteLocation`, `minValue()` cannot be guaranteed, but could be as low as `eval(asymptoteLocation)`
+        return Double.NEGATIVE_INFINITY;
     }
 
     @Override
     public double maxValue() {
-        return arg.maxValue() <= 0 ? errorArg.maxValue() : eval(arg.maxValue());
+        // Unlike `minValue()`, `maxValue()` can never be a result of `arg.minValue()`
+        return eval(arg.maxValue());
     }
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

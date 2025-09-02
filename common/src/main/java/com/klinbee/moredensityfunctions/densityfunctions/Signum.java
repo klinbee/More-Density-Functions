@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -15,9 +16,7 @@ public record Signum(DensityFunction arg)
                     ).apply(instance, Signum::new)
             );
 
-    public static final KeyDispatchDataCodec<Signum> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "signum";
+    public static final TypedCodec<Signum> TYPED_CODEC = new TypedCodec<>("signum", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
         return StrictMath.signum(density);
@@ -52,6 +51,6 @@ public record Signum(DensityFunction arg)
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }

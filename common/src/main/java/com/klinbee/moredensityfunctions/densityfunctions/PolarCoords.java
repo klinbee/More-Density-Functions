@@ -1,5 +1,6 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
+import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -9,9 +10,7 @@ public record PolarCoords()
 
     private static final MapCodec<PolarCoords> MAP_CODEC = MapCodec.unit(new PolarCoords());
 
-    public static final KeyDispatchDataCodec<PolarCoords> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
-
-    public static final String NAME = "polar_coords";
+    public static final TypedCodec<PolarCoords> TYPED_CODEC = new TypedCodec<>("polar_coords", KeyDispatchDataCodec.of(MAP_CODEC));
 
     @Override
     public double compute(FunctionContext pos) {
@@ -42,6 +41,6 @@ public record PolarCoords()
 
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
-        return CODEC;
+        return TYPED_CODEC.codec();
     }
 }
