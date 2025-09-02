@@ -13,7 +13,6 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, ArcCosine.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, ArcSine.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, ArcTangent.TYPED_CODEC);
-        registrar.register(DENSITY_FUNCTION, Cache.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Ceil.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Clamp.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, Cosine.TYPED_CODEC);
