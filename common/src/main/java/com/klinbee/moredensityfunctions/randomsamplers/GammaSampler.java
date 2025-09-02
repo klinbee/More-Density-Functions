@@ -2,13 +2,14 @@ package com.klinbee.moredensityfunctions.randomsamplers;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public sealed interface GammaSampler
         extends RandomSampler {
 
-    Codec<GammaSampler> CODEC =
-            RecordCodecBuilder.create((instance) ->
+    MapCodec<GammaSampler> CODEC =
+            RecordCodecBuilder.mapCodec((instance) ->
                     instance.group(
                             Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("shape").forGetter(GammaSampler::shape),
                             Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("scale").forGetter(GammaSampler::scale)

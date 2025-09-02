@@ -2,6 +2,7 @@ package com.klinbee.moredensityfunctions.randomsamplers;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 
@@ -9,7 +10,7 @@ public record GeometricSampler(double probability,
                                double inverseLog1p)
         implements RandomSampler {
 
-    private static final Codec<GeometricSampler> CODEC = RecordCodecBuilder.create((instance) ->
+    private static final MapCodec<GeometricSampler> CODEC = RecordCodecBuilder.mapCodec((instance) ->
             instance.group(
                     Codec.doubleRange(Double.MIN_NORMAL, 1.0D).fieldOf("probability").forGetter(GeometricSampler::probability)
             ).apply(instance, GeometricSampler::create)

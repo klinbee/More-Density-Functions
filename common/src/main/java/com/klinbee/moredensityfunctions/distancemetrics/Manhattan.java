@@ -2,10 +2,11 @@ package com.klinbee.moredensityfunctions.distancemetrics;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 public record Manhattan() implements DistanceMetric {
 
-    public static final Codec<Manhattan> CODEC = Codec.unit(new Manhattan());
+    public static final MapCodec<Manhattan> CODEC = MapCodec.unit(new Manhattan());
 
     public static final AnonymousTypedCodec<Manhattan> ANON_CODEC = new AnonymousTypedCodec<>("manhattan", CODEC);
 

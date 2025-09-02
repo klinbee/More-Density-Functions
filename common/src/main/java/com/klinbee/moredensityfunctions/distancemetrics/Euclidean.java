@@ -2,10 +2,11 @@ package com.klinbee.moredensityfunctions.distancemetrics;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 public record Euclidean() implements DistanceMetric {
 
-    public static final Codec<Euclidean> CODEC = Codec.unit(new Euclidean());
+    public static final MapCodec<Euclidean> CODEC = MapCodec.unit(new Euclidean());
 
     public static final AnonymousTypedCodec<Euclidean> ANON_CODEC = new AnonymousTypedCodec<>("euclidean", CODEC);
 

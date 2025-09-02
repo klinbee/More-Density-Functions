@@ -2,13 +2,14 @@ package com.klinbee.moredensityfunctions.randomsamplers;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record NormalSampler(double mean,
                             double stdDev)
         implements RandomSampler {
 
-    private static final Codec<NormalSampler> CODEC = RecordCodecBuilder.create((instance) ->
+    private static final MapCodec<NormalSampler> CODEC = RecordCodecBuilder.mapCodec((instance) ->
             instance.group(
                     Codec.doubleRange(-Double.MAX_VALUE, Double.MAX_VALUE).fieldOf("mean").forGetter(NormalSampler::mean),
                     Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).fieldOf("std_dev").forGetter(NormalSampler::stdDev)
