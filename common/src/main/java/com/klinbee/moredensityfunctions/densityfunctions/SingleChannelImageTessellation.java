@@ -47,7 +47,8 @@ public record SingleChannelImageTessellation(int xSize,
         int z = pos.blockZ();
         int arrayPos = StrictMath.floorMod(x, xSize) + StrictMath.floorMod(z, zSize) * xSize;
 
-        return inflatedFrameData[arrayPos];
+        // Conversion from signed 8-bit int (what `byte` is in java) to an unsigned 8-bit int
+        return inflatedFrameData[arrayPos] & 0xFF;
     }
 
     @Override
