@@ -1,10 +1,10 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record FloorDivide(DensityFunction numerator,
@@ -22,7 +22,7 @@ public record FloorDivide(DensityFunction numerator,
     public static final TypedCodec<FloorDivide> TYPED_CODEC = new TypedCodec<>("floor_div", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double numerator, double denominator) {
-        return Mth.floor(numerator / denominator);
+        return MDFMath.floorDiv(numerator, denominator);
     }
 
     @Override

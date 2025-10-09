@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -14,7 +15,7 @@ public record PolarCoords()
 
     @Override
     public double compute(FunctionContext pos) {
-        return StrictMath.atan2(pos.blockX(), pos.blockZ());
+        return MDFMath.atan2(pos.blockX(), pos.blockZ());
     }
 
     @Override

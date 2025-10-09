@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -22,7 +23,7 @@ public record Power(DensityFunction base,
 
     @Override
     public double compute(FunctionContext pos) {
-        return StrictMath.pow(base.compute(pos), exponent.compute(pos));
+        return MDFMath.pow(base.compute(pos), exponent.compute(pos));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -19,7 +20,7 @@ public record HyperbolicSine(DensityFunction arg)
     public static final TypedCodec<HyperbolicSine> TYPED_CODEC = new TypedCodec<>("sinh", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
-        return StrictMath.sinh(density);
+        return MDFMath.hsin(density);
     }
 
     @Override

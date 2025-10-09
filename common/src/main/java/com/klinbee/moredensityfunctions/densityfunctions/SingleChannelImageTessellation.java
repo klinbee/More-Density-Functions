@@ -1,7 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
-import com.mojang.serialization.Codec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -43,9 +43,8 @@ public record SingleChannelImageTessellation(int xSize,
 
     @Override
     public double compute(FunctionContext pos) {
-        int x = pos.blockX();
-        int z = pos.blockZ();
-        int arrayPos = StrictMath.floorMod(x, xSize) + StrictMath.floorMod(z, zSize) * xSize;
+
+        int arrayPos = MDFMath.coordinateToIndex(pos.blockX(), xSize, pos.blockZ(), zSize);
 
         // Conversion from signed 8-bit int (what `byte` is in java) to an unsigned 8-bit int
         return inflatedFrameData[arrayPos] & 0xFF;
