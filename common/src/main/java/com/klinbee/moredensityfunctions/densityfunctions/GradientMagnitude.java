@@ -1,6 +1,8 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.BlockContext;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -35,9 +37,6 @@ public record GradientMagnitude(DensityFunction arg,
         return new GradientMagnitude(arg, stepX, stepY, stepZ);
     }
 
-    private record BlockContext(int blockX, int blockY, int blockZ) implements FunctionContext {
-    }
-
     @Override
     public double compute(FunctionContext pos) {
         int x = pos.blockX(), y = pos.blockY(), z = pos.blockZ();
@@ -45,32 +44,30 @@ public record GradientMagnitude(DensityFunction arg,
         double gradX = 0.0D, gradY = 0.0D, gradZ = 0.0D;
 
         if (stepX != 0) {
-            gradX = (arg.compute(new BlockContext(x + stepX, y, z)) -
-                    arg.compute(new BlockContext(x - stepX, y, z))) / (2.0D * stepX);
+            BlockContext posForwards = new BlockContext(x + stepX, y, z);
+            BlockContext posBackwards = new BlockContext(x - stepX, y, z);
+
+            gradX = MDFMath.centralDifference(arg.compute(posForwards),
+                    arg.compute(posBackwards), stepX);
         }
 
         if (stepY != 0) {
-            gradY = (arg.compute(new BlockContext(x, y + stepY, z)) -
-                    arg.compute(new BlockContext(x, y - stepY, z))) / (2.0D * stepY);
+            BlockContext posForwards = new BlockContext(x, y + stepY, z);
+            BlockContext posBackwards = new BlockContext(x, y - stepY, z);
+
+            gradY = MDFMath.centralDifference(arg.compute(posForwards),
+                    arg.compute(posBackwards), stepY);
         }
 
         if (stepZ != 0) {
-            gradZ = (arg.compute(new BlockContext(x, y, z + stepZ)) -
-                    arg.compute(new BlockContext(x, y, z - stepZ))) / (2.0D * stepZ);
+            BlockContext posForwards = new BlockContext(x, y, z + stepZ);
+            BlockContext posBackwards = new BlockContext(x, y, z - stepZ);
+
+            gradZ = MDFMath.centralDifference(arg.compute(posForwards),
+                    arg.compute(posBackwards), stepZ);
         }
 
-        // Single step case short-circuits
-        if (stepY == 0 && stepZ == 0) {
-            return StrictMath.abs(gradX);
-        }
-        if (stepX == 0 && stepZ == 0) {
-            return StrictMath.abs(gradY);
-        }
-        if (stepX == 0 && stepY == 0) {
-            return StrictMath.abs(gradZ);
-        }
-
-        return StrictMath.sqrt(gradX * gradX + gradY * gradY + gradZ * gradZ);
+        return MDFMath.euclideanDist3D(gradX, gradY, gradZ);
     }
 
     @Override
@@ -96,18 +93,18 @@ public record GradientMagnitude(DensityFunction arg,
         double minGradX = 0.0D, minGradY = 0.0D, minGradZ = 0.0D;
 
         if (stepX != 0) {
-            minGradX = (arg.minValue() -
-                    arg.maxValue()) / (2.0D * stepX);
+            minGradX = MDFMath.centralDifference(arg.minValue(),
+                    arg.maxValue(), stepX);
         }
 
         if (stepY != 0) {
-            minGradY = (arg.minValue() -
-                    arg.maxValue()) / (2.0D * stepY);
+            minGradY = MDFMath.centralDifference(arg.minValue(),
+                    arg.maxValue(), stepY);
         }
 
         if (stepZ != 0) {
-            minGradZ = (arg.minValue() -
-                    arg.maxValue()) / (2.0D * stepZ);
+            minGradZ = MDFMath.centralDifference(arg.minValue(),
+                    arg.maxValue(), stepZ);
         }
 
         return minGradX * minGradX + minGradY * minGradY + minGradZ * minGradZ;
@@ -119,18 +116,18 @@ public record GradientMagnitude(DensityFunction arg,
         double maxGradX = 0.0D, maxGradY = 0.0D, maxGradZ = 0.0D;
 
         if (stepX != 0) {
-            maxGradX = (arg.maxValue() -
-                    arg.minValue()) / (2.0D * stepX);
+            maxGradX = MDFMath.centralDifference(arg.maxValue(),
+                    arg.minValue(), stepX);
         }
 
         if (stepY != 0) {
-            maxGradY = (arg.maxValue() -
-                    arg.minValue()) / (2.0D * stepY);
+            maxGradY = MDFMath.centralDifference(arg.maxValue(),
+                    arg.minValue(), stepY);
         }
 
         if (stepZ != 0) {
-            maxGradZ = (arg.maxValue() -
-                    arg.minValue()) / (2.0D * stepZ);
+            maxGradZ = MDFMath.centralDifference(arg.maxValue(),
+                    arg.minValue(), stepZ);
         }
 
         return maxGradX * maxGradX + maxGradY * maxGradY + maxGradZ * maxGradZ;

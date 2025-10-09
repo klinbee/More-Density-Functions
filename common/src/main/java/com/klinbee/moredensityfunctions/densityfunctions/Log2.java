@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -19,7 +20,7 @@ public record Log2(DensityFunction arg)
     public static final TypedCodec<Log2> TYPED_CODEC = new TypedCodec<>("log2", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double density) {
-        return StrictMath.log(density) * 1.4426950408889634D; // 1/ln(2);
+        return MDFMath.log2(density);
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.ExtraOctaves;
+import com.klinbee.moredensityfunctions.util.Interpolation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -49,26 +51,6 @@ public record ValueNoise(RandomSampler randomSampler,
     );
 
     public static final TypedCodec<ValueNoise> TYPED_CODEC = new TypedCodec<>("value_noise", KeyDispatchDataCodec.of(MAP_CODEC));
-
-    /// Interpolation codec
-    public enum Interpolation implements StringRepresentable {
-        NONE("none"),
-        LERP("lerp"),
-        SMOOTHSTEP("smoothstep");
-
-        public static final Codec<Interpolation> CODEC = StringRepresentable.fromEnum(Interpolation::values);
-
-        private final String name;
-
-        Interpolation(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return name;
-        }
-    }
 
     @Override
     public double eval(int x, int y, int z) {

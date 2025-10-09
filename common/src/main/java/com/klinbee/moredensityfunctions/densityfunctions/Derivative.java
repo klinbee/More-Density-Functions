@@ -1,6 +1,8 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.BlockContext;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -49,9 +51,6 @@ public record Derivative(DensityFunction arg,
         static final DerivativeComponent NONE = new DerivativeComponent(0, DensityFunctions.constant(0));
     }
 
-    private record BlockContext(int blockX, int blockY, int blockZ) implements FunctionContext {
-    }
-
     @Override
     public double compute(FunctionContext pos) {
         int x = pos.blockX(), y = pos.blockY(), z = pos.blockZ();
@@ -60,35 +59,33 @@ public record Derivative(DensityFunction arg,
         double gradX = 0.0D, gradY = 0.0D, gradZ = 0.0D;
 
         if (componentX.step != 0) {
+            BlockContext posForwards = new BlockContext(x + componentX.step, y, z);
+            BlockContext posBackwards = new BlockContext(x - componentX.step, y, z);
+
             dirX = componentX.direction.compute(pos);
-            gradX = (arg.compute(new BlockContext(x + componentX.step, y, z)) -
-                    arg.compute(new BlockContext(x - componentX.step, y, z))) / (2.0D * componentX.step);
+            gradX = MDFMath.centralDifference(arg.compute(posForwards),
+                    arg.compute(posBackwards), componentX.step);
         }
 
         if (componentY.step != 0) {
+            BlockContext posForwards = new BlockContext(x, y + componentY.step, z);
+            BlockContext posBackwards = new BlockContext(x, y - componentY.step, z);
+
             dirY = componentY.direction.compute(pos);
-            gradY = (arg.compute(new BlockContext(x, y + componentY.step, z)) -
-                    arg.compute(new BlockContext(x, y - componentY.step, z))) / (2.0D * componentY.step);
+            gradY = MDFMath.centralDifference(arg.compute(posForwards),
+                    arg.compute(posBackwards), componentY.step);
         }
 
         if (componentZ.step != 0) {
+            BlockContext posForwards = new BlockContext(x, y, z + componentZ.step);
+            BlockContext posBackwards = new BlockContext(x, y, z - componentZ.step);
+
             dirZ = componentZ.direction.compute(pos);
-            gradZ = (arg.compute(new BlockContext(x, y, z + componentZ.step)) -
-                    arg.compute(new BlockContext(x, y, z - componentZ.step))) / (2.0D * componentZ.step);
+            gradZ = MDFMath.centralDifference(arg.compute(posForwards),
+                    arg.compute(posBackwards), componentZ.step);
         }
 
-        // Single component case short-circuits
-        if (componentY.step == 0 && componentZ.step == 0) {
-            return StrictMath.signum(dirX) * gradX;
-        }
-        if (componentX.step == 0 && componentZ.step == 0) {
-            return StrictMath.signum(dirY) * gradY;
-        }
-        if (componentX.step == 0 && componentY.step == 0) {
-            return StrictMath.signum(dirZ) * gradZ;
-        }
-
-        double magnitude = StrictMath.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+        double magnitude = MDFMath.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
         return magnitude == 0.0D ? 0.0D : (dirX * gradX + dirY * gradY + dirZ * gradZ) / magnitude;
     }
 

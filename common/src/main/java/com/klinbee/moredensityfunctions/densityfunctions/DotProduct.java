@@ -1,6 +1,8 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.BlockContext;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -38,9 +40,6 @@ public record DotProduct(DensityFunction arg1,
         return new DotProduct(arg1, arg2, stepX, stepY, stepZ);
     }
 
-    private record BlockContext(int blockX, int blockY, int blockZ) implements FunctionContext {
-    }
-
     @Override
     public double compute(FunctionContext pos) {
         int x = pos.blockX(), y = pos.blockY(), z = pos.blockZ();
@@ -52,33 +51,33 @@ public record DotProduct(DensityFunction arg1,
             BlockContext posForwards = new BlockContext(x + stepX, y, z);
             BlockContext posBackwards = new BlockContext(x - stepX, y, z);
 
-            gradX1 = (arg1.compute(posForwards) -
-                    arg1.compute(posBackwards)) / (2.0D * stepX);
+            gradX1 = MDFMath.centralDifference(arg1.compute(posForwards),
+                    arg1.compute(posBackwards), stepX);
 
-            gradX2 = (arg2.compute(posForwards) -
-                    arg2.compute(posBackwards)) / (2.0D * stepX);
+            gradX2 = MDFMath.centralDifference(arg2.compute(posForwards),
+                    arg2.compute(posBackwards), stepX);
         }
 
         if (stepY != 0) {
             BlockContext posForwards = new BlockContext(x, y + stepY, z);
             BlockContext posBackwards = new BlockContext(x, y - stepY, z);
 
-            gradY1 = (arg1.compute(posForwards) -
-                    arg1.compute(posBackwards)) / (2.0D * stepY);
+            gradY1 = MDFMath.centralDifference(arg1.compute(posForwards),
+                    arg1.compute(posBackwards), stepY);
 
-            gradY2 = (arg2.compute(posForwards) -
-                    arg2.compute(posBackwards)) / (2.0D * stepY);
+            gradY2 = MDFMath.centralDifference(arg2.compute(posForwards),
+                    arg2.compute(posBackwards), stepY);
         }
 
         if (stepZ != 0) {
             BlockContext posForwards = new BlockContext(x, y, z + stepZ);
             BlockContext posBackwards = new BlockContext(x, y, z - stepZ);
 
-            gradZ1 = (arg1.compute(posForwards) -
-                    arg1.compute(posBackwards)) / (2.0D * stepZ);
+            gradZ1 = MDFMath.centralDifference(arg1.compute(posForwards),
+                    arg1.compute(posBackwards), stepZ);
 
-            gradZ2 = (arg2.compute(posForwards) -
-                    arg2.compute(posBackwards)) / (2.0D * stepZ);
+            gradZ2 = MDFMath.centralDifference(arg2.compute(posForwards),
+                    arg2.compute(posBackwards), stepZ);
         }
 
         return gradX1 * gradX2 + gradY1 * gradY2 + gradZ1 * gradZ2;
@@ -109,27 +108,27 @@ public record DotProduct(DensityFunction arg1,
         double minGradX2 = 0.0D, minGradY2 = 0.0D, minGradZ2 = 0.0D;
 
         if (stepX != 0) {
-            minGradX1 = (arg1.minValue() -
-                    arg1.maxValue()) / (2.0D * stepX);
+            minGradX1 = MDFMath.centralDifference(arg1.minValue(),
+                    arg1.maxValue(), stepX);
 
-            minGradX2 = (arg2.minValue() -
-                    arg2.maxValue()) / (2.0D * stepX);
+            minGradX2 = MDFMath.centralDifference(arg2.minValue(),
+                    arg2.maxValue(), stepX);
         }
 
         if (stepY != 0) {
-            minGradY1 = (arg1.minValue() -
-                    arg1.maxValue()) / (2.0D * stepY);
+            minGradY1 = MDFMath.centralDifference(arg1.minValue(),
+                    arg1.maxValue(), stepY);
 
-            minGradY2 = (arg2.minValue() -
-                    arg2.maxValue()) / (2.0D * stepY);
+            minGradY2 = MDFMath.centralDifference(arg2.minValue(),
+                    arg2.maxValue(), stepY);
         }
 
         if (stepZ != 0) {
-            minGradZ1 = (arg1.minValue() -
-                    arg1.maxValue()) / (2.0D * stepZ);
+            minGradZ1 = MDFMath.centralDifference(arg1.minValue(),
+                    arg1.maxValue(), stepZ);
 
-            minGradZ2 = (arg2.minValue() -
-                    arg2.maxValue()) / (2.0D * stepZ);
+            minGradZ2 = MDFMath.centralDifference(arg2.minValue(),
+                    arg2.maxValue(), stepZ);
         }
 
         return minGradX1 * minGradX2 + minGradY1 * minGradY2 + minGradZ1 * minGradZ2;
@@ -142,27 +141,27 @@ public record DotProduct(DensityFunction arg1,
         double maxGradX2 = 0.0D, maxGradY2 = 0.0D, maxGradZ2 = 0.0D;
 
         if (stepX != 0) {
-            maxGradX1 = (arg1.maxValue() -
-                    arg1.minValue()) / (2.0D * stepX);
+            maxGradX1 = MDFMath.centralDifference(arg1.maxValue(),
+                    arg1.minValue(), stepX);
 
-            maxGradX2 = (arg2.maxValue() -
-                    arg2.minValue()) / (2.0D * stepX);
+            maxGradX2 = MDFMath.centralDifference(arg2.maxValue(),
+                    arg2.minValue(), stepX);
         }
 
         if (stepY != 0) {
-            maxGradY1 = (arg1.maxValue() -
-                    arg1.minValue()) / (2.0D * stepY);
+            maxGradY1 = MDFMath.centralDifference(arg1.maxValue(),
+                    arg1.minValue(), stepY);
 
-            maxGradY2 = (arg2.maxValue() -
-                    arg2.minValue()) / (2.0D * stepY);
+            maxGradY2 = MDFMath.centralDifference(arg2.maxValue(),
+                    arg2.minValue(), stepY);
         }
 
         if (stepZ != 0) {
-            maxGradZ1 = (arg1.maxValue() -
-                    arg1.minValue()) / (2.0D * stepZ);
+            maxGradZ1 = MDFMath.centralDifference(arg1.maxValue(),
+                    arg1.minValue(), stepZ);
 
-            maxGradZ2 = (arg2.maxValue() -
-                    arg2.minValue()) / (2.0D * stepZ);
+            maxGradZ2 = MDFMath.centralDifference(arg2.maxValue(),
+                    arg2.minValue(), stepZ);
         }
 
         return maxGradX1 * maxGradX2 + maxGradY1 * maxGradY2 + maxGradZ1 * maxGradZ2;

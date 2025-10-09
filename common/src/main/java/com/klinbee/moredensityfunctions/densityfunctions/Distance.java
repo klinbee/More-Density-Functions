@@ -3,6 +3,7 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 import com.klinbee.moredensityfunctions.distancemetrics.DistanceMetric;
 import com.klinbee.moredensityfunctions.distancemetrics.Linear;
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -111,7 +112,7 @@ public record Distance(DistanceMetric distanceMetric,
                 minAbsDiffs[i] = 0;
             } else {
                 // Range doesn't cross zero, minimum is the smaller absolute value
-                minAbsDiffs[i] = StrictMath.min(StrictMath.abs(diffMin), StrictMath.abs(diffMax));
+                minAbsDiffs[i] = MDFMath.min(MDFMath.abs(diffMin), MDFMath.abs(diffMax));
             }
         }
 
@@ -131,7 +132,7 @@ public record Distance(DistanceMetric distanceMetric,
             double diffMax = p2Max - p1Min;
 
             // Maximum absolute difference is always the larger absolute value
-            maxAbsDiffs[i] = StrictMath.max(StrictMath.abs(diffMin), StrictMath.abs(diffMax));
+            maxAbsDiffs[i] = MDFMath.max(MDFMath.abs(diffMin), MDFMath.abs(diffMax));
         }
 
         return maxAbsDiffs;

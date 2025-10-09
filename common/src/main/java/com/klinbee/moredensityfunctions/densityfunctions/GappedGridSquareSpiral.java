@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -43,8 +44,8 @@ public record GappedGridSquareSpiral(int xSize,
     @Override
     public double compute(FunctionContext pos) {
 
-        int gridX = StrictMath.floorDiv(pos.blockX(), xSize);
-        int gridZ = StrictMath.floorDiv(pos.blockZ(), zSize);
+        int gridX = MDFMath.floorDivInt(pos.blockX(), xSize);
+        int gridZ = MDFMath.floorDivInt(pos.blockZ(), zSize);
 
         // Check if we're on a valid grid point
         if ((gridX % spacing != 0) || (gridZ % spacing != 0)) {
@@ -75,22 +76,16 @@ public record GappedGridSquareSpiral(int xSize,
         }
 
         // Chebyshev distance from origin is the ring the point is in
-        int ring = StrictMath.max(StrictMath.abs(spiralX), StrictMath.abs(spiralZ));
+        int ring = MDFMath.chebyshevDist2DInt(spiralX, spiralZ);
 
         // Each ring is 8 * ring, so sum of rings is 8 * sum of consecutive integers n * (n + 1) / 2
         // Therefore, end_index(ring) = 8 * (ring * (ring + 1)) / 2 -> 4 * ring * (ring + 1)
         // So starting index should be 1 + end_index(ring - 1) -> 1 + 4 * (ring - 1) * ring
         int index = 1 + 4 * ring * (ring - 1);
 
-        int indexOffset = getOffsetFromStartIndex(spiralX, spiralZ, ring);
-
-        return index + indexOffset;
-    }
-
-    private static int getOffsetFromStartIndex(int spiralX, int spiralZ, int ring) {
-
         int positionInRing;
 
+        // Calculation position in ring based on spiral coordinates and ring value
         if (spiralX == ring && spiralZ >= -ring && spiralZ < ring) {
             // Right edge, moving up
             positionInRing = spiralZ + ring;
@@ -107,7 +102,7 @@ public record GappedGridSquareSpiral(int xSize,
             throw new IllegalArgumentException("Invalid coordinate (" + spiralX + ", " + spiralZ + ") for spiral");
         }
 
-        return positionInRing;
+        return index + positionInRing;
     }
 
     @Override

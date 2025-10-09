@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -23,7 +24,7 @@ public record Remainder(DensityFunction numerator,
 
     @Override
     public double compute(FunctionContext pos) {
-        return numerator.compute(pos) % denominator.compute(pos);
+        return MDFMath.remainder(numerator.compute(pos), denominator.compute(pos));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -33,7 +34,7 @@ public record Clamp(DensityFunction arg,
 
     @Override
     public double compute(FunctionContext pos) {
-        return Mth.clamp(arg.compute(pos), min, max);
+        return MDFMath.clamp(arg.compute(pos), min, max);
     }
 
     @Override

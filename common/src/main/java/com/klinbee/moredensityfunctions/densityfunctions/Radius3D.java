@@ -2,6 +2,7 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.MoreDensityFunctionsConstants;
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
@@ -16,7 +17,7 @@ public record Radius3D()
 
     @Override
     public double compute(FunctionContext pos) {
-        return StrictMath.sqrt((pos.blockX() * pos.blockX()) + (pos.blockY() * pos.blockY()) + (pos.blockZ() * pos.blockZ()));
+        return MDFMath.euclideanDist3D(pos.blockX(), pos.blockY(), pos.blockZ());
     }
 
     @Override
