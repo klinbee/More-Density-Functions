@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -24,7 +25,7 @@ public record NaturalLog(DensityFunction arg)
     }
 
     private static double eval(double density) {
-        return StrictMath.log(density);
+        return MDFMath.ln(density);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -22,7 +23,7 @@ public record VectorAngle(DensityFunction arg1,
 
     @Override
     public double compute(FunctionContext pos) {
-        return StrictMath.atan2(arg1.compute(pos), arg2.compute(pos));
+        return MDFMath.atan2(arg1.compute(pos), arg2.compute(pos));
     }
 
     @Override

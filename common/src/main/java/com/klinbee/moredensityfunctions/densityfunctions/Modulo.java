@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -21,7 +22,7 @@ public record Modulo(DensityFunction numerator,
     public static final TypedCodec<Modulo> TYPED_CODEC = new TypedCodec<>("mod", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double numerator, double denominator) {
-        return (numerator % denominator + denominator) % denominator;
+        return MDFMath.modulo(numerator, denominator);
     }
 
     @Override

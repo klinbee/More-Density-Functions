@@ -1,6 +1,7 @@
 package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -22,8 +23,7 @@ public record FloorModulo(DensityFunction numerator,
     public static final TypedCodec<FloorModulo> TYPED_CODEC = new TypedCodec<>("floor_mod", KeyDispatchDataCodec.of(MAP_CODEC));
 
     private static double eval(double numerator, double denominator) {
-        // Similar to `StrictMath.floorMod()` but for doubles, doesn't throw errors
-        return Mth.floor((numerator % denominator + denominator) % denominator);
+        return MDFMath.floorMod(numerator, denominator);
     }
 
     @Override
