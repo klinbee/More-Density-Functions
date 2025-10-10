@@ -1,0 +1,96 @@
+    // To account for negative and positive cases, use `min`, and `max`
+    @Override
+    public double minValue() {
+        return switch (distanceType) {
+            case F1 -> {
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                yield randomSampler.minValue() * totalAmplitude;
+            }
+            case F2 -> {
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                yield randomSampler.minValue() * totalAmplitude;
+            }
+            case F2_SUB_F1 -> {
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                double minValue = randomSampler.minValue() * totalAmplitude;
+                double maxValue = randomSampler.maxValue() * totalAmplitude;
+                yield minValue - maxValue;
+            }
+            case F2_ADD_F1 -> {
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                double minValue = randomSampler.minValue() * totalAmplitude;
+
+                if (minValue < 0.0D) { // If negative, we want to add them
+                    yield 2 * minValue;
+                }
+                // If positive, we want to add 0
+                yield minValue;
+            }
+            case F2_MUL_F1 -> { // Similar to positive, different operation
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                double minValue = randomSampler.minValue() * totalAmplitude;
+                double maxValue = randomSampler.maxValue() * totalAmplitude;
+                if (minValue < 0.0D) {
+                    if (maxValue < 1.0D) {
+                        yield minValue; // multiplying would just make it bigger
+                    }
+                    yield minValue * maxValue; // multiplying makes it more negative
+                }
+                // minValue >= 0
+                if (maxValue < 1.0D) {
+                    yield minValue * maxValue; // multiplying makes it smaller
+                }
+                // maxValue >=1.0
+                yield minValue; // multiplying would just make it bigger
+            }
+            case F2_DIV_F1 -> Double.NEGATIVE_INFINITY; // Potentially Unbounded
+        };
+    }
+
+    @Override
+    public double maxValue() {
+        return switch (distanceType) {
+            case F1 -> {
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                yield randomSampler.maxValue() * totalAmplitude;
+            }
+            case F2 -> {
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                yield randomSampler.maxValue() * totalAmplitude;
+            }
+            case F2_SUB_F1 -> {
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                double minValue = randomSampler.minValue() * totalAmplitude;
+                double maxValue = randomSampler.maxValue() * totalAmplitude;
+                yield maxValue - minValue;
+            }
+            case F2_ADD_F1 -> {
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                double minValue = randomSampler.minValue() * totalAmplitude;
+
+                if (minValue < 0.0D) { // If negative, we want to add them
+                    yield 2 * minValue;
+                }
+                // If positive, we want to add 0
+                yield minValue;
+            }
+            case F2_MUL_F1 -> { // Similar to positive, different operation
+                double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+                double minValue = randomSampler.minValue() * totalAmplitude;
+                double maxValue = randomSampler.maxValue() * totalAmplitude;
+                if (minValue < 0.0D) {
+                    if (maxValue < 1.0D) {
+                        yield minValue; // multiplying would just make it bigger
+                    }
+                    yield minValue * maxValue; // multiplying makes it more negative
+                }
+                // minValue >= 0
+                if (maxValue < 1.0D) {
+                    yield minValue * maxValue; // multiplying makes it smaller
+                }
+                // maxValue >=1.0
+                yield minValue; // multiplying would just make it bigger
+            }
+            case F2_DIV_F1 -> Double.NEGATIVE_INFINITY; // Potentially Unbounded
+        };
+    }
