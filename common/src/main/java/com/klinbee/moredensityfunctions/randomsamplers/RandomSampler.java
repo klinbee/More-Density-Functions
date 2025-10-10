@@ -13,35 +13,6 @@ public interface RandomSampler {
             randomSampler -> randomSampler.anonCodec().type()
     );
 
-    AnonymousTypedCodec<? extends RandomSampler> anonCodec();
-
-    /**
-     * Samples a value from the Sampler's distribution using the given already hashedSeed.
-     *
-     * @param hashedSeed The seed being used for the current sample.
-     * @return The double value sampled from the distribution.
-     */
-    double sample(long hashedSeed);
-
-    double minValue();
-
-    double maxValue();
-
-    /// Seed Randomization
-
-    /**
-     * <p>Holds the WorldSeed
-     * <p>Its kind of safe? I did test, and the {@code ChunkMapMixin} goes off everytime
-     * a world is joined, so the {@code worldSeed} <i>should</i> always be set to the world you join.
-     */
-    class WorldSeedHolder {
-        static volatile long worldSeed;
-
-        public static void setWorldSeed(long seed) {
-            worldSeed = seed;
-        }
-    }
-
     /**
      * <p>Wicked Salted 3D Positional Hashing Function
      *
@@ -96,8 +67,6 @@ public interface RandomSampler {
         return finalSeed >>> 43 ^ finalSeed;
     }
 
-    /// RNG Functions
-
     /**
      * <p>Returns a {@code double} purely by converting a long value into a double on the range [0, 1)
      * <p>Please read {@code hashPosition(...)} for more details on RNG implementation.
@@ -138,6 +107,8 @@ public interface RandomSampler {
         return (int) (m >>> 32);
     }
 
+    /// Seed Randomization
+
     /**
      * <p>Returns a Gaussian-distributed {@code double} value
      * <p> Using a Box-Muller transform
@@ -154,5 +125,34 @@ public interface RandomSampler {
         if (u1 < 1e-15) u1 = 1e-15;
 
         return StrictMath.sqrt(-2.0 * StrictMath.log(u1)) * StrictMath.cos(2.0 * StrictMath.PI * u2);
+    }
+
+    AnonymousTypedCodec<? extends RandomSampler> anonCodec();
+
+    /**
+     * Samples a value from the Sampler's distribution using the given already hashedSeed.
+     *
+     * @param hashedSeed The seed being used for the current sample.
+     * @return The double value sampled from the distribution.
+     */
+    double sample(long hashedSeed);
+
+    /// RNG Functions
+
+    double minValue();
+
+    double maxValue();
+
+    /**
+     * <p>Holds the WorldSeed
+     * <p>Its kind of safe? I did test, and the {@code ChunkMapMixin} goes off everytime
+     * a world is joined, so the {@code worldSeed} <i>should</i> always be set to the world you join.
+     */
+    class WorldSeedHolder {
+        static volatile long worldSeed;
+
+        public static void setWorldSeed(long seed) {
+            worldSeed = seed;
+        }
     }
 }

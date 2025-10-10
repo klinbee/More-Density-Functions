@@ -39,18 +39,6 @@ public record Derivative(DensityFunction arg,
         return new Derivative(arg, componentX, componentY, componentZ);
     }
 
-    /// Derivative Component codec
-    private record DerivativeComponent(int step, DensityFunction direction) {
-        static final Codec<DerivativeComponent> CODEC =
-                RecordCodecBuilder.create(instance ->
-                        instance.group(
-                                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step").forGetter(DerivativeComponent::step),
-                                DensityFunction.HOLDER_HELPER_CODEC.fieldOf("direction").forGetter(DerivativeComponent::direction)
-                        ).apply(instance, DerivativeComponent::new)
-                );
-        static final DerivativeComponent NONE = new DerivativeComponent(0, DensityFunctions.constant(0));
-    }
-
     @Override
     public double compute(FunctionContext pos) {
         int x = pos.blockX(), y = pos.blockY(), z = pos.blockZ();
@@ -122,5 +110,17 @@ public record Derivative(DensityFunction arg,
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return TYPED_CODEC.codec();
+    }
+
+    /// Derivative Component codec
+    private record DerivativeComponent(int step, DensityFunction direction) {
+        static final Codec<DerivativeComponent> CODEC =
+                RecordCodecBuilder.create(instance ->
+                        instance.group(
+                                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("step").forGetter(DerivativeComponent::step),
+                                DensityFunction.HOLDER_HELPER_CODEC.fieldOf("direction").forGetter(DerivativeComponent::direction)
+                        ).apply(instance, DerivativeComponent::new)
+                );
+        static final DerivativeComponent NONE = new DerivativeComponent(0, DensityFunctions.constant(0));
     }
 }
