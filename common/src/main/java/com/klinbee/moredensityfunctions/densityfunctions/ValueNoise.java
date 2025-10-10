@@ -53,23 +53,20 @@ public record ValueNoise(RandomSampler randomSampler,
 
     @Override
     public double eval(int x, int y, int z) {
-        boolean is2D = sizeY == 0;
-
         if (interpolation == Interpolation.NONE) {
-            return computeNoise(x, y, z, salt, is2D);
+            return computeNoise(x, y, z, salt);
         } else {
-            return is2D ?
+            // if 2D
+            return sizeY == 0 ?
                     computeNoiseInterpolated2D(x, z, salt) :
                     computeNoiseInterpolated3D(x, y, z, salt);
         }
     }
 
-    private double computeNoise(int x, int y, int z, int salt, boolean is2D) {
+    private double computeNoise(int x, int y, int z, int salt) {
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
+        int gridY = MDFMath.safeFloorDiv(y, sizeY);
         int gridZ = MDFMath.safeFloorDiv(z, sizeZ);
-        int gridY = is2D ?
-                0 :
-                MDFMath.safeFloorDiv(y, sizeY);
 
         long hash = RandomSampler.hashPosition(gridX, gridY, gridZ, salt);
 
