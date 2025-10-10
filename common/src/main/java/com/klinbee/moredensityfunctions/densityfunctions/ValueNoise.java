@@ -5,12 +5,12 @@ import com.klinbee.moredensityfunctions.randomsamplers.RandomSampler;
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.klinbee.moredensityfunctions.util.ExtraOctaves;
 import com.klinbee.moredensityfunctions.util.Interpolation;
+import com.klinbee.moredensityfunctions.util.MDFMath;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.KeyDispatchDataCodec;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record ValueNoise(RandomSampler randomSampler,
@@ -21,6 +21,19 @@ public record ValueNoise(RandomSampler randomSampler,
                          ExtraOctaves extraOctaves,
                          int salt)
         implements NoiseDensityFunction {
+
+    private static final MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    RandomSampler.CODEC.fieldOf("sampler").forGetter(ValueNoise::randomSampler),
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_x").forGetter(ValueNoise::sizeX),
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
+                    Interpolation.CODEC.fieldOf("interpolation").forGetter(ValueNoise::interpolation),
+                    ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse(ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
+                    Codec.INT.fieldOf("salt").orElse(0).forGetter(ValueNoise::salt)
+            ).apply(instance, ValueNoise::new)
+    );
+    public static final TypedCodec<ValueNoise> TYPED_CODEC = new TypedCodec<>("value_noise", KeyDispatchDataCodec.of(MAP_CODEC));
 
     public ValueNoise(RandomSampler randomSampler,
                       int sizeX,
@@ -38,20 +51,6 @@ public record ValueNoise(RandomSampler randomSampler,
         this.salt = salt;
     }
 
-    private static final MapCodec<ValueNoise> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
-            instance.group(
-                    RandomSampler.CODEC.fieldOf("sampler").forGetter(ValueNoise::randomSampler),
-                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_x").forGetter(ValueNoise::sizeX),
-                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_y").forGetter(ValueNoise::sizeY),
-                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("size_z").forGetter(ValueNoise::sizeZ),
-                    Interpolation.CODEC.fieldOf("interpolation").forGetter(ValueNoise::interpolation),
-                    ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse(ExtraOctaves.getDefault()).forGetter(ValueNoise::extraOctaves),
-                    Codec.INT.fieldOf("salt").orElse(0).forGetter(ValueNoise::salt)
-            ).apply(instance, ValueNoise::new)
-    );
-
-    public static final TypedCodec<ValueNoise> TYPED_CODEC = new TypedCodec<>("value_noise", KeyDispatchDataCodec.of(MAP_CODEC));
-
     @Override
     public double eval(int x, int y, int z) {
         boolean is2D = sizeY == 0;
@@ -59,34 +58,30 @@ public record ValueNoise(RandomSampler randomSampler,
         if (interpolation == Interpolation.NONE) {
             return computeNoise(x, y, z, salt, is2D);
         } else {
-            return computeNoiseInterpolated(x, y, z, salt, is2D);
+            return is2D ?
+                    computeNoiseInterpolated2D(x, z, salt) :
+                    computeNoiseInterpolated3D(x, y, z, salt);
         }
     }
 
     private double computeNoise(int x, int y, int z, int salt, boolean is2D) {
-        int gridX = NoiseDensityFunction.safeFloorDiv(x, sizeX);
-        int gridZ = NoiseDensityFunction.safeFloorDiv(z, sizeZ);
+        int gridX = MDFMath.safeFloorDiv(x, sizeX);
+        int gridZ = MDFMath.safeFloorDiv(z, sizeZ);
         int gridY = is2D ?
                 0 :
-                NoiseDensityFunction.safeFloorDiv(y, sizeY);
+                MDFMath.safeFloorDiv(y, sizeY);
 
         long hash = RandomSampler.hashPosition(gridX, gridY, gridZ, salt);
 
         return randomSampler.sample(hash);
     }
 
-    private double computeNoiseInterpolated(int x, int y, int z, int salt, boolean is2D) {
-        return is2D ?
-                computeNoiseInterpolated2D(x, z, salt) :
-                computeNoiseInterpolated3D(x, y, z, salt);
-    }
-
     private double computeNoiseInterpolated2D(int x, int z, int salt) {
         double cellX = calculateCellCoord(x, sizeX);
         double cellZ = calculateCellCoord(z, sizeZ);
 
-        int gridX0 = NoiseDensityFunction.safeFloorDiv(x, sizeX);
-        int gridZ0 = NoiseDensityFunction.safeFloorDiv(z, sizeZ);
+        int gridX0 = MDFMath.safeFloorDiv(x, sizeX);
+        int gridZ0 = MDFMath.safeFloorDiv(z, sizeZ);
         int gridX1 = gridX0 + 1;
         int gridZ1 = gridZ0 + 1;
 
@@ -106,9 +101,9 @@ public record ValueNoise(RandomSampler randomSampler,
         double cellY = calculateCellCoord(y, sizeY);
         double cellZ = calculateCellCoord(z, sizeZ);
 
-        int gridX0 = NoiseDensityFunction.safeFloorDiv(x, sizeX);
-        int gridY0 = NoiseDensityFunction.safeFloorDiv(y, sizeY);
-        int gridZ0 = NoiseDensityFunction.safeFloorDiv(z, sizeZ);
+        int gridX0 = MDFMath.safeFloorDiv(x, sizeX);
+        int gridY0 = MDFMath.safeFloorDiv(y, sizeY);
+        int gridZ0 = MDFMath.safeFloorDiv(z, sizeZ);
         int gridX1 = gridX0 + 1;
         int gridY1 = gridY0 + 1;
         int gridZ1 = gridZ0 + 1;

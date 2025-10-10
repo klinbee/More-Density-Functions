@@ -2,7 +2,6 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.klinbee.moredensityfunctions.util.MDFMath;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -40,35 +39,6 @@ public record GappedGridSquareSpiral(int xSize,
         return new GappedGridSquareSpiral(xSize, zSize, spacing + 1, gridCellArgs, oobArg);
     }
 
-
-    @Override
-    public double compute(DensityFunction.FunctionContext pos) {
-
-        int gridX = MDFMath.floorDivInt(pos.blockX(), xSize);
-        int gridZ = MDFMath.floorDivInt(pos.blockZ(), zSize);
-
-        // Check if we're on a valid grid point
-        if ((gridX % spacing != 0) || (gridZ % spacing != 0)) {
-            return oobArg.compute(pos);
-        }
-
-        // Scale the grid positions
-        int normalizedGridX = gridX / spacing;
-        int normalizedGridZ = gridZ / spacing;
-
-        int index = getSpiralIndex(normalizedGridX, normalizedGridZ);
-
-        int numFunctions = gridCellArgs.length;
-
-        // >= because array indices
-        if (index >= numFunctions) {
-            return oobArg.compute(pos);
-        }
-
-        DensityFunction arg = gridCellArgs[index];
-        return arg.compute(pos);
-    }
-
     private static int getSpiralIndex(int spiralX, int spiralZ) {
         // Index formula doesn't work for origin
         if (spiralX == 0 && spiralZ == 0) {
@@ -103,6 +73,34 @@ public record GappedGridSquareSpiral(int xSize,
         }
 
         return index + positionInRing;
+    }
+
+    @Override
+    public double compute(DensityFunction.FunctionContext pos) {
+
+        int gridX = MDFMath.floorDivInt(pos.blockX(), xSize);
+        int gridZ = MDFMath.floorDivInt(pos.blockZ(), zSize);
+
+        // Check if we're on a valid grid point
+        if ((gridX % spacing != 0) || (gridZ % spacing != 0)) {
+            return oobArg.compute(pos);
+        }
+
+        // Scale the grid positions
+        int normalizedGridX = gridX / spacing;
+        int normalizedGridZ = gridZ / spacing;
+
+        int index = getSpiralIndex(normalizedGridX, normalizedGridZ);
+
+        int numFunctions = gridCellArgs.length;
+
+        // >= because array indices
+        if (index >= numFunctions) {
+            return oobArg.compute(pos);
+        }
+
+        DensityFunction arg = gridCellArgs[index];
+        return arg.compute(pos);
     }
 
     @Override

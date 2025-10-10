@@ -25,6 +25,22 @@ public record Log(DensityFunction arg,
         return MDFMath.log(arg, base);
     }
 
+    private static BaseRange findBaseRange(double min, double max) {
+
+        // Range is inside the (0, 1) set
+        if ((min > 0.0D) && (min < 1.0D) && (max > 0.0D) && (max < 1.0D)) {
+            return BaseRange.ZERO_TO_ONE_EXCLUSIVE;
+        }
+
+        // Range is inside the (1, +∞) set
+        if (min > 1.0D) {
+            return BaseRange.ONE_TO_INFINITY_EXCLUSIVE;
+        }
+
+        // Range is across sets
+        return BaseRange.INVALID;
+    }
+
     @Override
     public double compute(FunctionContext pos) {
         return eval(arg.compute(pos), base.compute(pos));
@@ -43,28 +59,6 @@ public record Log(DensityFunction arg,
                         base.mapAll(visitor)
                 )
         );
-    }
-
-    private enum BaseRange {
-        ZERO_TO_ONE_EXCLUSIVE,
-        ONE_TO_INFINITY_EXCLUSIVE,
-        INVALID,
-    }
-
-    private static BaseRange findBaseRange(double min, double max) {
-
-        // Range is inside the (0, 1) set
-        if ((min > 0.0D) && (min < 1.0D) && (max > 0.0D) && (max < 1.0D)) {
-            return BaseRange.ZERO_TO_ONE_EXCLUSIVE;
-        }
-
-        // Range is inside the (1, +∞) set
-        if (min > 1.0D) {
-            return BaseRange.ONE_TO_INFINITY_EXCLUSIVE;
-        }
-
-        // Range is across sets
-        return BaseRange.INVALID;
     }
 
     @Override
@@ -146,5 +140,11 @@ public record Log(DensityFunction arg,
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return TYPED_CODEC.codec();
+    }
+
+    private enum BaseRange {
+        ZERO_TO_ONE_EXCLUSIVE,
+        ONE_TO_INFINITY_EXCLUSIVE,
+        INVALID,
     }
 }

@@ -45,6 +45,21 @@ public sealed interface BinomialSampler
 
     double probability();
 
+    @Override
+    default double minValue() {
+        return 0.0D;
+    }
+
+    @Override
+    default double maxValue() {
+        return trials();
+    }
+
+    @Override
+    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
+    }
+
     record Direct(int trials,
                   double probability)
             implements BinomialSampler {
@@ -96,20 +111,5 @@ public sealed interface BinomialSampler
             }
             return x - 1;
         }
-    }
-
-    @Override
-    default double minValue() {
-        return 0.0D;
-    }
-
-    @Override
-    default double maxValue() {
-        return trials();
-    }
-
-    @Override
-    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
-        return ANON_CODEC;
     }
 }

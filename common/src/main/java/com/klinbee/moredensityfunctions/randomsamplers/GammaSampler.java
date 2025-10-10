@@ -18,10 +18,6 @@ public sealed interface GammaSampler
 
     AnonymousTypedCodec<GammaSampler> ANON_CODEC = new AnonymousTypedCodec<>("gamma", CODEC);
 
-    double shape();
-
-    double scale();
-
     static GammaSampler create(double shape, double scale) {
         if (shape < 1.0D) {
             double inverseShape = 1.0D / shape;
@@ -30,6 +26,25 @@ public sealed interface GammaSampler
         double shapeMinusOneThird = shape - 1.0D / 3.0D;
         double inverseSqrtShape = 1.0D / StrictMath.sqrt(9.0D * shapeMinusOneThird);
         return new GammaSampler.MarsagliaTsang(shape, scale, shapeMinusOneThird, inverseSqrtShape);
+    }
+
+    double shape();
+
+    double scale();
+
+    @Override
+    default double minValue() {
+        return 0.0D;
+    }
+
+    @Override
+    default double maxValue() {
+        return Double.MAX_VALUE;
+    }
+
+    @Override
+    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
     }
 
     record AhrensDieter(double shape,
@@ -91,20 +106,5 @@ public sealed interface GammaSampler
 
             }
         }
-    }
-
-    @Override
-    default double minValue() {
-        return 0.0D;
-    }
-
-    @Override
-    default double maxValue() {
-        return Double.MAX_VALUE;
-    }
-
-    @Override
-    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
-        return ANON_CODEC;
     }
 }
