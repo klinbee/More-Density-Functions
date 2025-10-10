@@ -30,7 +30,7 @@ public record ExtraOctaves(int count,
                 0.0D,
                 null,
                 null,
-                1.0D,
+                0.0D,
                 null,
                 null,
                 null);
