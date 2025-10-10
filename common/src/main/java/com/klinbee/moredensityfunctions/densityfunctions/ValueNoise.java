@@ -157,14 +157,17 @@ public record ValueNoise(RandomSampler randomSampler,
         );
     }
 
+    // Add 1 to take the original in account
     @Override
     public double minValue() {
-        return randomSampler.minValue() * extraOctaves.maxAmplitude();
+        double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+        return randomSampler.minValue() * totalAmplitude;
     }
 
     @Override
     public double maxValue() {
-        return randomSampler.maxValue() * extraOctaves.maxAmplitude();
+        double totalAmplitude = 1.0D + extraOctaves.maxAmplitude();
+        return randomSampler.maxValue() * totalAmplitude;
     }
 
     @Override
