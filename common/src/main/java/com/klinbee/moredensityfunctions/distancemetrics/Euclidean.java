@@ -1,7 +1,6 @@
 package com.klinbee.moredensityfunctions.distancemetrics;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
 public record Euclidean() implements DistanceMetric {

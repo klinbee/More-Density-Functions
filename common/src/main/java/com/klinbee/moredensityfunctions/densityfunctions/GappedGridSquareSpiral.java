@@ -2,7 +2,6 @@ package com.klinbee.moredensityfunctions.densityfunctions;
 
 import com.klinbee.moredensityfunctions.registration.TypedCodec;
 import com.klinbee.moredensityfunctions.util.MDFMath;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
@@ -38,35 +37,6 @@ public record GappedGridSquareSpiral(int xSize,
                                                  DensityFunction oobArg) {
         // We add 1 to spacing, because if we want spacing of 1 grid, we need to use a modulo 2, etc.
         return new GappedGridSquareSpiral(xSize, zSize, spacing + 1, gridCellArgs, oobArg);
-    }
-
-
-    @Override
-    public double compute(FunctionContext pos) {
-
-        int gridX = MDFMath.floorDivInt(pos.blockX(), xSize);
-        int gridZ = MDFMath.floorDivInt(pos.blockZ(), zSize);
-
-        // Check if we're on a valid grid point
-        if ((gridX % spacing != 0) || (gridZ % spacing != 0)) {
-            return oobArg.compute(pos);
-        }
-
-        // Scale the grid positions
-        int normalizedGridX = gridX / spacing;
-        int normalizedGridZ = gridZ / spacing;
-
-        int index = getSpiralIndex(normalizedGridX, normalizedGridZ);
-
-        int numFunctions = gridCellArgs.length;
-
-        // >= because array indices
-        if (index >= numFunctions) {
-            return oobArg.compute(pos);
-        }
-
-        DensityFunction arg = gridCellArgs[index];
-        return arg.compute(pos);
     }
 
     private static int getSpiralIndex(int spiralX, int spiralZ) {
@@ -106,12 +76,40 @@ public record GappedGridSquareSpiral(int xSize,
     }
 
     @Override
-    public void fillArray(double[] densities, ContextProvider applier) {
+    public double compute(DensityFunction.FunctionContext pos) {
+
+        int gridX = MDFMath.floorDivInt(pos.blockX(), xSize);
+        int gridZ = MDFMath.floorDivInt(pos.blockZ(), zSize);
+
+        // Check if we're on a valid grid point
+        if ((gridX % spacing != 0) || (gridZ % spacing != 0)) {
+            return oobArg.compute(pos);
+        }
+
+        // Scale the grid positions
+        int normalizedGridX = gridX / spacing;
+        int normalizedGridZ = gridZ / spacing;
+
+        int index = getSpiralIndex(normalizedGridX, normalizedGridZ);
+
+        int numFunctions = gridCellArgs.length;
+
+        // >= because array indices
+        if (index >= numFunctions) {
+            return oobArg.compute(pos);
+        }
+
+        DensityFunction arg = gridCellArgs[index];
+        return arg.compute(pos);
+    }
+
+    @Override
+    public void fillArray(double[] densities, DensityFunction.ContextProvider applier) {
         applier.fillAllDirectly(densities, this);
     }
 
     @Override
-    public DensityFunction mapAll(Visitor visitor) {
+    public DensityFunction mapAll(DensityFunction.Visitor visitor) {
 
         // `.mapAll()` cannot be applied to `gridCellArgs` or else, it will lag out Minecraft
 

@@ -19,13 +19,13 @@ public record NaturalLog(DensityFunction arg)
 
     public static final TypedCodec<NaturalLog> TYPED_CODEC = new TypedCodec<>("ln", KeyDispatchDataCodec.of(MAP_CODEC));
 
+    private static double eval(double density) {
+        return MDFMath.ln(density);
+    }
+
     @Override
     public double compute(FunctionContext pos) {
         return eval(arg.compute(pos));
-    }
-
-    private static double eval(double density) {
-        return MDFMath.ln(density);
     }
 
     @Override

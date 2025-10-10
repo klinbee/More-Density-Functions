@@ -27,6 +27,21 @@ public sealed interface PoissonSampler
 
     double lambda();
 
+    @Override
+    default double minValue() {
+        return 0.0D;
+    }
+
+    @Override
+    default double maxValue() {
+        return Double.MAX_VALUE;
+    }
+
+    @Override
+    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
+        return ANON_CODEC;
+    }
+
     record Knuth(double lambda,
                  double expNegativeLambda)
             implements PoissonSampler {
@@ -52,20 +67,5 @@ public sealed interface PoissonSampler
         public double sample(long hashedSeed) {
             return StrictMath.max(0.0D, StrictMath.round(normalSampler.sample(hashedSeed)));
         }
-    }
-
-    @Override
-    default double minValue() {
-        return 0.0D;
-    }
-
-    @Override
-    default double maxValue() {
-        return Double.MAX_VALUE;
-    }
-
-    @Override
-    default AnonymousTypedCodec<? extends RandomSampler> anonCodec() {
-        return ANON_CODEC;
     }
 }

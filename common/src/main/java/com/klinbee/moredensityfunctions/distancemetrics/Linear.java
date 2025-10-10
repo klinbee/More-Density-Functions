@@ -1,8 +1,6 @@
 package com.klinbee.moredensityfunctions.distancemetrics;
 
 import com.klinbee.moredensityfunctions.registration.AnonymousTypedCodec;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 
 /**
  * The Contract for this record is that it should never be used for arrays of size > 1
