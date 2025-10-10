@@ -56,6 +56,8 @@ public class CommonRegistrations {
         registrar.register(DENSITY_FUNCTION, Tangent.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, ValueNoise.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, VectorAngle.TYPED_CODEC);
+        registrar.register(DENSITY_FUNCTION, VoronoiCells.TYPED_CODEC);
+        registrar.register(DENSITY_FUNCTION, WorleyNoise.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, XClampedGradient.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, XPos.TYPED_CODEC);
         registrar.register(DENSITY_FUNCTION, YPos.TYPED_CODEC);
