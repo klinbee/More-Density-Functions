@@ -30,7 +30,6 @@ public final class MDFMath {
         return (forwards - backwards) / (2.0D * step);
     }
 
-
     public static int maxInt(int i1, int i2) {
         return StrictMath.max(i1, i2);
     }
@@ -68,6 +67,13 @@ public final class MDFMath {
     }
 
     public static double modulo(double numerator, double denominator) {
+        return (numerator % denominator + denominator) % denominator;
+    }
+
+    public static double safeModulo(double numerator, double denominator) {
+        if (denominator == 0.0D) {
+            return 0.0D;
+        }
         return (numerator % denominator + denominator) % denominator;
     }
 

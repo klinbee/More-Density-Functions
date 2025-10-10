@@ -117,9 +117,11 @@ public record VoronoiCells(RandomSampler randomSampler,
                 double centerX = neighborGridCellX * sizeX + sizeX * 0.5;
                 double centerZ = neighborGridCellZ * sizeZ + sizeZ * 0.5;
 
-                double jitterX = MDFMath.modulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
-                double jitterY = MDFMath.modulo(jitter.samplerY().sample(sampleHash), sizeY);
-                double jitterZ = MDFMath.modulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
+                double jitterX = MDFMath.safeModulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
+                sampleHash = RandomSampler.mix(sampleHash);
+                double jitterY = MDFMath.safeModulo(jitter.samplerY().sample(sampleHash), sizeY);
+                sampleHash = RandomSampler.mix(sampleHash);
+                double jitterZ = MDFMath.safeModulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
 
                 samplePos[0] = centerX + jitterX;
                 samplePos[1] = jitterY;
@@ -173,9 +175,11 @@ public record VoronoiCells(RandomSampler randomSampler,
                     double centerY = neighborGridCellY * sizeY + sizeY * 0.5;
                     double centerZ = neighborGridCellZ * sizeZ + sizeZ * 0.5;
 
-                    double jitterX = MDFMath.modulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
-                    double jitterY = MDFMath.modulo(jitter.samplerY().sample(sampleHash), sizeY) - sizeY * 0.5;
-                    double jitterZ = MDFMath.modulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
+                    double jitterX = MDFMath.safeModulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
+                    sampleHash = RandomSampler.mix(sampleHash);
+                    double jitterY = MDFMath.safeModulo(jitter.samplerY().sample(sampleHash), sizeY) - sizeY * 0.5;
+                    sampleHash = RandomSampler.mix(sampleHash);
+                    double jitterZ = MDFMath.safeModulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
 
                     samplePos[0] = centerX + jitterX;
                     samplePos[1] = centerY + jitterY;
@@ -229,9 +233,11 @@ public record VoronoiCells(RandomSampler randomSampler,
                 double centerX = neighborGridCellX * sizeX + sizeX * 0.5;
                 double centerZ = neighborGridCellZ * sizeZ + sizeZ * 0.5;
 
-                double jitterX = MDFMath.modulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
-                double jitterY = MDFMath.modulo(jitter.samplerY().sample(sampleHash), sizeY);
-                double jitterZ = MDFMath.modulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
+                double jitterX = MDFMath.safeModulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
+                sampleHash = RandomSampler.mix(sampleHash);
+                double jitterY = MDFMath.safeModulo(jitter.samplerY().sample(sampleHash), sizeY);
+                sampleHash = RandomSampler.mix(sampleHash);
+                double jitterZ = MDFMath.safeModulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
 
                 samplePos[0] = centerX + jitterX;
                 samplePos[1] = jitterY;
@@ -301,9 +307,11 @@ public record VoronoiCells(RandomSampler randomSampler,
                     double centerY = neighborGridCellY * sizeY + sizeY * 0.5;
                     double centerZ = neighborGridCellZ * sizeZ + sizeZ * 0.5;
 
-                    double jitterX = MDFMath.modulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
-                    double jitterY = MDFMath.modulo(jitter.samplerY().sample(sampleHash), sizeY) - sizeY * 0.5;
-                    double jitterZ = MDFMath.modulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
+                    double jitterX = MDFMath.safeModulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
+                    sampleHash = RandomSampler.mix(sampleHash);
+                    double jitterY = MDFMath.safeModulo(jitter.samplerY().sample(sampleHash), sizeY) - sizeY * 0.5;
+                    sampleHash = RandomSampler.mix(sampleHash);
+                    double jitterZ = MDFMath.safeModulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
 
                     samplePos[0] = centerX + jitterX;
                     samplePos[1] = centerY + jitterY;

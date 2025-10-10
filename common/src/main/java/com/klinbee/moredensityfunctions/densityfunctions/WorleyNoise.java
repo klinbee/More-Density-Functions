@@ -21,7 +21,9 @@ public record WorleyNoise(int sizeX,
                           Jitter jitter,
                           DistanceMetric distanceMetric,
                           DistanceType distanceType,
+                          double distanceMax,
                           boolean exact,
+                          boolean invert,
                           ExtraOctaves extraOctaves,
                           int salt)
         implements NoiseDensityFunction {
@@ -35,10 +37,12 @@ public record WorleyNoise(int sizeX,
                     DistanceMetric.CODEC.fieldOf("distance_metric").forGetter(WorleyNoise::distanceMetric),
                     DistanceType.CODEC.fieldOf("distance_type").forGetter(WorleyNoise::distanceType),
                     Codec.BOOL.fieldOf("exact").forGetter(WorleyNoise::exact),
+                    Codec.BOOL.fieldOf("invert").forGetter(WorleyNoise::invert),
                     ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse(ExtraOctaves.getDefault()).forGetter(WorleyNoise::extraOctaves),
                     Codec.INT.fieldOf("salt").orElse(0).forGetter(WorleyNoise::salt)
             ).apply(instance, WorleyNoise::new)
     );
+
     public static final TypedCodec<WorleyNoise> TYPED_CODEC = new TypedCodec<>("worley_noise", KeyDispatchDataCodec.of(MAP_CODEC));
 
     public WorleyNoise(int sizeX,
@@ -48,17 +52,21 @@ public record WorleyNoise(int sizeX,
                        DistanceMetric distanceMetric,
                        DistanceType distanceType,
                        boolean exact,
+                       boolean invert,
                        ExtraOctaves extraOctaves,
                        int salt) {
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-        this.sizeZ = sizeZ;
-        this.jitter = jitter;
-        this.distanceMetric = distanceMetric;
-        this.distanceType = distanceType;
-        this.exact = exact;
-        this.extraOctaves = extraOctaves.finalizedWithSalt(salt);
-        this.salt = salt;
+        this(sizeX,
+                sizeY,
+                sizeZ,
+                jitter,
+                distanceMetric,
+                distanceType,
+                distanceMetric.distance(new double[]{0, 0, 0}, new double[]{sizeX, sizeY, sizeZ}),
+                exact,
+                invert,
+                extraOctaves.finalizedWithSalt(salt),
+                salt
+        );
     }
 
     @Override
@@ -69,19 +77,27 @@ public record WorleyNoise(int sizeX,
                 2 :
                 1;
 
+        double result;
+
         if (is2D) {
             if (distanceType == DistanceType.F1) {
-                return evaluate2DWorleyF1(x, z, neighbors);
+                result = evaluate2DWorleyF1(x, z, neighbors);
             } else {
-                return evaluate2DWorleyF2(x, z, neighbors);
+                result = evaluate2DWorleyF2(x, z, neighbors);
             }
         } else {
             if (distanceType == DistanceType.F1) {
-                return evaluate3DWorleyF1(x, y, z, neighbors);
+                result = evaluate3DWorleyF1(x, y, z, neighbors);
             } else {
-                return evaluate3DWorleyF2(x, y, z, neighbors);
+                result = evaluate3DWorleyF2(x, y, z, neighbors);
             }
         }
+
+        result = result / distanceMax;
+
+        return invert ?
+                1.0D - result :
+                result;
     }
 
     private double evaluate2DWorleyF1(int x, int z, int neighbors) {
@@ -96,12 +112,9 @@ public record WorleyNoise(int sizeX,
         double[] samplePos = new double[3];
 
         for (int dx = -neighbors; dx <= neighbors; dx++) {
-            for (int dz = -neighbors; dz <= neighbors; dz++) {
-
-                // Skip corners on 5x5
-                if (neighbors == 2 && ((dx | dz) == 2 || (dx | dz) == -2)) {
-                    continue;
-                }
+            // Skip corners of 5x5
+            int zneighbors = neighbors - (dx == 2 ? 1 : 0) - (dx == -2 ? 1 : 0);
+            for (int dz = -zneighbors; dz <= zneighbors; dz++) {
 
                 int neighborGridCellX = gridX + dx;
                 int neighborGridCellZ = gridZ + dz;
@@ -111,9 +124,11 @@ public record WorleyNoise(int sizeX,
                 double centerX = neighborGridCellX * sizeX + sizeX * 0.5;
                 double centerZ = neighborGridCellZ * sizeZ + sizeZ * 0.5;
 
-                double jitterX = MDFMath.modulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
-                double jitterY = MDFMath.modulo(jitter.samplerY().sample(sampleHash), sizeY);
-                double jitterZ = MDFMath.modulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
+                double jitterX = MDFMath.safeModulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
+                sampleHash = RandomSampler.mix(sampleHash);
+                double jitterY = MDFMath.safeModulo(jitter.samplerY().sample(sampleHash), sizeY);
+                sampleHash = RandomSampler.mix(sampleHash);
+                double jitterZ = MDFMath.safeModulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
 
                 samplePos[0] = centerX + jitterX;
                 samplePos[1] = jitterY;
@@ -146,13 +161,12 @@ public record WorleyNoise(int sizeX,
         double[] samplePos = new double[3];
 
         for (int dx = -neighbors; dx <= neighbors; dx++) {
-            for (int dy = -neighbors; dy <= neighbors; dy++) {
-                for (int dz = -neighbors; dz <= neighbors; dz++) {
-
-                    // Skip corners on 5x5
-                    if (neighbors == 2 && ((dx | dy | dz) == 2 || (dx | dy | dz) == -2)) {
-                        continue;
-                    }
+            // Skip corners of 5x5x5
+            int yneighbors = neighbors - (dx == 2 ? 1 : 0) - (dx == -2 ? 1 : 0);
+            for (int dy = -yneighbors; dy <= yneighbors; dy++) {
+                // Skip corners of 5x5x5
+                int zneighbors = yneighbors - (dy == 2 ? 1 : 0) - (dy == -2 ? 1 : 0);
+                for (int dz = -zneighbors; dz <= zneighbors; dz++) {
 
                     int neighborGridCellX = gridX + dx;
                     int neighborGridCellY = gridY + dy;
@@ -164,9 +178,11 @@ public record WorleyNoise(int sizeX,
                     double centerY = neighborGridCellY * sizeY + sizeY * 0.5;
                     double centerZ = neighborGridCellZ * sizeZ + sizeZ * 0.5;
 
-                    double jitterX = MDFMath.modulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
-                    double jitterY = MDFMath.modulo(jitter.samplerY().sample(sampleHash), sizeY) - sizeY * 0.5;
-                    double jitterZ = MDFMath.modulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
+                    double jitterX = MDFMath.safeModulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
+                    sampleHash = RandomSampler.mix(sampleHash);
+                    double jitterY = MDFMath.safeModulo(jitter.samplerY().sample(sampleHash), sizeY) - sizeY * 0.5;
+                    sampleHash = RandomSampler.mix(sampleHash);
+                    double jitterZ = MDFMath.safeModulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
 
                     samplePos[0] = centerX + jitterX;
                     samplePos[1] = centerY + jitterY;
@@ -201,12 +217,9 @@ public record WorleyNoise(int sizeX,
         double[] samplePos = new double[3];
 
         for (int dx = -neighbors; dx <= neighbors; dx++) {
-            for (int dz = -neighbors; dz <= neighbors; dz++) {
-
-                // Skip corners on 5x5
-                if (neighbors == 2 && ((dx | dz) == 2 || (dx | dz) == -2)) {
-                    continue;
-                }
+            // Skip corners of 5x5
+            int zneighbors = neighbors - (dx == 2 ? 1 : 0) - (dx == -2 ? 1 : 0);
+            for (int dz = -zneighbors; dz <= zneighbors; dz++) {
 
                 int neighborGridCellX = gridX + dx;
                 int neighborGridCellZ = gridZ + dz;
@@ -216,9 +229,11 @@ public record WorleyNoise(int sizeX,
                 double centerX = neighborGridCellX * sizeX + sizeX * 0.5;
                 double centerZ = neighborGridCellZ * sizeZ + sizeZ * 0.5;
 
-                double jitterX = MDFMath.modulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
-                double jitterY = MDFMath.modulo(jitter.samplerY().sample(sampleHash), sizeY);
-                double jitterZ = MDFMath.modulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
+                double jitterX = MDFMath.safeModulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
+                sampleHash = RandomSampler.mix(sampleHash);
+                double jitterY = MDFMath.safeModulo(jitter.samplerY().sample(sampleHash), sizeY);
+                sampleHash = RandomSampler.mix(sampleHash);
+                double jitterZ = MDFMath.safeModulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
 
                 samplePos[0] = centerX + jitterX;
                 samplePos[1] = jitterY;
@@ -264,8 +279,12 @@ public record WorleyNoise(int sizeX,
         double[] samplePos = new double[3];
 
         for (int dx = -neighbors; dx <= neighbors; dx++) {
-            for (int dy = -neighbors; dy <= neighbors; dy++) {
-                for (int dz = -neighbors; dz <= neighbors; dz++) {
+            // Skip corners of 5x5x5
+            int yneighbors = neighbors - (dx == 2 ? 1 : 0) - (dx == -2 ? 1 : 0);
+            for (int dy = -yneighbors; dy <= yneighbors; dy++) {
+                // Skip corners of 5x5x5
+                int zneighbors = yneighbors - (dy == 2 ? 1 : 0) - (dy == -2 ? 1 : 0);
+                for (int dz = -zneighbors; dz <= zneighbors; dz++) {
 
                     // Skip corners on 5x5
                     if (neighbors == 2 && ((dx | dy | dz) == 2 || (dx | dy | dz) == -2)) {
@@ -282,9 +301,11 @@ public record WorleyNoise(int sizeX,
                     double centerY = neighborGridCellY * sizeY + sizeY * 0.5;
                     double centerZ = neighborGridCellZ * sizeZ + sizeZ * 0.5;
 
-                    double jitterX = MDFMath.modulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
-                    double jitterY = MDFMath.modulo(jitter.samplerY().sample(sampleHash), sizeY) - sizeY * 0.5;
-                    double jitterZ = MDFMath.modulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
+                    double jitterX = MDFMath.safeModulo(jitter.samplerX().sample(sampleHash), sizeX) - sizeX * 0.5;
+                    sampleHash = RandomSampler.mix(sampleHash);
+                    double jitterY = MDFMath.safeModulo(jitter.samplerY().sample(sampleHash), sizeY) - sizeY * 0.5;
+                    sampleHash = RandomSampler.mix(sampleHash);
+                    double jitterZ = MDFMath.safeModulo(jitter.samplerZ().sample(sampleHash), sizeZ) - sizeZ * 0.5;
 
                     samplePos[0] = centerX + jitterX;
                     samplePos[1] = centerY + jitterY;
@@ -326,7 +347,9 @@ public record WorleyNoise(int sizeX,
                         jitter,
                         distanceMetric,
                         distanceType,
+                        distanceMax,
                         exact,
+                        invert,
                         extraOctaves,
                         salt
                 )
@@ -346,23 +369,10 @@ public record WorleyNoise(int sizeX,
         };
     }
 
+    // TODO: Issue complicated
     @Override
     public double maxValue() {
-        return switch (distanceType) {
-            case F1 ->
-                    extraOctaves.maxAmplitude() * distanceMetric().maxValue(new double[]{sizeX, sizeY, sizeZ}); // Highest is cell point diagonal to current location
-            case F2 ->
-                    extraOctaves.maxAmplitude() * 2 * distanceMetric().maxValue(new double[]{sizeX, sizeY, sizeZ}); // Highest is neighbor cell point diagonal to current location
-            case F2_SUB_F1 ->
-                    extraOctaves.maxAmplitude() * 2 * distanceMetric().maxValue(new double[]{sizeX, sizeY, sizeZ}); // Highest is cell point on current location and neighbor cell point is diagonal to current location
-            case F2_ADD_F1 ->
-                    extraOctaves.maxAmplitude() * 2 * distanceMetric().maxValue(new double[]{sizeX, sizeY, sizeZ}); // Highest is cell point diagonal to current location and neighbor cell point is diagonal to current location
-            case F2_MUL_F1 -> { // Same logic as above
-                double dist = extraOctaves.maxAmplitude() * distanceMetric().maxValue(new double[]{sizeX, sizeY, sizeZ});
-                yield dist * dist;
-            }
-            case F2_DIV_F1 -> Double.POSITIVE_INFINITY; // Potentially Unbounded
-        };
+        return Double.POSITIVE_INFINITY; // Potentially Unbounded
     }
 
     @Override
