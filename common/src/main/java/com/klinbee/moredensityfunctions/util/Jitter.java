@@ -10,9 +10,9 @@ public record Jitter(RandomSampler samplerX,
                      RandomSampler samplerZ) {
     public static final Codec<Jitter> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                    RandomSampler.CODEC.fieldOf("sampler_x").forGetter(Jitter::samplerX),
-                    RandomSampler.CODEC.fieldOf("sampler_y").forGetter(Jitter::samplerY),
-                    RandomSampler.CODEC.fieldOf("sampler_z").forGetter(Jitter::samplerZ)
+                    RandomSampler.CODEC.fieldOf("x").forGetter(Jitter::samplerX),
+                    RandomSampler.CODEC.fieldOf("y").forGetter(Jitter::samplerY),
+                    RandomSampler.CODEC.fieldOf("z").forGetter(Jitter::samplerZ)
             ).apply(instance, Jitter::new)
     );
 }
