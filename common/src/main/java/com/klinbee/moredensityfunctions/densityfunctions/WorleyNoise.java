@@ -39,7 +39,7 @@ public record WorleyNoise(int sizeX,
                     Codec.INT.fieldOf("salt").orElse(0).forGetter(WorleyNoise::salt)
             ).apply(instance, WorleyNoise::new)
     );
-    public static final TypedCodec<WorleyNoise> TYPED_CODEC = new TypedCodec<>("value_noise", KeyDispatchDataCodec.of(MAP_CODEC));
+    public static final TypedCodec<WorleyNoise> TYPED_CODEC = new TypedCodec<>("worley_noise", KeyDispatchDataCodec.of(MAP_CODEC));
 
     public WorleyNoise(int sizeX,
                        int sizeY,
