@@ -22,7 +22,7 @@ public record VoronoiCells(RandomSampler randomSampler,
                            Jitter jitter,
                            DistanceMetric distanceMetric,
                            DistanceType distanceType,
-                           boolean exact,
+                           int neighbors,
                            ExtraOctaves extraOctaves,
                            int salt)
         implements NoiseDensityFunction {
@@ -36,7 +36,7 @@ public record VoronoiCells(RandomSampler randomSampler,
                     Jitter.CODEC.fieldOf("jitter_sampler").forGetter(VoronoiCells::jitter),
                     DistanceMetric.CODEC.fieldOf("distance_metric").forGetter(VoronoiCells::distanceMetric),
                     DistanceType.CODEC.fieldOf("distance_type").forGetter(VoronoiCells::distanceType),
-                    Codec.BOOL.fieldOf("exact").forGetter(VoronoiCells::exact),
+                    Codec.BOOL.fieldOf("exact").forGetter(VoronoiCells::isExact),
                     ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse(ExtraOctaves.getDefault()).forGetter(VoronoiCells::extraOctaves),
                     Codec.INT.fieldOf("salt").orElse(0).forGetter(VoronoiCells::salt)
             ).apply(instance, VoronoiCells::new)
@@ -53,42 +53,42 @@ public record VoronoiCells(RandomSampler randomSampler,
                         boolean exact,
                         ExtraOctaves extraOctaves,
                         int salt) {
-        this.randomSampler = randomSampler;
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-        this.sizeZ = sizeZ;
-        this.jitter = jitter;
-        this.distanceMetric = distanceMetric;
-        this.distanceType = distanceType;
-        this.exact = exact;
-        this.extraOctaves = extraOctaves.finalizedWithSalt(salt);
-        this.salt = salt;
+        this(randomSampler,
+                sizeX,
+                sizeY,
+                sizeZ,
+                jitter,
+                distanceMetric,
+                distanceType,
+                exact ? 2 : 1, // exact = 2 neighbors = 5x5x5, otherwise = 1 neighbor = 3x3x3
+                extraOctaves,
+                salt
+        );
+    }
+
+    private boolean isExact() {
+        return neighbors == 2;
     }
 
     @Override
     public double eval(int x, int y, int z) {
         boolean is2D = sizeY == 0;
-        // exact = 2 neighbors = 5x5x5, otherwise = 1 neighbor = 3x3x3
-        int neighbors = exact ?
-                2 :
-                1;
-
         if (is2D) {
             if (distanceType == DistanceType.F1) {
-                return evaluate2DVoronoiF1(x, z, neighbors);
+                return evaluate2DVoronoiF1(x, z);
             } else {
-                return evaluate2DVoronoiF2(x, z, neighbors);
+                return evaluate2DVoronoiF2(x, z);
             }
         } else {
             if (distanceType == DistanceType.F1) {
-                return evaluate3DVoronoiF1(x, y, z, neighbors);
+                return evaluate3DVoronoiF1(x, y, z);
             } else {
-                return evaluate3DVoronoiF2(x, y, z, neighbors);
+                return evaluate3DVoronoiF2(x, y, z);
             }
         }
     }
 
-    private double evaluate2DVoronoiF1(int x, int z, int neighbors) {
+    private double evaluate2DVoronoiF1(int x, int z) {
         // divide into grid cells
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
         int gridZ = MDFMath.safeFloorDiv(z, sizeZ);
@@ -142,7 +142,7 @@ public record VoronoiCells(RandomSampler randomSampler,
         return minDistanceCellValue;
     }
 
-    private double evaluate3DVoronoiF1(int x, int y, int z, int neighbors) {
+    private double evaluate3DVoronoiF1(int x, int y, int z) {
         // divide into grid cells
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
         int gridY = MDFMath.safeFloorDiv(y, sizeY);
@@ -201,7 +201,7 @@ public record VoronoiCells(RandomSampler randomSampler,
         return minDistanceCellValue;
     }
 
-    private double evaluate2DVoronoiF2(int x, int z, int neighbors) {
+    private double evaluate2DVoronoiF2(int x, int z) {
         // divide into grid cells
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
         int gridZ = MDFMath.safeFloorDiv(z, sizeZ);
@@ -271,7 +271,7 @@ public record VoronoiCells(RandomSampler randomSampler,
         };
     }
 
-    private double evaluate3DVoronoiF2(int x, int y, int z, int neighbors) {
+    private double evaluate3DVoronoiF2(int x, int y, int z) {
         // divide into grid cells
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
         int gridY = MDFMath.safeFloorDiv(y, sizeY);
@@ -357,7 +357,7 @@ public record VoronoiCells(RandomSampler randomSampler,
                         jitter,
                         distanceMetric,
                         distanceType,
-                        exact,
+                        neighbors,
                         extraOctaves,
                         salt
                 )
