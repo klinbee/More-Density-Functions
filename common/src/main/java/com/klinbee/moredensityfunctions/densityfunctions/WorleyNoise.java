@@ -22,7 +22,7 @@ public record WorleyNoise(int sizeX,
                           DistanceMetric distanceMetric,
                           DistanceType distanceType,
                           double distanceMax,
-                          boolean exact,
+                          int neighbors,
                           boolean invert,
                           ExtraOctaves extraOctaves,
                           int salt)
@@ -36,7 +36,7 @@ public record WorleyNoise(int sizeX,
                     Jitter.CODEC.fieldOf("jitter_sampler").forGetter(WorleyNoise::jitter),
                     DistanceMetric.CODEC.fieldOf("distance_metric").forGetter(WorleyNoise::distanceMetric),
                     DistanceType.CODEC.fieldOf("distance_type").forGetter(WorleyNoise::distanceType),
-                    Codec.BOOL.fieldOf("exact").forGetter(WorleyNoise::exact),
+                    Codec.BOOL.fieldOf("exact").forGetter(WorleyNoise::isExact),
                     Codec.BOOL.fieldOf("invert").forGetter(WorleyNoise::invert),
                     ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse(ExtraOctaves.getDefault()).forGetter(WorleyNoise::extraOctaves),
                     Codec.INT.fieldOf("salt").orElse(0).forGetter(WorleyNoise::salt)
@@ -62,34 +62,34 @@ public record WorleyNoise(int sizeX,
                 distanceMetric,
                 distanceType,
                 distanceMetric.distance(new double[]{0, 0, 0}, new double[]{sizeX, sizeY, sizeZ}),
-                exact,
+                exact ? 2 : 1, // exact = 2 neighbors = 5x5x5, otherwise = 1 neighbor = 3x3x3
                 invert,
                 extraOctaves.finalizedWithSalt(salt),
                 salt
         );
     }
 
+    private boolean isExact() {
+        return neighbors == 2;
+    }
+
     @Override
     public double eval(int x, int y, int z) {
         boolean is2D = sizeY == 0;
-        // exact = 2 neighbors = 5x5x5, otherwise = 1 neighbor = 3x3x3
-        int neighbors = exact ?
-                2 :
-                1;
 
         double result;
 
         if (is2D) {
             if (distanceType == DistanceType.F1) {
-                result = evaluate2DWorleyF1(x, z, neighbors);
+                result = evaluate2DWorleyF1(x, z);
             } else {
-                result = evaluate2DWorleyF2(x, z, neighbors);
+                result = evaluate2DWorleyF2(x, z);
             }
         } else {
             if (distanceType == DistanceType.F1) {
-                result = evaluate3DWorleyF1(x, y, z, neighbors);
+                result = evaluate3DWorleyF1(x, y, z);
             } else {
-                result = evaluate3DWorleyF2(x, y, z, neighbors);
+                result = evaluate3DWorleyF2(x, y, z);
             }
         }
 
@@ -100,7 +100,7 @@ public record WorleyNoise(int sizeX,
                 result;
     }
 
-    private double evaluate2DWorleyF1(int x, int z, int neighbors) {
+    private double evaluate2DWorleyF1(int x, int z) {
         // divide into grid cells
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
         int gridZ = MDFMath.safeFloorDiv(z, sizeZ);
@@ -148,7 +148,7 @@ public record WorleyNoise(int sizeX,
         return minDistance;
     }
 
-    private double evaluate3DWorleyF1(int x, int y, int z, int neighbors) {
+    private double evaluate3DWorleyF1(int x, int y, int z) {
         // divide into grid cells
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
         int gridY = MDFMath.safeFloorDiv(y, sizeY);
@@ -203,7 +203,7 @@ public record WorleyNoise(int sizeX,
         return minDistance;
     }
 
-    private double evaluate2DWorleyF2(int x, int z, int neighbors) {
+    private double evaluate2DWorleyF2(int x, int z) {
         // divide into grid cells
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
         int gridZ = MDFMath.safeFloorDiv(z, sizeZ);
@@ -264,7 +264,7 @@ public record WorleyNoise(int sizeX,
         };
     }
 
-    private double evaluate3DWorleyF2(int x, int y, int z, int neighbors) {
+    private double evaluate3DWorleyF2(int x, int y, int z) {
         // divide into grid cells
         int gridX = MDFMath.safeFloorDiv(x, sizeX);
         int gridY = MDFMath.safeFloorDiv(y, sizeY);
@@ -348,7 +348,7 @@ public record WorleyNoise(int sizeX,
                         distanceMetric,
                         distanceType,
                         distanceMax,
-                        exact,
+                        neighbors,
                         invert,
                         extraOctaves,
                         salt
