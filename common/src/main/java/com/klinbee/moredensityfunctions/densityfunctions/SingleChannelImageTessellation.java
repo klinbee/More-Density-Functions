@@ -38,6 +38,9 @@ public record SingleChannelImageTessellation(int xSize,
         } catch (IOException e) {
             throw new UncheckedIOException("Error: More Density Functions failed to decompress frame data", e);
         }
+        if (inflatedBytes.length != xSize * zSize) {
+            throw new IllegalArgumentException("Error: More Density Functions expected inflated frame data to be of size: " + xSize * zSize + ", but found size: " + inflatedBytes.length);
+        }
         return new SingleChannelImageTessellation(xSize, zSize, inflatedBytes);
     }
 
