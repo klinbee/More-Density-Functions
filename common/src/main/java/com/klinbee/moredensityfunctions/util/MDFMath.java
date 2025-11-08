@@ -15,7 +15,7 @@ public final class MDFMath {
     }
 
     public static int coordinateToIndex(int x1, int x1Length, int x2, int x2Length) {
-        return MDFMath.floorModInt(x1, x1Length) + MDFMath.floorModInt(x2, x2Length) * x1;
+        return MDFMath.floorModInt(x1, x1Length) + MDFMath.floorModInt(x2, x2Length) * x1Length;
     }
 
     public static int floorModInt(int numerator, int denominator) {
