@@ -23,7 +23,7 @@ public record WorleyNoise(int sizeX,
                           DistanceType distanceType,
                           double distanceMax,
                           int neighbors,
-                          boolean invert,
+                          boolean invertValue,
                           ExtraOctaves extraOctaves,
                           int salt)
         implements NoiseDensityFunction {
@@ -37,7 +37,7 @@ public record WorleyNoise(int sizeX,
                     DistanceMetric.CODEC.fieldOf("distance_metric").forGetter(WorleyNoise::distanceMetric),
                     DistanceType.CODEC.fieldOf("distance_type").forGetter(WorleyNoise::distanceType),
                     Codec.BOOL.fieldOf("exact").forGetter(WorleyNoise::isExact),
-                    Codec.BOOL.fieldOf("invert").forGetter(WorleyNoise::invert),
+                    Codec.BOOL.fieldOf("invertValue").forGetter(WorleyNoise::invertValue),
                     ExtraOctaves.CODEC.fieldOf("extra_octaves").orElse(ExtraOctaves.getDefault()).forGetter(WorleyNoise::extraOctaves),
                     Codec.INT.fieldOf("salt").orElse(0).forGetter(WorleyNoise::salt)
             ).apply(instance, WorleyNoise::new)
@@ -95,7 +95,7 @@ public record WorleyNoise(int sizeX,
 
         result = result / distanceMax;
 
-        return invert ?
+        return invertValue ?
                 1.0D - result :
                 result;
     }
@@ -349,7 +349,7 @@ public record WorleyNoise(int sizeX,
                         distanceType,
                         distanceMax,
                         neighbors,
-                        invert,
+                        invertValue,
                         extraOctaves,
                         salt
                 )
